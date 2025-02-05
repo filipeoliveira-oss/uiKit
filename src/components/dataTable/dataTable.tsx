@@ -1,7 +1,8 @@
+import React from "react";
 import { AgGridReact } from "ag-grid-react";
 import { ComponentProps, forwardRef, Ref } from "react";
 import { tv, VariantProps } from "tailwind-variants";
-import { CellEditingStoppedEvent, GridApi, RowClickedEvent, themeQuartz } from 'ag-grid-community';
+import { CellEditingStoppedEvent, RowClickedEvent, themeQuartz } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ClientSideRowModelModule, PaginationModule, NumberFilterModule, TextFilterModule, LocaleModule, RowStyleModule, CheckboxEditorModule, ValidationModule, DateFilterModule, } from 'ag-grid-community';
 ModuleRegistry.registerModules([ClientSideRowModelModule, PaginationModule, NumberFilterModule, TextFilterModule, LocaleModule, CheckboxEditorModule, RowStyleModule, ValidationModule, DateFilterModule,]);
