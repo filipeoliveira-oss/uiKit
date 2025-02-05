@@ -1,5 +1,5 @@
 import { useState } from "react"
-import Modal from "./components/modal/modal"
+import Modal from "./components/uiKit/modal"
 
 function App() {
 

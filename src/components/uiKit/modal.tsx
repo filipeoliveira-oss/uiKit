@@ -3,8 +3,7 @@ import { createPortal } from "react-dom"
 import { tv, type VariantProps } from 'tailwind-variants'
 import { X } from "lucide-react"
 import { motion } from 'framer-motion'
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { cn } from "../../utils/cn"
 
 interface props {
     /** Controls whether the component is open */
@@ -21,10 +20,6 @@ interface props {
     overlayClassName?: string,
     title?:string
 }
-
-function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs))
-  }
 
 const modal = tv({
     base: "bg-white w-1/2 h-2/3 rounded-lg shadow-md p-2 relative flex flex-col"
