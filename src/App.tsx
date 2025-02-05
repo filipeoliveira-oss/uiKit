@@ -1,26 +1,20 @@
 import { useState } from "react"
-import Drawer from "./components/drawer/drawer"
+import ActionsMenu from "./components/actionsMenu/actionsMenu"
 
 function App() {
 
 	const [open, setOpen] = useState(false)
 
 	return (
-		<div className="">
+		<div className="p-48">
 			<button onClick={() => setOpen(true)}>open dialog</button>
 
-			<Drawer isOpen={open} onClose={() => setOpen(false)} >
-				<div className="w-full h-full flex flex-col gap-4 overflow-auto">
-					{Array.from({ length: 400 }, (_, index) => index).map((each) => {
-						return (
-							<div className="flex flex-row gap-5">
-								<input className="w-96 h-8 bg-red-500" value={`this is a input ${each}`}/>
-								<input className="w-96 h-8 bg-red-500" value={`this is a input ${each}`}/>
-							</div>
-						)
-					})}
-				</div>
-			</Drawer>
+			<ActionsMenu position="bottom">
+				<span>1</span>
+				<span>2</span>
+				<span>3</span>
+				<span>4</span>
+			</ActionsMenu>
 		</div>
 	)
 }
