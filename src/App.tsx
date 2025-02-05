@@ -1,5 +1,5 @@
 import { useState } from "react"
-import Modal from "./components/uiKit/modal"
+import Drawer from "./components/drawer/drawer"
 
 function App() {
 
@@ -9,7 +9,7 @@ function App() {
 		<div className="">
 			<button onClick={() => setOpen(true)}>open dialog</button>
 
-			<Modal isOpen={open} onClose={() => setOpen(false)} title="123">
+			<Drawer isOpen={open} onClose={() => setOpen(false)} >
 				<div className="w-full h-full flex flex-col gap-4 overflow-auto">
 					{Array.from({ length: 400 }, (_, index) => index).map((each) => {
 						return (
@@ -20,7 +20,7 @@ function App() {
 						)
 					})}
 				</div>
-			</Modal>
+			</Drawer>
 		</div>
 	)
 }

@@ -19,7 +19,9 @@ interface props {
      * Default duration .150*/
     animationDuration?: number,
     overlayClassName?: string,
-    title?:string
+    title?:string,
+    openHeight?:string,
+    openWidth?:string
 }
 
 function cn(...inputs: ClassValue[]) {
@@ -33,13 +35,13 @@ const modal = tv({
 type ModalProps = ComponentProps<'div'> & VariantProps<typeof modal> & props
 
 const Modal = forwardRef<HTMLDivElement, ModalProps>(
-    ({ className, isOpen, onClose, children, disableAnimation = false, animationDuration = .150, overlayClassName,title }, ref) => {
+    ({ className, isOpen, onClose, children, disableAnimation = false, animationDuration = .150, overlayClassName,title, openHeight='66%', openWidth='50%' }, ref) => {
 
         const modalAnimation = {
             closed: { width: '0px', height: '0px' },
             open: {
-                width: '50%',
-                height: '66%',
+                width: openWidth,
+                height: openHeight,
                 zIndex: 999,
                 transition: {
                     duration: animationDuration,
