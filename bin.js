@@ -11,6 +11,7 @@ const availableComponents = [
     { name: "Actions Menu", value: "actionsMenu" },
     { name: "Button", value: "button" },
     { name: "Drawer", value: "drawer" },
+    { name: "Data Table", value: "dataTable" },
     { name: "Modal", value: "modal" },
 ];
 

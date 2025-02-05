@@ -38,7 +38,7 @@ const actionsMenu = tv({
 type ActionsMenuProps = ComponentProps<'div'> & VariantProps<typeof actionsMenu> & props
 
 const ActionsMenu = forwardRef<HTMLDivElement, ActionsMenuProps>(
-    ({ buttonClassName, icon = <Ellipsis />,children,position,className }, ref) => {
+    ({ buttonClassName, icon = <Ellipsis />,children,position,className,  }, ref) => {
 
         const dropdownRef = useRef(null)
         const [isOpen, setIsOpen] = useState(false)
