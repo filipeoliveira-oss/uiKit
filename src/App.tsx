@@ -1,5 +1,5 @@
 import { useState } from "react"
-import ActionsMenu from "./components/actionsMenu/actionsMenu"
+import ActionsMenu from "./components/uiKit/actionsMenu"
 
 function App() {
 

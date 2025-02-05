@@ -41,7 +41,7 @@ const ActionsMenu = forwardRef<HTMLDivElement, ActionsMenuProps>(
     ({ buttonClassName, icon = <Ellipsis />,children,position,className }, ref) => {
 
         const dropdownRef = useRef(null)
-        const [isOpen, setIsOpen] = useState(false)
+        const [isOpen, setIsOpen] = useState(true)
 
         const handleClickOutside = () => {
             if (isOpen) {

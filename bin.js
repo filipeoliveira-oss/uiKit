@@ -7,123 +7,45 @@ import readline from "readline";
 import https from "https";
 import inquirer from "inquirer";
 
-const availableComponents = ["modal", "drawer"];
+const availableComponents = [
+    { name: "Actions Menu", value: "actionsMenu" },
+    { name: "Button", value: "button" },
+    { name: "Drawer", value: "drawer" },
+    { name: "Modal", value: "modal" },
+];
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-});
-
-rl.question("Which component do you want? ", (component) => {
-
-    function createComponent() {
-        try {
-            execSync(`curl --create-dirs > ${dest} ${fileUrl}`);
-            console.log(`✅ ${component} was added to your project!`);
-            console.log(`🛜 Fetching dependencies...`);
-    
-            https.get(depsUrl, (res) => {
-                let data = "";
-    
-                res.on("data", (chunck) => {
-                    data += chunck;
-                });
-    
-                res.on("end", () => {
-                    try {
-                        const dependencies = JSON.parse(data);
-                        if (dependencies.dependencies) {
-                            console.log("📦 Checking dependencies...");
-    
-                            const depsList = Object.entries(
-                                dependencies.dependencies
-                            ).map(([pkg, version]) => `${pkg}@${version}`);
-    
-                            fs.readFile(packageJsonPath, "utf-8", (err, data) => {
-                                if (err) {
-                                    console.log("error", err);
-    
-                                    return;
-                                }
-                                const packagejson = JSON.parse(data);
-                                const installed = packagejson.dependencies; // trocar para dependencies
-    
-                                if (installed) {
-                                    const toInstall = depsList.filter((dep) => {
-                                        const depName = dep.split("@")[0];
-    
-                                        if (!installed[depName]) {
-                                            return true;
-                                        } else {
-                                            const required = dep.replace(/[^0-9.]/g,"");
-                                            const installedPkg = installed[depName].replace(/[^0-9.]/g, "");
-                                            const isValid = isVersionGreaterOrEqual(installedPkg, required);
-                                            return !isValid;
-                                        }
-                                    });
-    
-                                    if (toInstall.length > 0) {
-                                        const InstallPkg = toInstall.join(" ");
-                                        console.log(`📦 Installing dependencies... (${toInstall.join(", ")})`);
-                                        execSync(`npm install -P ${InstallPkg} `);
-                                    }
-                                } else {
-                                    console.log(`📦 Installing dependencies... (${depsList.join(", ")})`);
-                                    const InstallPkg = depsList.join(" ");
-                                    execSync(`npm install -P ${InstallPkg}`);
-                                }
-                            });
-                        }
-                    } catch (error) {
-                        console.error("❌ Failled to parse dependencies:", error);
-                    }
-                }).on("error", (error) => {
-                    console.error("❌ Failled to parse dependencies:", error);
-                });
-            });
-        } catch (error) {
-            console.error("❌ Failed to fetch component:", error);
-        }
-    }
-    
-
-    if (
-        !availableComponents.some((comp) => {
-            return comp.toLowerCase() === component.toLowerCase();
-        })
-    ) {
-        console.log("This component is not available or not exists!");
-        rl.close();
-        return;
-    }
+async function main() {
+    const component = await getDesiredComponent()
 
     const repoUrl = "https://raw.githubusercontent.com/filipeoliveira-oss/uiKit/refs/heads/main/src/components";
     const fileUrl = `${repoUrl}/${component}/${component}.tsx`;
     const depsUrl = `${repoUrl}/${component}/${component}.deps.json`;
     const dest = `./src/components/uiKit/${component}.tsx`;
 
-    const packageJsonPath = path.join(process.cwd(), "package.json");
     const tailwindVersion = execSync("npm show tailwindcss version").toString();
 
     if (!tailwindVersion) {
-        console.log(`Tailwind is required for this library to work, please refer to Tailwind's docs: https://tailwindcss.com/docs/installation`);
+        console.log(
+            `Tailwind is required for this library to work, please refer to Tailwind's docs: https://tailwindcss.com/docs/installation`
+        );
 
-        rl.close();
-        return;
+        process.exit(1)
     }
 
     if (Number(tailwindVersion.split(".")[0]) < 4) {
-        console.log(`Tailwind version is too old, please refer to Tailwind's migration website: https://tailwindcss.com/docs/upgrade-guide`);
+        console.log(
+            `Tailwind version is too old, please refer to Tailwind's migration website: https://tailwindcss.com/docs/upgrade-guide`
+        );
 
-        rl.close();
-        return;
+        
+        process.exit(1)
     }
 
     fs.readFile(dest, "utf-8", async (err, data) => {
         if (err) {
-            createComponent();
+            createComponent(dest,fileUrl,depsUrl,component);
 
-            return
+            process.exit(1)
         }
 
         const answer = await inquirer.prompt([
@@ -140,17 +62,212 @@ rl.question("Which component do you want? ", (component) => {
         ]);
 
         if (answer.option === "Yes") {
-            createComponent();
+            createComponent(dest,fileUrl,depsUrl,component);
         } else {
             console.log("❌ Operation cancelled by the user");
-            rl.close();
-            return;
+            process.exit(1)
         }
-        
     });
+}
 
-    rl.close();
-});
+async function getDesiredComponent() {
+    const answer = await inquirer.prompt([
+        {
+            type: "list",
+            name: "option",
+            message:
+                "Which component do you want to install?",
+            choices: availableComponents
+        },
+    ]);
+
+    return answer.option
+}
+
+function createComponent(dest, fileUrl, depsUrl, component) {
+    const packageJsonPath = path.join(process.cwd(), "package.json");
+
+    try {
+        execSync(`curl --create-dirs > ${dest} ${fileUrl}`);
+        console.log(`✅ ${component} was added to your project!`);
+        console.log(`🛜 Fetching dependencies...`);
+
+        https.get(depsUrl, (res) => {
+            let data = "";
+
+            res.on("data", (chunck) => {
+                data += chunck;
+            });
+
+            res.on("end", () => {
+                try {
+                    const dependencies = JSON.parse(data);
+                    if (dependencies.dependencies) {
+                        console.log("📦 Checking dependencies...");
+
+                        const depsList = Object.entries(
+                            dependencies.dependencies
+                        ).map(([pkg, version]) => `${pkg}@${version}`);
+
+                        fs.readFile(
+                            packageJsonPath,
+                            "utf-8",
+                            (err, data) => {
+                                if (err) {
+                                    console.log("error", err);
+
+                                    return;
+                                }
+                                const packagejson = JSON.parse(data);
+                                const installed = packagejson.dependencies; // trocar para dependencies
+
+                                if (installed) {
+                                    const toInstall = depsList.filter(
+                                        (dep) => {
+                                            const depName =
+                                                dep.split("@")[0];
+
+                                            if (!installed[depName]) {
+                                                return true;
+                                            } else {
+                                                const required =
+                                                    dep.replace(
+                                                        /[^0-9.]/g,
+                                                        ""
+                                                    );
+                                                const installedPkg =
+                                                    installed[
+                                                        depName
+                                                    ].replace(
+                                                        /[^0-9.]/g,
+                                                        ""
+                                                    );
+                                                const isValid =
+                                                    isVersionGreaterOrEqual(
+                                                        installedPkg,
+                                                        required
+                                                    );
+                                                return !isValid;
+                                            }
+                                        }
+                                    );
+
+                                    if (toInstall.length > 0) {
+                                        const InstallPkg =
+                                            toInstall.join(" ");
+                                        console.log(
+                                            `📦 Installing dependencies... (${toInstall.join(
+                                                ", "
+                                            )})`
+                                        );
+                                        execSync(
+                                            `npm install -P ${InstallPkg} `
+                                        );
+                                    }
+                                } else {
+                                    console.log(
+                                        `📦 Installing dependencies... (${depsList.join(
+                                            ", "
+                                        )})`
+                                    );
+                                    const InstallPkg = depsList.join(" ");
+                                    execSync(
+                                        `npm install -P ${InstallPkg}`
+                                    );
+                                }
+                            }
+                        );
+                    }
+                } catch (error) {
+                    console.error(
+                        "❌ Failled to parse dependencies:",
+                        error
+                    );
+                }
+            }).on("error", (error) => {
+                console.error("❌ Failled to parse dependencies:", error);
+            });
+        });
+    } catch (error) {
+        console.error("❌ Failed to fetch component:", error);
+    }
+}
+
+// const rl = readline.createInterface({
+//     input: process.stdin,
+//     output: process.stdout,
+// });
+
+// rl.question("Which component do you want? ", (component) => {
+
+//     // if (
+//     //     !availableComponents.some((comp) => {
+//     //         return comp.toLowerCase() === component.toLowerCase();
+//     //     })
+//     // ) {
+//     //     console.log("This component is not available or not exists!");
+//     //     rl.close();
+//     //     return;
+//     // }
+
+//     const repoUrl =
+//         "https://raw.githubusercontent.com/filipeoliveira-oss/uiKit/refs/heads/main/src/components";
+//     const fileUrl = `${repoUrl}/${component}/${component}.tsx`;
+//     const depsUrl = `${repoUrl}/${component}/${component}.deps.json`;
+//     const dest = `./src/components/uiKit/${component}.tsx`;
+
+//     const packageJsonPath = path.join(process.cwd(), "package.json");
+//     const tailwindVersion = execSync("npm show tailwindcss version").toString();
+
+//     if (!tailwindVersion) {
+//         console.log(
+//             `Tailwind is required for this library to work, please refer to Tailwind's docs: https://tailwindcss.com/docs/installation`
+//         );
+
+//         rl.close();
+//         return;
+//     }
+
+//     if (Number(tailwindVersion.split(".")[0]) < 4) {
+//         console.log(
+//             `Tailwind version is too old, please refer to Tailwind's migration website: https://tailwindcss.com/docs/upgrade-guide`
+//         );
+
+//         rl.close();
+//         return;
+//     }
+
+//     fs.readFile(dest, "utf-8", async (err, data) => {
+//         if (err) {
+//             createComponent();
+
+//             return;
+//         }
+
+//         const answer = await inquirer.prompt([
+//             {
+//                 type: "list",
+//                 name: "option",
+//                 message:
+//                     "There is a file with this name in the uiKit folder, do you want to overwrite this?",
+//                 choices: [
+//                     { name: "Yes", value: "Yes" },
+//                     { name: "No", value: "No" },
+//                 ],
+//             },
+//         ]);
+
+//         if (answer.option === "Yes") {
+//             createComponent();
+//         } else {
+//             console.log("❌ Operation cancelled by the user");
+//             rl.close();
+//             return;
+//         }
+//     });
+
+//     rl.close();
+// });
 
 function isVersionGreaterOrEqual(installed, required) {
     const [installedMajor, installedMinor, installedPatch] = installed
@@ -168,3 +285,5 @@ function isVersionGreaterOrEqual(installed, required) {
 
     return installedPatch >= requiredPatch;
 }
+
+main()
