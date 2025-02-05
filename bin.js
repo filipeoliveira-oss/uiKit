@@ -75,10 +75,10 @@ rl.question("Which component do you want? ", (component) => {
                             });
                         }
                     } catch (error) {
-                        console.log("❌ Failled to parse dependencies:", error);
+                        console.error("❌ Failled to parse dependencies:", error);
                     }
                 }).on("error", (error) => {
-                    console.log("❌ Failled to parse dependencies:", error);
+                    console.error("❌ Failled to parse dependencies:", error);
                 });
             });
         } catch (error) {
@@ -122,30 +122,31 @@ rl.question("Which component do you want? ", (component) => {
     fs.readFile(dest, "utf-8", async (err, data) => {
         if (err) {
             createComponent();
+
+            return
         }
 
-        if (data) {
-            const answer = await inquirer.prompt([
-                {
-                    type: "list",
-                    name: "option",
-                    message:
-                        "There is a file with this name in the uiKit folder, do you want to overwrite this?",
-                    choices: [
-                        { name: "Yes", value: "Yes" },
-                        { name: "No", value: "No" },
-                    ],
-                },
-            ]);
+        const answer = await inquirer.prompt([
+            {
+                type: "list",
+                name: "option",
+                message:
+                    "There is a file with this name in the uiKit folder, do you want to overwrite this?",
+                choices: [
+                    { name: "Yes", value: "Yes" },
+                    { name: "No", value: "No" },
+                ],
+            },
+        ]);
 
-            if (answer.option === "Yes") {
-                createComponent();
-            } else {
-                console.log("❌ Operation cancelled by the user");
-                rl.close();
-                return;
-            }
+        if (answer.option === "Yes") {
+            createComponent();
+        } else {
+            console.log("❌ Operation cancelled by the user");
+            rl.close();
+            return;
         }
+        
     });
 
     rl.close();
