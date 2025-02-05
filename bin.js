@@ -44,7 +44,7 @@ async function main() {
 
     fs.readFile(dest, "utf-8", async (err, data) => {
         if (err) {
-            createComponent(dest,fileUrl,depsUrl,component);
+            await createComponent(dest,fileUrl,depsUrl,component);
 
             process.exit(1)
         }
@@ -85,7 +85,7 @@ async function getDesiredComponent() {
     return answer.option
 }
 
-function createComponent(dest, fileUrl, depsUrl, component) {
+async function createComponent(dest, fileUrl, depsUrl, component) {
     const packageJsonPath = path.join(process.cwd(), "package.json");
 
     try {
@@ -93,102 +93,156 @@ function createComponent(dest, fileUrl, depsUrl, component) {
         console.log(`✅ ${component} was added to your project!`);
         console.log(`🛜 Fetching dependencies...`);
 
-        https.get(depsUrl, (res) => {
-            let data = "";
+        const depsFetch = await new Promise((resolve, reject) =>{
+            https.get(depsUrl, (res) =>{
+                let data = ''
 
-            res.on("data", (chunck) => {
-                data += chunck;
-            });
+                res.on('data', (chunck) =>{
+                    data += chunck
+                })
 
-            res.on("end", () => {
-                try {
-                    const dependencies = JSON.parse(data);
-                    if (dependencies.dependencies) {
-                        console.log("📦 Checking dependencies...");
-
-                        const depsList = Object.entries(
-                            dependencies.dependencies
-                        ).map(([pkg, version]) => `${pkg}@${version}`);
-
-                        fs.readFile(
-                            packageJsonPath,
-                            "utf-8",
-                            (err, data) => {
-                                if (err) {
-                                    console.log("error", err);
-
-                                    return;
-                                }
-                                const packagejson = JSON.parse(data);
-                                const installed = packagejson.dependencies; // trocar para dependencies
-
-                                if (installed) {
-                                    const toInstall = depsList.filter(
-                                        (dep) => {
-                                            const depName =
-                                                dep.split("@")[0];
-
-                                            if (!installed[depName]) {
-                                                return true;
-                                            } else {
-                                                const required =
-                                                    dep.replace(
-                                                        /[^0-9.]/g,
-                                                        ""
-                                                    );
-                                                const installedPkg =
-                                                    installed[
-                                                        depName
-                                                    ].replace(
-                                                        /[^0-9.]/g,
-                                                        ""
-                                                    );
-                                                const isValid =
-                                                    isVersionGreaterOrEqual(
-                                                        installedPkg,
-                                                        required
-                                                    );
-                                                return !isValid;
-                                            }
-                                        }
-                                    );
-
-                                    if (toInstall.length > 0) {
-                                        const InstallPkg =
-                                            toInstall.join(" ");
-                                        console.log(
-                                            `📦 Installing dependencies... (${toInstall.join(
-                                                ", "
-                                            )})`
-                                        );
-                                        execSync(
-                                            `npm install -P ${InstallPkg} `
-                                        );
-                                    }
-                                } else {
-                                    console.log(
-                                        `📦 Installing dependencies... (${depsList.join(
-                                            ", "
-                                        )})`
-                                    );
-                                    const InstallPkg = depsList.join(" ");
-                                    execSync(
-                                        `npm install -P ${InstallPkg}`
-                                    );
-                                }
-                            }
-                        );
+                res.on('end', () =>{
+                    try {
+                        resolve(JSON.parse(data))
+                    } catch (error) {
+                        reject("❌ Failed to parse dependencies: " + error);
                     }
-                } catch (error) {
-                    console.error(
-                        "❌ Failled to parse dependencies:",
-                        error
-                    );
+                })
+
+                res.on('error', (error) =>{
+                    reject("❌ Failed to parse dependencies: " + error);
+                })
+            })
+        })
+
+        if(depsFetch && depsFetch.dependencies){
+            console.log("📦 Checking dependencies...");
+
+            const depsList = Object.entries(depsFetch.dependencies).map(([pkg, version]) => `${pkg}@${version}`)
+
+            const packageJsonData = fs.readFileSync(packageJsonPath, 'utf-8')
+            const packagejson = JSON.parse(packageJsonData)
+            const installed = packagejson.dependencies || {}
+            console.log(depsList)
+            const toInstall = depsList.filter((dep) =>{
+                const depName = dep.split('@')[0];
+                
+                if(!installed[depName]){
+                    return true
+                }else{
+                    const required = dep.replace(/[^0-9.]/g, "");
+                    const installedPkg = installed[depName].replace(/[^0-9.]/g, "");
+                    const greater = isVersionGreaterOrEqual(installedPkg, required)
+
+                    return !greater
                 }
-            }).on("error", (error) => {
-                console.error("❌ Failled to parse dependencies:", error);
-            });
-        });
+            })
+            
+            if(toInstall.length > 0){
+                console.log(`📦 Installing dependencies... (${toInstall.join(", ")})`);
+                execSync(`npm install -P ${toInstall.join(" ")}`);
+            }
+        }
+
+        // https.get(depsUrl, (res) => {
+        //     let data = "";
+
+        //     res.on("data", (chunck) => {
+        //         data += chunck;
+        //         console.log(JSON.parse(chunck))
+        //     });
+
+        //     res.on("end", () => {
+        //         try {
+        //             const dependencies = JSON.parse(data);
+        //             if (dependencies.dependencies) {
+        //                 console.log("📦 Checking dependencies...");
+
+        //                 const depsList = Object.entries(
+        //                     dependencies.dependencies
+        //                 ).map(([pkg, version]) => `${pkg}@${version}`);
+
+        //                 fs.readFile(
+        //                     packageJsonPath,
+        //                     "utf-8",
+        //                     (err, data) => {
+        //                         if (err) {
+        //                             console.log("error", err);
+
+        //                             return;
+        //                         }
+        //                         const packagejson = JSON.parse(data);
+        //                         const installed = packagejson.dependencies; // trocar para dependencies
+
+        //                         if (installed) {
+        //                             const toInstall = depsList.filter(
+        //                                 (dep) => {
+        //                                     const depName =
+        //                                         dep.split("@")[0];
+
+        //                                     if (!installed[depName]) {
+        //                                         return true;
+        //                                     } else {
+        //                                         const required =
+        //                                             dep.replace(
+        //                                                 /[^0-9.]/g,
+        //                                                 ""
+        //                                             );
+        //                                         const installedPkg =
+        //                                             installed[
+        //                                                 depName
+        //                                             ].replace(
+        //                                                 /[^0-9.]/g,
+        //                                                 ""
+        //                                             );
+        //                                         const isValid =
+        //                                             isVersionGreaterOrEqual(
+        //                                                 installedPkg,
+        //                                                 required
+        //                                             );
+        //                                         return !isValid;
+        //                                     }
+        //                                 }
+        //                             );
+
+        //                             if (toInstall.length > 0) {
+        //                                 const InstallPkg =
+        //                                     toInstall.join(" ");
+        //                                 console.log(
+        //                                     `📦 Installing dependencies... (${toInstall.join(
+        //                                         ", "
+        //                                     )})`
+        //                                 );
+        //                                 execSync(
+        //                                     `npm install -P ${InstallPkg} `
+        //                                 );
+        //                             }
+        //                         } else {
+        //                             console.log(
+        //                                 `📦 Installing dependencies... (${depsList.join(
+        //                                     ", "
+        //                                 )})`
+        //                             );
+        //                             const InstallPkg = depsList.join(" ");
+        //                             execSync(
+        //                                 `npm install -P ${InstallPkg}`
+        //                             );
+        //                         }
+        //                     }
+        //                 );
+        //             }
+        //         } catch (error) {
+        //             console.error(
+        //                 "❌ Failled to parse dependencies:",
+        //                 error
+        //             );
+        //         }
+        //     }).on("error", (error) => {
+        //         console.error("❌ Failled to parse dependencies:", error);
+        //     });
+
+            
+        // });
     } catch (error) {
         console.error("❌ Failed to fetch component:", error);
     }

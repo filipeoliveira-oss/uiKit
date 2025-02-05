@@ -38,10 +38,10 @@ const actionsMenu = tv({
 type ActionsMenuProps = ComponentProps<'div'> & VariantProps<typeof actionsMenu> & props
 
 const ActionsMenu = forwardRef<HTMLDivElement, ActionsMenuProps>(
-    ({ buttonClassName, icon = <Ellipsis />,children,position,className }, ref) => {
+    ({ buttonClassName, icon = <Ellipsis />,children,position,className,  }, ref) => {
 
         const dropdownRef = useRef(null)
-        const [isOpen, setIsOpen] = useState(true)
+        const [isOpen, setIsOpen] = useState(false)
 
         const handleClickOutside = () => {
             if (isOpen) {
@@ -64,7 +64,7 @@ const ActionsMenu = forwardRef<HTMLDivElement, ActionsMenuProps>(
         }
         
         return (
-            <div className="relative flex  w-fit h-auto">
+            <div className="relative flex  w-fit h-auto" ref={ref}>
                 <button ref={dropdownRef} className={cn('bg-white border border-zinc-200 w-fit min-w-12 h-8 flex items-center justify-center cursor-pointer', buttonClassName)} onClick={() => setIsOpen(!isOpen)}>{icon}</button>
                 <motion.div className={actionsMenu({position, className})} variants={list} initial='closed' animate={isOpen ? 'open' : 'closed'}>
                     {children}
