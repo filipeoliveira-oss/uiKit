@@ -10,8 +10,9 @@ import inquirer from "inquirer";
 const availableComponents = [
     { name: "Actions Menu", value: "actionsMenu" },
     { name: "Button", value: "button" },
-    { name: "Drawer", value: "drawer" },
     { name: "Data Table", value: "dataTable" },
+    { name: "Drawer", value: "drawer" },
+    { name: "Dropdown", value: "dropdown" },
     { name: "Modal", value: "modal" },
 ];
 
@@ -123,7 +124,7 @@ async function createComponent(dest, fileUrl, depsUrl, component) {
             const packageJsonData = fs.readFileSync(packageJsonPath, 'utf-8')
             const packagejson = JSON.parse(packageJsonData)
             const installed = packagejson.dependencies || {}
-            console.log(depsList)
+
             const toInstall = depsList.filter((dep) =>{
                 const depName = dep.split('@')[0];
                 
@@ -137,6 +138,7 @@ async function createComponent(dest, fileUrl, depsUrl, component) {
                     return !greater
                 }
             })
+
             
             if(toInstall.length > 0){
                 console.log(`📦 Installing dependencies... (${toInstall.join(", ")})`);
