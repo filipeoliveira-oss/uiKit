@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Dropdown } from "./components/dropdown/dropdown"
 import CurrencyInput from "./components/currencyInput/currencyInput"
+import MaskInput from "./components/maskInput/maskInput"
 
 function App() {
 	const [value, setValue] = useState('')
@@ -13,7 +14,7 @@ function App() {
 
 	return (
 		<div className="p-48">
-			<CurrencyInput value={null} onChangeValue={(e) => {}}/>
+			<MaskInput value={value} onChangeValue={(e) => {setValue(e.target.value)}} type="text"/>
 		</div>
 	)
 }

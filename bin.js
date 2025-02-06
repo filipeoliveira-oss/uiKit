@@ -14,6 +14,7 @@ const availableComponents = [
     { name: "Data Table", value: "dataTable" },
     { name: "Drawer", value: "drawer" },
     { name: "Dropdown", value: "dropdown" },
+    { name: "Input Mask", value: "maskInput" },
     { name: "Modal", value: "modal" },
 ];
 
@@ -37,7 +38,7 @@ async function main() {
 
     if (Number(tailwindVersion.split(".")[0]) < 4) {
         console.log(
-            `Tailwind version is too old, please refer to Tailwind's migration website: https://tailwindcss.com/docs/upgrade-guide`
+            `Tailwind's version is too old, please refer to Tailwind's migration website: https://tailwindcss.com/docs/upgrade-guide`
         );
 
         
