@@ -10,6 +10,7 @@ import inquirer from "inquirer";
 const availableComponents = [
     { name: "Actions Menu", value: "actionsMenu" },
     { name: "Button", value: "button" },
+    { name: "Currency Input", value: "currencyInput" },
     { name: "Data Table", value: "dataTable" },
     { name: "Drawer", value: "drawer" },
     { name: "Dropdown", value: "dropdown" },

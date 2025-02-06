@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Dropdown } from "./components/dropdown/dropdown"
+import CurrencyInput from "./components/currencyInput/currencyInput"
 
 function App() {
 	const [value, setValue] = useState('')
@@ -12,7 +13,7 @@ function App() {
 
 	return (
 		<div className="p-48">
-			<Dropdown onChangeValue={(e:any) => {setValue(e), alert(e)}} value={value} content={[1,2,3]} />
+			<CurrencyInput value={null} onChangeValue={(e) => {}}/>
 		</div>
 	)
 }
