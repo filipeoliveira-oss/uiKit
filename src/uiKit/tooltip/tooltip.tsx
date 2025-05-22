@@ -1,3 +1,4 @@
+'use client'
 import { ComponentProps, forwardRef, useState,useRef } from "react";
 import { tv, type VariantProps } from 'tailwind-variants'
 import { motion } from 'framer-motion'
@@ -24,7 +25,7 @@ interface Itooltip {
 
 
 const TooltipVariant = tv({
-    base: 'flex items-center justify-center w-fit h-fit absolute bg-white shadow-lg p-1 rounded-sm z-50',
+    base: 'flex items-center justify-center w-fit h-fit absolute bg-white shadow-lg p-1 rounded-sm z-50 text-black',
 
     variants: {
         placement: {
@@ -79,7 +80,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipType>(
 
         const [showTooltip, setShowTooltip] = useState(false)
 
-        const timerRef = useRef<number | null>(null);
+        const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
         const tooltip = {
             closed: { display: 'none', opacity: 0, translateY:'20px' },
@@ -110,7 +111,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipType>(
 
 
         return (
-            <div ref={ref} className={"flex items-center justify-center w-full h-full relative "} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <div ref={ref} className={"flex items-center justify-center w-fit h-fit relative "} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                 {children}
 
                 <motion.div className={TooltipVariant({ placement, className })} style={{backgroundColor:isValidColor(backgroundColor) ? backgroundColor : '#ffffff'}} variants={tooltip} initial='closed' animate={showTooltip ? 'open' : 'closed'}>

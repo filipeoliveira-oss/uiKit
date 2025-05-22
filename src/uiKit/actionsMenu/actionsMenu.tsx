@@ -1,3 +1,4 @@
+'use client'
 import { ComponentProps, forwardRef, useRef, useState } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
 
@@ -18,7 +19,7 @@ interface props {
 }
 
 const actionsMenu = tv({
-    base: "w-fit h-fit min-h-56 bg-white absolute cursor-pointer overflow-auto text-black border border-zinc-300 px-2 py-2 rounded-md shadow-md",
+    base: "w-fit h-fit flex flex-col bg-white absolute cursor-pointer overflow-auto text-black border border-zinc-300 px-2 py-2 rounded-md shadow-md text-wrap",
     variants:{
         position:{
             topLeft:'bottom-0 right-full',
@@ -38,7 +39,7 @@ const actionsMenu = tv({
 type ActionsMenuProps = ComponentProps<'div'> & VariantProps<typeof actionsMenu> & props
 
 const ActionsMenu = forwardRef<HTMLDivElement, ActionsMenuProps>(
-    ({ buttonClassName, icon = <Ellipsis />,children,position,className,  }, ref) => {
+    ({ buttonClassName, icon = <Ellipsis color="#000"/>,children,position,className}, ref) => {
 
         const dropdownRef = useRef(null)
         const [isOpen, setIsOpen] = useState(false)
@@ -56,7 +57,7 @@ const ActionsMenu = forwardRef<HTMLDivElement, ActionsMenuProps>(
             closed: { opacity: 0, display: 'none' },
             open: {
                 opacity: 1,
-                display: 'block',
+                display: 'flex',
                 zIndex: 999,
                 transition: {
                     duration: .300,

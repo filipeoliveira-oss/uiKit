@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const useInputFocus = (inputRef: React.RefObject<HTMLInputElement>) => {
+const useInputFocus = (inputRef: React.RefObject<HTMLElement | null>) => {
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {

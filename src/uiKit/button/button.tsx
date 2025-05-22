@@ -8,8 +8,8 @@ const button =  tv({
   variants: {
     variant: {
       primary:
-        ' text-white hover:opacity-95 min-w-28 ',
-      secondary: 'bg-mauve4 text-mauve11 hover:bg-mauve5 bg-mauve4 min-w-28',
+        ' text-white hover:opacity-95 min-w-28 bg-purple-500 hover:bg-purple-400',
+      secondary: 'bg-zinc-400 hover:bg-zinc-300 text-mauve11  min-w-28',
     },
 
     size: {
@@ -46,7 +46,7 @@ interface props{
 type ButtonProps = ComponentProps<'button'> & VariantProps<typeof button> & props
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, active, type = 'button',backgroundColor='#8e51ff', ...props }, ref) => {
+  ({ className, variant, size, active, type = 'button', ...props }, ref) => {
 
     const isValidColor = (color: string): boolean => {
       // Regex patterns for different color formats
@@ -78,7 +78,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         type={type || 'button'}
         ref={ref}
         className={button({ variant, size, className, active })}
-        style={{backgroundColor:isValidColor(backgroundColor) ? backgroundColor : '#000000'}}
       />
     )
   }

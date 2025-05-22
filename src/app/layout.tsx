@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+'use client'
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/sidebar";
@@ -11,10 +11,6 @@ export const inter = Inter({
 });
 
 
-export const metadata: Metadata = {
-	title: "FOUIKIT",
-	description: "FOUIKIT",
-};
 
 export default function RootLayout({
 	children,
@@ -28,9 +24,9 @@ export default function RootLayout({
 				<div className="w-[50vh] h-1/2 bg-gradient-to-tr from-[#a8ff78] to-[#78ffd6] absolute bottom-[10%] left-8 rounded-full blur-[120px] opacity-30"></div>
 				<Header/>
 
-				<div className="w-[80%] h-[92%] backdrop-blur-lg text-white border border-sky-500 flex flex-row ">
+				<div className="w-[80%] h-[92%] backdrop-blur-lg text-white  flex flex-row ">
 					<Sidebar/>
-					<div className="w-full h-full px-8 border border-zinc-100 prose text-white!">
+					<div className="w-full h-full pl-8  prose text-white!">
 						{children}
 					</div>
 				</div>

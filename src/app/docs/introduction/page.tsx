@@ -1,8 +1,9 @@
+import PageWrapper from "@/components/pageWrapper";
 import Link from "next/link";
 
 export default function Introduction() {
     return (
-        <div className="w-full h-full overflow-auto flex flex-col gap-8 ">
+        <PageWrapper>
             <h1 className="text-4xl font-bold">Introduction</h1>
             <span>Welcome to the FOUIKIT documentation!</span>
 
@@ -48,6 +49,6 @@ export default function Introduction() {
                     On the other hand, GSAP excels at timeline-based animations, giving us greater flexibility for non-physics-based transitions and sequences.
                 </span>
             </div>
-        </div>
+        </PageWrapper>
     );
 }

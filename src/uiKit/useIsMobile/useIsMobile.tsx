@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 
-export function useIsMobile(query = "(max-width: 768px)") {
+export function useIsMobile(query = 768) {
+  const maxWidth = '(max-width:' + String(query) +'px)'
+
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window === "undefined") return false;
-    return window.matchMedia(query).matches;
+    return window.matchMedia(maxWidth).matches;
   });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const mediaQueryList = window.matchMedia(query);
+    const mediaQueryList = window.matchMedia(maxWidth);
 
     const updateIsMobile = (event: MediaQueryListEvent) => {
       setIsMobile(event.matches);
@@ -20,7 +22,7 @@ export function useIsMobile(query = "(max-width: 768px)") {
 
     mediaQueryList.addEventListener("change", updateIsMobile);
     return () => mediaQueryList.removeEventListener("change", updateIsMobile);
-  }, [query]);
+  }, [maxWidth]);
 
   return isMobile;
 }

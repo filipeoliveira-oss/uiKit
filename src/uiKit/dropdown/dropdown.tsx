@@ -12,7 +12,7 @@ function cn(...inputs: ClassValue[]) {
 
 interface IDropdown{
     value: string | number | null;
-    onChangeValue: (e: React.MouseEvent<HTMLDivElement>) => void;
+    onChangeValue: (e: string) => void;
     placeholder?: string,
     disabled?: boolean,
     filter?: boolean,
@@ -63,7 +63,7 @@ export const Dropdown = forwardRef<HTMLDivElement, dropdownProps>(
         }
 
         return (
-            <div className={cn(`w-full h-10 rounded outline-none border border-[rgba(0,0,0,0.2)] pl-2 text-base mt-2 text-black  bg-transparent flex items-center relative ${disabled ? 'cursor-auto opacity-85' : 'cursor-pointer'}`, className)} onClick={() => !disabled && setIsOpen(!isOpen)} ref={dropdownRef}>
+            <div className={cn(`shrink-0 w-full h-10 rounded outline-none border border-[rgba(0,0,0,0.2)] pl-2 text-base mt-2 text-black  bg-transparent flex items-center relative ${disabled ? 'cursor-auto opacity-85' : 'cursor-pointer'}`, className)} onClick={() => !disabled && setIsOpen(!isOpen)} ref={dropdownRef}>
                 <span className={`text-base ${!value ? 'text-[#757575]' : ''}`}>{value ? ((typeof value === 'string' || typeof value === 'number') ? String(value) : String(value[labelKey])) : placeholder}</span>
                 <motion.div className={`absolute right-[2%] ${isOpen ? 'rotate-180' : ''}`} variants={icon} initial='closed' animate={isOpen ? 'open' : 'closed'}>
                     {!disabled && <ChevronDown />}

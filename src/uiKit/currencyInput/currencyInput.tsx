@@ -12,6 +12,7 @@ function cn(...inputs: ClassValue[]) {
 interface CurrencyInputProps extends NumericFormatProps {
     placeholder?: string;
     inputClassName?: string;
+    className?:string;
     value:string|number|null|undefined;
     onChangeValue: (e:NumberFormatValues) => void
 }
@@ -30,7 +31,7 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
             <span style={{ marginRight: 4 }}>R$</span>
             <NumericFormat
                 value={value}
-                onValueChange={(values) => onChangeValue(values)}
+                onValueChange={(values:any) => onChangeValue(values)}
                 thousandSeparator="."
                 decimalSeparator=","
                 decimalScale={2}
