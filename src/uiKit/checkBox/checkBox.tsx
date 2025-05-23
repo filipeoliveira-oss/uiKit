@@ -67,7 +67,7 @@ const isValidColor = (color: string): boolean => {
   };
 
 const Checkbox = forwardRef<HTMLDivElement, checkboxType>(
-	({ className, setValue, value, format, falseAccentColor = '#FE0000', trueAccentColor = '#00CC44', disabledAnimation = false, animationDuration = 0.5, size=32 }, ref) => {
+	({ className, setValue, value, format, falseAccentColor = '#FE0000', trueAccentColor = '#00CC44', disabledAnimation = false, animationDuration = 0.5, size=32, ...props }, ref) => {
 
 
 		const animation = {
@@ -111,7 +111,7 @@ const Checkbox = forwardRef<HTMLDivElement, checkboxType>(
 		}
 
 		return (
-			<div ref={ref} className={checkboxVariants({ format, className:`${className}` })} onClick={() => setValue((prev: boolean) => !prev)} style={style}>
+			<div ref={ref} className={checkboxVariants({ format, className:`${className}` })} onClick={() => setValue((prev: boolean) => !prev)} style={style} {...props}>
 				{value === true ? <Check /> : <X />}
 			</div>
 		)

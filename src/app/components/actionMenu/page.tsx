@@ -12,8 +12,15 @@ export default function ActionMenu() {
     components
     ActionMenu`
 
+    const deps = [
+        { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },
+        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
+        { name: "react", url: "https://www.npmjs.com/package/react" },
+        { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" },
+        { name: "ag-grid-react", url: "https://www.npmjs.com/package/ag-grid-react" }
+    ]
     return (
-        <PageWrapper>
+        <PageWrapper requirements={deps} title="Action Menu">
             <h1 className="text-4xl font-bold">Actions Menu</h1>
             <span>Actions menu is a menu dropdown</span>
 

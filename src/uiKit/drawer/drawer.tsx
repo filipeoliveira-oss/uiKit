@@ -34,7 +34,7 @@ const drawer = tv({
 type DrawerProps = ComponentProps<'div'> & VariantProps<typeof drawer> & props
 
 const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
-    ({ className, isOpen, onClose, children, disableAnimation = false, animationDuration = .200, overlayClassName,title,openWidth='40%' }, ref) => {
+    ({ className, isOpen, onClose, children, disableAnimation = false, animationDuration = .200, overlayClassName,title,openWidth='40%', ...props }, ref) => {
 
         const drawerAnimation = {
             closed: { width: '0px'},
@@ -47,12 +47,10 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
             }
         }
 
-        if (!document.body) return null
-
         return (
             isOpen && (
                 createPortal(
-                    <div className={cn("w-dvw h-dvh  absolute top-0 left-0 bg-[rgba(0,0,0,0.2)] flex items-center justify-center", overlayClassName)} ref={ref}>
+                    <div className={cn("w-dvw h-dvh  absolute top-0 left-0 bg-[rgba(0,0,0,0.2)] flex items-center justify-center", overlayClassName)} ref={ref} {...props}>
                         <motion.div className={drawer({ className })} variants={disableAnimation === false ? drawerAnimation : {}} initial='closed' animate={isOpen ? 'open' : 'closed'}>
                             <div className="w-full h-12  flex items-center">
                                 <span className="text-lg font-semibold w-fit h-fit">{title}</span>

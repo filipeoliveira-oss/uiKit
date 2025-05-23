@@ -12,8 +12,19 @@ export default function DrawerPage() {
     components
     Drawer`
 
+    const deps = [
+  { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },
+  { name: "framer-motion", url: "https://www.npmjs.com/package/framer-motion" },
+  { name: "lucide-react", url: "https://www.npmjs.com/package/lucide-react" },
+  { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
+  { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
+  { name: "react", url: "https://www.npmjs.com/package/react" },
+  { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" }
+]
+
+
     return (
-        <PageWrapper>
+        <PageWrapper requirements={deps} title="Drawer">
             <Drawer isOpen={open} onClose={() => setOpen(false)}>
                 This is the drawer
 

@@ -111,7 +111,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipType>(
 
 
         return (
-            <div ref={ref} className={"flex items-center justify-center w-fit h-fit relative "} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <div ref={ref} className={"flex items-center justify-center w-fit h-fit relative "} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} {...props}>
                 {children}
 
                 <motion.div className={TooltipVariant({ placement, className })} style={{backgroundColor:isValidColor(backgroundColor) ? backgroundColor : '#ffffff'}} variants={tooltip} initial='closed' animate={showTooltip ? 'open' : 'closed'}>

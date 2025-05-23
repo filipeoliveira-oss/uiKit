@@ -13,8 +13,19 @@ export default function DropdownPage() {
     components
     Dropdown`
 
+    const deps = [
+  { name: "framer-motion", url: "https://www.npmjs.com/package/framer-motion" },
+  { name: "lucide-react", url: "https://www.npmjs.com/package/lucide-react" },
+  { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
+  { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
+  { name: "react", url: "https://www.npmjs.com/package/react" },
+  { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" },
+  { name: "usehooks-ts", url: "https://www.npmjs.com/package/usehooks-ts" }
+]
+
+
     return (
-        <PageWrapper>
+        <PageWrapper requirements={deps} title="Dropdown">
             <h1 className="text-4xl font-bold">Dropdown</h1>
 
             <CodeBlock code={a} />

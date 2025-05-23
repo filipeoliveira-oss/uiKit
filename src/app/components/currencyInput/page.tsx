@@ -11,9 +11,17 @@ export default function Currency() {
     npx fouikit
     components
     Currency Input`
+    const deps = [
+        { name: "react-number-format", url: "https://www.npmjs.com/package/react-number-format" },
+        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
+        { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
+        { name: "react", url: "https://www.npmjs.com/package/react" },
+        { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" }
+    ]
+
 
     return (
-        <PageWrapper>
+        <PageWrapper requirements={deps} title="Currency Input">
             <h1 className="text-4xl font-bold">Currency inputs</h1>
 
             <CodeBlock code={a} />
@@ -48,7 +56,7 @@ export default function Currency() {
                 <span>Classname that will be applied to the input itself</span>
             </div>
 
-             <div className="w-full h-fit flex flex-col gap-2">
+            <div className="w-full h-fit flex flex-col gap-2">
                 <span className="text-lg font-semibold">className</span>
                 <CodeBlock code="string" showLineNumbers={false} />
                 <span>Classname that will be applied to the input container</span>

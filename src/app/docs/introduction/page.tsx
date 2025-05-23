@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Introduction() {
     return (
-        <PageWrapper>
+        <PageWrapper showRequirements={false} requirements={[]} title="Introduction">
             <h1 className="text-4xl font-bold">Introduction</h1>
             <span>Welcome to the FOUIKIT documentation!</span>
 

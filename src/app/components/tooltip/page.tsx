@@ -9,8 +9,15 @@ export default function TooltipPage() {
     components
     Tooltip`
 
+    const deps = [
+  { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },
+  { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
+  { name: "react", url: "https://www.npmjs.com/package/react" },
+  { name: "framer-motion", url: "https://www.npmjs.com/package/framer-motion" }
+]
+
     return (
-        <PageWrapper>
+        <PageWrapper requirements={deps} title="Tooltip">
             <h1 className="text-4xl font-bold">Tooltip</h1>
 
             <CodeBlock code={a} />

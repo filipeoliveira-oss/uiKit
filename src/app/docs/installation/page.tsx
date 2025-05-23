@@ -1,23 +1,12 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
 import PageWrapper from "@/components/pageWrapper";
-import Link from "next/link";
 
 export default function Installation() {
+   
     return (
-        <PageWrapper>
+        <PageWrapper requirements={[{name:'React 18+', url:'https://react.dev/'}, {name:'Tailwind CSS V4', url:'https://tailwindcss.com/'}]} title="Installation">
             <h1 className="text-4xl font-bold">Installation</h1>
-
-            <h2 className="text-2xl font-semibold">Requirements</h2>
-
-            <ul className="w-[80%] h-fit list-disc pl-4 ">
-                <li className="text-zinc-300">
-                    <Link href={'https://react.dev/'} className="underline">React 18+</Link>
-                </li>
-                <li className="mt-2 text-zinc-300">
-                    <Link href={'https://tailwindcss.com/'} className="underline">Tailwind CSS V4</Link>
-                </li>
-            </ul>
 
             <div className="w-full h-[1px] bg-zinc-500"></div>
 

@@ -7,8 +7,17 @@ export default function Button() {
     components
     Button`
 
+    const deps = [
+        { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },
+        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
+        { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
+        { name: "react", url: "https://www.npmjs.com/package/react" },
+        { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" }
+    ]
+
+
     return (
-        <PageWrapper>
+        <PageWrapper requirements={deps} title="Button">
             <h1 className="text-4xl font-bold">Button</h1>
             <span>A default button for the project</span>
 

@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
+import PageWrapper from "@/components/pageWrapper";
 import { useIsMobile } from "@/uiKit/useIsMobile/useIsMobile";
 
 export default function UseIsMobile() {
@@ -19,8 +20,13 @@ export default function UseIsMobile() {
     //custom max-width (500px)
     const isMobile = useIsMobile(500)`
 
+     const deps = [
+  { name: "react", url: "https://www.npmjs.com/package/react" },
+  { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" }
+]
+
     return (
-        <div className="w-full h-full overflow-auto flex flex-col gap-8  pb-12">
+        <PageWrapper requirements={deps} title="UseIsMobile">
             <h1 className="text-4xl font-bold">useInputFocus</h1>
             <span>useIsMobile accepts a max-width to define if the screen is on a mobile width or not.</span>
             <span>By default the max-width is 768px (screen MD from tailwind)</span>
@@ -34,6 +40,6 @@ export default function UseIsMobile() {
 
 
             <CodeBlock language="javascript" code={example} />
-        </div>
+        </PageWrapper>
     )
 }

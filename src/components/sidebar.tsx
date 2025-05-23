@@ -30,6 +30,7 @@ export default function Sidebar() {
                 <span className="font-semibold">Hooks</span>
                 <div className="w-full ml-4">
                     <ul className="w-[80%] h-fit list-disc pl-4 ">
+                        <SidebarElement url="/hooks/useDocumentTitle" title="useDocumentTitle" />
                         <SidebarElement url="/hooks/useInputFocus" title="useInputFocus" />
                         <SidebarElement url='/hooks/useIsMobile' title="useIsMobile" />
                     </ul>

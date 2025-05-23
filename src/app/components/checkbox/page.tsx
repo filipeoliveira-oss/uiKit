@@ -12,9 +12,15 @@ export default function CheckboxPage() {
     components
     Checkbox`
 
+    const deps = [
+  { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },
+  { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
+  { name: "react", url: "https://www.npmjs.com/package/react" },
+  { name: "framer-motion", url: "https://www.npmjs.com/package/framer-motion" }
+]
 
     return (
-        <PageWrapper>
+        <PageWrapper requirements={deps} title="Checkbox">
             <h1 className="text-4xl font-bold">Checkbox</h1>
             <span>A custom Checkbox for the project</span>
 
