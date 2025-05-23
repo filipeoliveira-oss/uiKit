@@ -6,7 +6,7 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { Ellipsis } from "lucide-react";
 import { motion } from "framer-motion"
-import { useOnClickOutside } from "usehooks-ts";
+import useOnClickOutside from "../useOnClickOutside/useOnClickOutside";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
