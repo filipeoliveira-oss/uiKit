@@ -33,6 +33,7 @@ export default function Sidebar() {
                         <SidebarElement url="/hooks/useDocumentTitle" title="useDocumentTitle" />
                         <SidebarElement url="/hooks/useInputFocus" title="useInputFocus" />
                         <SidebarElement url='/hooks/useIsMobile' title="useIsMobile" />
+                        <SidebarElement url='/hooks/useOnClickOutside' title="useOnClickOutside" />
                     </ul>
                 </div>
             </div>

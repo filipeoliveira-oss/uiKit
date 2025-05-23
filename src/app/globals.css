@@ -3,3 +3,25 @@
 @theme{
     --color-background: #0a0a0a
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background:  oklch(44.2% 0.017 285.786);
+ 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: oklch(87.1% 0.006 286.286);
+  border-radius: 20px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(70.5% 0.015 286.067);
+}
