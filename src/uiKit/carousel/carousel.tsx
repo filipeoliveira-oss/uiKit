@@ -68,7 +68,6 @@ const Carousel = forwardRef<HTMLDivElement, CarouselProps>(
         useEffect(() => {
             const valid = React.Children.toArray(children).filter(
                 (child): child is React.ReactElement => {
-                    console.log(child)
                     return (
                         React.isValidElement(child) &&
                         Boolean((child.type as any)[BRAND_KEY])
