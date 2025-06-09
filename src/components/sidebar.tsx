@@ -44,6 +44,7 @@ export default function Sidebar() {
                     <ul className="w-[80%] h-fit list-disc pl-4 ">
                         <SidebarElement url="/components/actionMenu" title="Action Menu" />
                         <SidebarElement url="/components/button" title="Button" />
+                        <SidebarElement url="/components/carousel" title="Carousel" />
                         <SidebarElement url="/components/checkbox" title="Checkbox" />
                         <SidebarElement url="/components/currencyInput" title="Currency Input" />
                         <SidebarElement url="/components/customDropdownFilter" title="Custom Filter" />
