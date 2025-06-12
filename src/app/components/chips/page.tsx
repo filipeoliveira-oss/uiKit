@@ -36,7 +36,7 @@ Chips`
         `
 
     return (
-        <PageWrapper requirements={deps} title="Button">
+        <PageWrapper requirements={deps} title="Chips">
             <h1 className="text-4xl font-bold">Chips</h1>
             <span>Chips is used to enter multiple values on an input field.</span>
 

@@ -22,6 +22,7 @@ export default function Sidebar() {
                     <ul className="w-[80%] h-fit list-disc pl-4 ">
                         <SidebarElement url="/docs/introduction" title="Introduction" />
                         <SidebarElement url='/docs/installation' title="Installation" />
+                        <SidebarElement url='/docs/extension' title="Extension" />
                     </ul>
                 </div>
             </div>
