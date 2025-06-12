@@ -6,10 +6,10 @@ import DataTable from "@/uiKit/dataTable/dataTable";
 
 export default function CustomDropdownFilterAgGridPage() {
 
-    const a = `
-    npx fouikit
-    components
-    Custom Dropdown Filter For AG Grid`
+    const a = 
+    `npx fouikit
+components
+Custom Dropdown Filter For AG Grid`
 
     const deps = [
         { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },

@@ -6,10 +6,10 @@ import Link from "next/link";
 
 export default function DataTablePage() {
 
-    const a = `
-    npx fouikit
-    components
-    Data table`
+    const a = 
+    `npx fouikit
+components
+Data table`
 
     const deps = [
         { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },

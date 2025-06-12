@@ -11,10 +11,10 @@ import { useState } from "react"
 export default function CarouselPage() {
     const [currentType, setCurrentType] = useState('slide')
 
-    const a = `
-    npx fouikit
-    components
-    carousel`
+    const a = 
+    `npx fouikit
+components
+carousel`
 
     const deps = [
         { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },
@@ -25,12 +25,12 @@ export default function CarouselPage() {
         { name: "lucide-react", url: "https://www.npmjs.com/package/lucide-react" },
     ]
 
-    const code = `
-    <Carousel>
-        <Slide alt="image1" slideSrc={c4} />
-        <Slide alt="image2" slideSrc={c2} />
-        <Slide alt="image3" slideSrc={c3} />
-    </Carousel>`
+    const code = 
+    `<Carousel>
+    <Slide alt="image1" slideSrc={c4} />
+    <Slide alt="image2" slideSrc={c2} />
+    <Slide alt="image3" slideSrc={c3} />
+</Carousel>`
 
     return (
         <PageWrapper requirements={deps} title="Checkbox">

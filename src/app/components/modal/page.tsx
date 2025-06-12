@@ -7,10 +7,10 @@ import { useState } from "react";
 
 export default function ModalPage() {
     const [open, setOpen] = useState(false)
-    const a = `
-    npx fouikit
-    components
-    Modal`
+    const a = 
+    `npx fouikit
+components
+Modal`
 
     const deps = [
   { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },

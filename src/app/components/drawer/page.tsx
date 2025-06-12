@@ -7,10 +7,10 @@ import { useState } from "react";
 
 export default function DrawerPage() {
     const [open, setOpen] = useState(false)
-    const a = `
-    npx fouikit
-    components
-    Drawer`
+    const a = 
+    `npx fouikit
+components
+Drawer`
 
     const deps = [
   { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },

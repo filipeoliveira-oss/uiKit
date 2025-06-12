@@ -7,10 +7,10 @@ import { useState } from "react"
 export default function MaskInputPage() {
     const [v, sv] = useState('')
 
-    const a = `
-        npx fouikit
-        components
-        Mask Input`
+    const a = 
+    `npx fouikit
+components
+Mask Input`
 
     const deps = [
         { name: "@react-input/mask", url: "https://www.npmjs.com/package/@react-input/mask" },

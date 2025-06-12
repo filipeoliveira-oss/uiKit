@@ -7,10 +7,10 @@ import { useState } from "react";
 export default function CheckboxPage() {
     const [value, setValue] = useState(false)
 
-    const a = `
-    npx fouikit
-    components
-    Checkbox`
+    const a = 
+    `npx fouikit
+components
+Checkbox`
 
     const deps = [
   { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },

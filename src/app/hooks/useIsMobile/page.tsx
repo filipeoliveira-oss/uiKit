@@ -7,18 +7,18 @@ export default function UseIsMobile() {
 
     const isMobile = useIsMobile()
 
-    const install = `
-    npx fouikit
-    hooks
-    useIsMobile`
+    const install = 
+    `npx fouikit
+hooks
+useIsMobile`
 
 
-    const example = `
-    //default max-width (768px)
-    const isMobile = useIsMobile()
-    
-    //custom max-width (500px)
-    const isMobile = useIsMobile(500)`
+    const example = 
+    `//default max-width (768px)
+const isMobile = useIsMobile()
+
+//custom max-width (500px)
+const isMobile = useIsMobile(500)`
 
      const deps = [
   { name: "react", url: "https://www.npmjs.com/package/react" },

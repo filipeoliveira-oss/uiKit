@@ -7,11 +7,12 @@ import { useState } from "react";
 export default function Currency() {
     const [value, setValue] = useState('')
 
-    const a = `
-    npx fouikit
-    components
-    Currency Input`
-    const deps = [
+    const a = 
+    `npx fouikit
+components
+Currency Input`
+
+const deps = [
         { name: "react-number-format", url: "https://www.npmjs.com/package/react-number-format" },
         { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
         { name: "clsx", url: "https://www.npmjs.com/package/clsx" },

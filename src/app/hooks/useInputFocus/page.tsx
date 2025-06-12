@@ -9,16 +9,16 @@ export default function UseInputFocus() {
     const inputRef = useRef<HTMLInputElement>(null)
     const isFocused = useInputFocus(inputRef)
 
-    const a = `
-    npx fouikit
-    hooks
-    useInputFocus`
+    const a = 
+    `npx fouikit
+hooks
+useInputFocus`
 
-    const code = `
-    const inputRef = useRef<HTMLInputElement>(null)
-    const isFocused = useInputFocus(inputRef)
+    const code = 
+    `const inputRef = useRef<HTMLInputElement>(null)
+const isFocused = useInputFocus(inputRef)
 
-    <input ref={inputRef} className='w-full bg-zinc-600 text-white h-8 pl-2 rounded-lg outline-none' placeholder='Click me' />`
+<input ref={inputRef} className='w-full bg-zinc-600 text-white h-8 pl-2 rounded-lg outline-none' placeholder='Click me' />`
 
 
     const deps = [

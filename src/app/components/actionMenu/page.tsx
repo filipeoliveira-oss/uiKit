@@ -7,10 +7,10 @@ import { useState } from "react"
 export default function ActionMenu() {
     const [currentPosition, setCurrentPosition] = useState('bottomRight')
 
-    const a = `
-    npx fouikit
-    components
-    ActionMenu`
+    const a = 
+    `npx fouikit
+components
+ActionMenu`
 
     const deps = [
         { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },

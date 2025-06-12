@@ -4,10 +4,10 @@ import { Tooltip } from "@/uiKit/tooltip/tooltip";
 
 export default function TooltipPage() {
 
-    const a = `
-    npx fouikit
-    components
-    Tooltip`
+    const a = 
+    `npx fouikit
+components
+Tooltip`
 
     const deps = [
   { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },

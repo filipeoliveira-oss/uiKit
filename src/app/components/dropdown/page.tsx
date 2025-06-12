@@ -8,10 +8,10 @@ export default function DropdownPage() {
 
     const [v, sv] = useState('')
 
-    const a = `
-    npx fouikit
-    components
-    Dropdown`
+    const a = 
+    `npx fouikit
+components
+Dropdown`
 
     const deps = [
   { name: "framer-motion", url: "https://www.npmjs.com/package/framer-motion" },

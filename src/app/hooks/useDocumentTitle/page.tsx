@@ -9,10 +9,10 @@ export default function useDocumentTitlePage() {
     const [title, setTitle] = useState(`FOUIKIT | UseDocumentTitle`)
     useDocumentTitle(title)
 
-    const a = `
-    npx fouikit
-    hooks
-    useDocumentTitle`
+    const a = 
+    `npx fouikit
+hooks
+useDocumentTitle`
 
     const code = `useDocumentTitle('${title}')`
 

@@ -2,10 +2,10 @@ import CodeBlock from "@/components/codeBlock";
 import PageWrapper from "@/components/pageWrapper";
 import { Button as UiButton } from "@/uiKit/button/button";
 export default function Button() {
-    const a = `
-    npx fouikit
-    components
-    Button`
+    const a = 
+    `npx fouikit
+components
+Button`
 
     const deps = [
         { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },
