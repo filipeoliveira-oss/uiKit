@@ -46,6 +46,7 @@ export default function Sidebar() {
                         <SidebarElement url="/components/button" title="Button" />
                         <SidebarElement url="/components/carousel" title="Carousel" />
                         <SidebarElement url="/components/checkbox" title="Checkbox" />
+                        <SidebarElement url="/components/chips" title="Chips" />
                         <SidebarElement url="/components/currencyInput" title="Currency Input" />
                         <SidebarElement url="/components/customDropdownFilter" title="Custom Filter" />
                         <SidebarElement url="/components/dataTable" title="Data Table" />
