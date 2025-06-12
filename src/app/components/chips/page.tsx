@@ -8,14 +8,16 @@ export default function ChipsPage() {
 
     const [value, setValue] = useState<Array<string>>([])
 
+    const deps = [
+        { name: "react", url: "https://www.npmjs.com/package/react" },
+        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
+        { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
+    ]
     const a =
         `npx fouikit
 components
 Chips`
 
-    const deps = [
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-    ]
 
 
     const code =
@@ -38,7 +40,10 @@ Chips`
     return (
         <PageWrapper requirements={deps} title="Chips">
             <h1 className="text-4xl font-bold">Chips</h1>
-            <span>Chips is used to enter multiple values on an input field.</span>
+            <div className="flex flex-col gap-2">
+                <span>Chips is used to enter multiple values on an input field.</span>
+                <span>Chips is a HTMLInputElement replica, that means that every Input property works on the element</span>
+            </div>
 
             <CodeBlock code={a} />
 
@@ -80,7 +85,7 @@ Chips`
                 <span className="text-lg font-semibold">template</span>
                 <CodeBlock code="(chip: string) => React.ReactNode" showLineNumbers={false} language="js" />
                 <CodeBlock code={template} showLineNumbers={false} language="js" />
-                
+
                 <span>Chip content is customized using itemTemplate function that receives a single chip value as a parameter. Can use function components or const</span>
             </div>
 
