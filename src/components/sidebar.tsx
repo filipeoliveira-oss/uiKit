@@ -53,6 +53,7 @@ export default function Sidebar() {
                         <SidebarElement url="/components/dataTable" title="Data Table" />
                         <SidebarElement url="/components/drawer" title="Drawer" />
                         <SidebarElement url="/components/dropdown" title="Dropdown" />
+                        <SidebarElement url="/components/loaders" title="Loaders" />
                         <SidebarElement url="/components/maskInput" title="Mask Input" />
                         <SidebarElement url="/components/modal" title="Modal" />
                         <SidebarElement url="/components/tooltip" title="Tooltip" />

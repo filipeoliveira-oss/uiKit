@@ -24,4 +24,5 @@
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: oklch(70.5% 0.015 286.067);
+  
 }

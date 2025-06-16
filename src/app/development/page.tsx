@@ -1,17 +1,28 @@
 'use client'
-import {Carousel, Slide} from "@/uiKit/carousel/carousel";
-import c4 from '../../../public/card4.png'
-import c2 from '../../../public/card2.jpg'
-import c3 from '../../../public/card3.png'
+import { BarLoader } from "@/uiKit/barLoader/barLoader";
+import { BeatLoader } from "@/uiKit/beatLoader/beatLoader";
+import { ClipLoader } from "@/uiKit/clipLoader/clipLoader";
+import { DotLoader } from "@/uiKit/dotLoader/dotLoader";
+import { FadeLoader } from "@/uiKit/fadeLoader/fadeLoader";
+import { GridLoader } from "@/uiKit/gridLoader/gridLoader";
+import { PropagateLoader } from "@/uiKit/propagateLoader/propagateLoader";
+import { PuffLoader } from "@/uiKit/puffLoader/puffLoader";
+import { PulseLoader } from "@/uiKit/pulseLoader/pulseLoader";
+import { ScaleLoader } from "@/uiKit/scaleLoader/scaleLoader";
 
 export default function Component(){
     return(
         <div className="w-full h-full">
-            <Carousel className=" w-full h-full" animationType="none" showDots>
-                <Slide slideSrc={c4} alt="teste" label="t123his is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tilethis is the tile"></Slide>
-                <Slide slideSrc={c2} alt="teste"></Slide>
-                <Slide slideSrc={c3} alt="teste"></Slide>
-            </Carousel>
+            {/* <BarLoader/> */}
+            {/* <BeatLoader/> */}
+            {/* <ClipLoader/> */}
+            {/* <DotLoader/> */}
+            {/* <GridLoader/> */}
+            {/* <FadeLoader/> */}
+            {/* <PulseLoader/> */}
+            {/* <PropagateLoader/> */}
+            {/* <PuffLoader/> */}
+            <ScaleLoader/>
         </div>
     )
 }
