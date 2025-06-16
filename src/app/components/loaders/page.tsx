@@ -28,7 +28,7 @@ export default function LoadersPage() {
 
     const a =
         `npx fouikit
-components
+loaders
 {loaderName}`
 
     const deps = [
