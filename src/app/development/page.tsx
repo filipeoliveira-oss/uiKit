@@ -1,28 +1,27 @@
 'use client'
-import { BarLoader } from "@/uiKit/barLoader/barLoader";
-import { BeatLoader } from "@/uiKit/beatLoader/beatLoader";
-import { ClipLoader } from "@/uiKit/clipLoader/clipLoader";
-import { DotLoader } from "@/uiKit/dotLoader/dotLoader";
-import { FadeLoader } from "@/uiKit/fadeLoader/fadeLoader";
-import { GridLoader } from "@/uiKit/gridLoader/gridLoader";
-import { PropagateLoader } from "@/uiKit/propagateLoader/propagateLoader";
-import { PuffLoader } from "@/uiKit/puffLoader/puffLoader";
-import { PulseLoader } from "@/uiKit/pulseLoader/pulseLoader";
-import { ScaleLoader } from "@/uiKit/scaleLoader/scaleLoader";
+import { useRef } from 'react';
+import { PageLoader, plController } from '../../uiKit/pageProgress/pageProgress'
 
-export default function Component(){
-    return(
+export default function Component() {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const handleStart = () => {
+        plController.start();
+        setTimeout(() => {
+            plController.end();
+        }, 5000);
+    };
+
+    return (
         <div className="w-full h-full">
-            {/* <BarLoader/> */}
-            {/* <BeatLoader/> */}
-            {/* <ClipLoader/> */}
-            {/* <DotLoader/> */}
-            {/* <GridLoader/> */}
-            {/* <FadeLoader/> */}
-            {/* <PulseLoader/> */}
-            {/* <PropagateLoader/> */}
-            {/* <PuffLoader/> */}
-            <ScaleLoader/>
+            {/* <PageLoader color='#8e51ff' /> */}
+            <button onClick={() => plController.start()} className="bg-blue-500 text-white p-2 rounded">
+                Show Loader
+            </button>
+
+            <button onClick={() => plController.end()} className="bg-blue-500 text-white p-2 rounded">
+                stop Loader
+            </button>
+
         </div>
     )
 }
