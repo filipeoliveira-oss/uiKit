@@ -33,7 +33,7 @@ interface IColors {
 
 interface ICalendar {
     date: string,
-    setDate: React.Dispatch<SetStateAction<string>>
+    setDate: (e:string) => void
     disabled?: boolean
     label?: string,
     labelClassname?: string,

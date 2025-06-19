@@ -13,7 +13,7 @@ function cn(...inputs: ClassValue[]) {
 interface props {
     label?: string,
     value: Array<string>,
-    changeValue: React.Dispatch<SetStateAction<Array<string>>>,
+    changeValue: (e:Array<string>) => void,
     separator?: string,
     disabled?: boolean,
     template?: (chip: string) => React.ReactNode,
@@ -34,7 +34,9 @@ export const Chips = forwardRef<HTMLInputElement, chipsProps>(
 
             
             if (lastChar === separator) {
-                changeValue(prev => [...prev, currentItem.replace(separator, '')]);
+                const aux = value
+                aux.push(currentItem.replace(separator, ''))
+                changeValue(aux);
                 setCurrentItem('');
                 return;
             }

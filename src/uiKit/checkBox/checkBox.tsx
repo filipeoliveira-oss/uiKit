@@ -16,7 +16,7 @@ type colors = RGB | RGBA | HEX | HSL | HSLA | OKLCH | OKLAB | CMYK ;
 
 interface props {
 	value: boolean,
-	setValue: (e: boolean | ((prev: boolean) => boolean)) => void,
+	setValue: (e:boolean) => void,
 	falseAccentColor?: colors ,
 	trueAccentColor?: colors ,
 	disabledAnimation?: boolean,
@@ -67,7 +67,7 @@ const isValidColor = (color: string): boolean => {
   };
 
 const Checkbox = forwardRef<HTMLDivElement, checkboxType>(
-	({ className, setValue, value, format, falseAccentColor = '#FE0000', trueAccentColor = '#00CC44', disabledAnimation = false, animationDuration = 0.5, size=32, ...props }, ref) => {
+	({ className, setValue, value=false, format, falseAccentColor = '#FE0000', trueAccentColor = '#00CC44', disabledAnimation = false, animationDuration = 0.5, size=32, ...props }, ref) => {
 
 
 		const animation = {
@@ -94,7 +94,7 @@ const Checkbox = forwardRef<HTMLDivElement, checkboxType>(
 		}
 
 		return (
-			<div ref={ref} className={checkboxVariants({ format, className:`${className}` })} onClick={() => setValue((prev: boolean) => !prev)} style={style} {...props}>
+			<div ref={ref} className={checkboxVariants({ format, className:`${className}` })} onClick={() => setValue(!value)} style={style} {...props}>
 				{value === true ? 
 				<svg xmlns="http://www.w3.org/2000/svg" width='80%' height='80%' viewBox="0 0 24 24" fill="none" stroke={isValidColor(trueAccentColor) ? trueAccentColor : '#00CC44'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" >
 					<motion.path d="M20 6 9 17l-5-5" variants={animation} initial='hidden' animate={value === true ? 'show' : 'hidden'} />
