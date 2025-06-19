@@ -15,15 +15,16 @@ interface ICustomLanguage {
 }
 
 interface IColors {
-    iconBackgroundColor?:string,
+    containerBackgroundColor?: string,
+    labelTextColor?: string,
+    iconBackgroundColor?: string,
     iconColor?: string,
-    selectedDayColor?: string,
-    todayColor?: string,
-    backgroundColor?: string,
+    calendarBackground?: string,
     textColor?: string,
-    weekDaysColor?: string,
-    borderColor?:string,
-    inputColor?:string
+    hoverBackground?: string,
+    todayBackground?: string,
+    selectedDayBackground?: string,
+    weekDaysTextColor?: string
 }
 
 interface ICalendar {
@@ -65,17 +66,18 @@ export default function Calendar({ disabled, label, labelClassname, language = '
         months: ['', '', '', '', '', '', '', '', '', '', '', '']
     })
 
-    const calendarColors:IColors = React.useMemo(() => {
+    const calendarColors: IColors = React.useMemo(() => {
         return {
+            containerBackgroundColor: colors?.containerBackgroundColor ?? 'transparent',
+            calendarBackground: colors?.calendarBackground ?? '#FFFFFF',
+            hoverBackground: colors?.hoverBackground ?? '#e4e4e7',
             iconBackgroundColor: colors?.iconBackgroundColor ?? '#00bcff',
             iconColor: colors?.iconColor ?? '#FFFFFF',
-            selectedDayColor: colors?.selectedDayColor ?? '#DFF2fE',
-            todayColor: colors?.todayColor ?? '#F4F4F5',
-            backgroundColor: colors?.backgroundColor ?? '#FFFFFF',
+            labelTextColor: colors?.labelTextColor ?? '#FFFFFF',
+            selectedDayBackground: colors?.selectedDayBackground ?? '#00bcff',
             textColor: colors?.textColor ?? '#000000',
-            weekDaysColor: colors?.weekDaysColor ?? '#4A5565',
-            borderColor: colors?.backgroundColor ?? '#E4E4E7',
-            inputColor: colors?.inputColor ?? '#FFFFFF',
+            todayBackground: colors?.todayBackground ?? '#e5e7eb',
+            weekDaysTextColor: colors?.weekDaysTextColor ?? '#52525c',
         }
     }, [colors])
 
@@ -129,9 +131,8 @@ export default function Calendar({ disabled, label, labelClassname, language = '
     }, [customLanguage, language])
 
 
-
     function formatDate(day: number, month: number, year: number, hour?: number, minute?: number, period?: 'PM' | 'AM' | null) {
-        const str = `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}${showTime && ` ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`}${timeFormat === '12' && ` ${period}`}`
+        const str = `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}${showTime && ` ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`}${timeFormat === '12' ? ` ${period}` : ''}`
         setDate(str)
     }
 
@@ -250,13 +251,14 @@ export default function Calendar({ disabled, label, labelClassname, language = '
     }
 
     return (
-        <label className="w-full h-fit flex flex-col gap-4 relative select-none" style={disabled ? { pointerEvents: 'none' } : {}}>
-            {label && <span className={cn(`text-black/60`, labelClassname)}>{label}</span>}
+
+        <label className="w-full h-fit flex flex-col gap-4 relative select-none" style={{ pointerEvents: disabled ? 'none' : 'auto', backgroundColor: calendarColors.containerBackgroundColor }}>
+            {label && <span className={labelClassname} style={{ color: calendarColors.labelTextColor }}>{label}</span>}
             <div className="border border-zinc-500 w-full h-10 flex flex-row items-center rounded-lg overflow-hidden" >
                 <input onFocus={() => setShowCalendar(true)} onBlur={() => setShowCalendar(false)} className="px-2 w-full h-full bg-transparent border-none outline-none" value={date} readOnly />
                 {showIcon && (
-                    <div className="w-fit h-full bg-sky-400 px-2 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <div className="w-fit h-full px-2 flex items-center" style={{ backgroundColor: calendarColors.iconBackgroundColor }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={calendarColors.iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M8 2v4" />
                             <path d="M16 2v4" />
                             <rect width="18" height="18" x="3" y="4" rx="2" />
@@ -266,18 +268,18 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                 )}
             </div>
 
-            <div className="bg-white w-full h-fit absolute top-full flex flex-col items-center justify-center">
+            <div className="w-full h-fit absolute top-full flex flex-col items-center justify-center" style={{ backgroundColor: calendarColors.calendarBackground }}>
 
                 {whatToShow === 'days' && (
                     <>
-                        <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center text-black">
+                        <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center" style={{ color: calendarColors.textColor }}>
                             <svg onClick={handlePrevMonth} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
                             <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
 
                                 {whatToShow === 'days' && (
-                                    <span className="hover:text-sky-400 cursor-pointer" onClick={() => setWhatToShow('months')}>{currentLanguages.months[currentMonth]}</span>
+                                    <span className={`hover:[color:var(--hover-color)] cursor-pointer`} onClick={() => setWhatToShow('months')} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>{currentLanguages.months[currentMonth]}</span>
                                 )}
-                                <span className="hover:text-sky-400 cursor-pointer" onClick={() => setWhatToShow('years')}>{new Date(currentYear, currentMonth).toLocaleString(language, {
+                                <span className={`hover:[color:var(--hover-color)] cursor-pointer`} onClick={() => setWhatToShow('years')} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>{new Date(currentYear, currentMonth).toLocaleString(language, {
                                     year: 'numeric',
                                 })}</span>
                             </div>
@@ -285,31 +287,41 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                         </div>
 
                         <div className="w-full h-fit grid grid-cols-7 text-center font-medium mt-2">
-                            {currentLanguages.weekDays.map(day => (
-                                <div key={day} className="text-sm text-gray-600">{day}</div>
+                            {currentLanguages.weekDays.map((day, i) => (
+                                <div key={i} className="text-sm" style={{ color: calendarColors.weekDaysTextColor }}>{day}</div>
                             ))}
                         </div>
 
                         <div className="w-full grid grid-cols-7 auto-rows-fr gap-1 text-center mt-1">
                             {dates.map((item, idx) => {
+                                const aux = date.split(' ')[0]
+                                const dateElements = aux.split('/')
+                                const dayAux = dateElements[0]
+                                const month = dateElements[1]
+                                const year = dateElements[2]
+
                                 const isToday =
                                     item.currentMonth &&
                                     currentMonth === today.getMonth() &&
                                     currentYear === today.getFullYear() &&
                                     item.date === today.getDate();
+
+                                const isSelected = dayAux === String(item.date).padStart(2, '0') && month == String(currentMonth + 1).padStart(2, '0') && year === String(currentYear).padStart(2, '0') && item.currentMonth
                                 return (
                                     <div
                                         key={idx}
                                         onClick={() => handleSelectDay(item.date)}
-                                        className={`p-2 text-sm rounded ${item.currentMonth ? 'text-black' : 'text-gray-300 pointer-events-none'} ${isToday ? 'bg-zinc-100 ' : ''} hover:bg-gray-200 cursor-pointer`}>
-                                        {item.date}
+                                        className={`p-2 text-sm rounded ${item.currentMonth ? '' : 'pointer-events-none'} group cursor-pointer w-full h-full flex items-center justify-center`} >
+                                        <span className=" w-6 h-6 rounded-full flex items-center justify-center group-hover:[background-color:var(--hover-color)]"
+                                        style={{ backgroundColor: isSelected ? calendarColors.selectedDayBackground : isToday ? calendarColors.todayBackground : '', ...{ ["--hover-color"]: calendarColors.hoverBackground, color: item.currentMonth ? calendarColors.textColor : '#99a1af  ' } }}
+                                        >{item.date}</span>
                                     </div>
                                 )
                             })}
                         </div>
 
                         {showTime && (
-                            <div className="w-full h-20 border-t border-zinc-200 flex flex-row gap-2 items-center justify-center text-black">
+                            <div className="w-full h-20 border-t border-zinc-200 flex flex-row gap-2 items-center justify-center" style={{ color: calendarColors.textColor }}>
                                 <div className="w-fit h-full flex flex-col gap:1 items-center justify-center">
                                     <svg onClick={() => incrementHour()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
                                     <span className="select-none text-lg">{String(timeFormat === '12' && hour === 0 ? 12 : hour).padStart(2, '0')}</span>
@@ -338,19 +350,19 @@ export default function Calendar({ disabled, label, labelClassname, language = '
 
                 {whatToShow === 'months' && (
                     <>
-                        <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center text-black">
+                        <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center" style={{ color: calendarColors.textColor }}>
                             <svg onClick={() => { setCurrentYear(prev => prev - 1); }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
                             <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
-                                <span className="hover:text-sky-400 cursor-pointer" onClick={() => setWhatToShow('years')}>{new Date(currentYear, currentMonth).toLocaleString(language, {
+                                <span className={`hover:[color:var(--hover-color)] cursor-pointer`} onClick={() => setWhatToShow('years')} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>{new Date(currentYear, currentMonth).toLocaleString(language, {
                                     year: 'numeric',
                                 })}</span>
                             </div>
                             <svg onClick={() => { setCurrentYear(prev => prev + 1) }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
                         </div>
 
-                        <div className="w-full h-fit grid grid-cols-3 text-center mt-2 text-black">
+                        <div className="w-full h-fit grid grid-cols-3 text-center mt-2" style={{ color: calendarColors.textColor }}>
                             {Array.from({ length: 12 }, (_, i) => (
-                                <div key={i} className="py-2 cursor-pointer hover:bg-zinc-100" onClick={() => { setCurrentMonth(i); setWhatToShow('days') }}>
+                                <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); setWhatToShow('days') }} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>
                                     {new Date(2000, i).toLocaleString(language, { month: 'long' })}
                                 </div>
                             ))}
@@ -360,7 +372,7 @@ export default function Calendar({ disabled, label, labelClassname, language = '
 
                 {whatToShow === 'years' && (
                     <>
-                        <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center text-black">
+                        <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center" style={{ color: calendarColors.textColor }}>
                             <svg onClick={() => { setCurrentYear(prev => prev - 10); }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
                             <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
                                 <span>{Math.floor(currentYear / 10) * 10} - {(Math.floor(currentYear / 10) * 10) + 9}</span>
@@ -368,11 +380,12 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                             <svg onClick={() => { setCurrentYear(prev => prev + 10) }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
                         </div>
 
-                        <div className="w-full h-fit grid grid-cols-2 text-center mt-2 text-black">
+                        <div className="w-full h-fit grid grid-cols-2 text-center mt-2" style={{ color: calendarColors.textColor }}>
                             {Array.from({ length: 10 }, (_, i) => Math.floor(currentYear / 10) * 10 + i).map((year) => (
                                 <div
                                     key={year}
-                                    className="py-2 cursor-pointer hover:bg-zinc-100 rounded"
+                                    style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
+                                    className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)] rounded`}
                                     onClick={() => {
                                         setCurrentYear(year);
                                         setWhatToShow('months');
@@ -390,16 +403,18 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                         <div className="flex gap-2 w-full justify-between">
                             <button
                                 type="button"
-                                className="text-zinc-500 font-semibold py-1 rounded cursor-pointer hover:bg-zinc-100 "
+                                style={{ color: calendarColors.textColor, "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
+                                className={`font-semibold py-1 px-1 rounded cursor-pointer hover:[background-color:var(--hover-color)]`}
                                 onClick={() => {
                                     setCurrentMonth(today.getMonth());
                                     setCurrentYear(today.getFullYear());
-                                    formatDate(today.getDate(), today.getMonth(), today.getFullYear(), hour, minutes);
+                                    formatDate(today.getDate(), today.getMonth(), today.getFullYear(), hour, minutes, dayPeriod);
                                 }}
                             >{currentLanguages.today}</button>
                             <button
                                 type="button"
-                                className="text-zinc-500 font-semibold py-1 rounded cursor-pointer hover:bg-zinc-100"
+                                style={{ color: calendarColors.textColor, "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
+                                className={`font-semibold py-1 px-1 rounded cursor-pointer hover:[background-color:var(--hover-color)]`}
                                 onClick={() => setShowCalendar(false)}
                             >{currentLanguages.close}</button>
                         </div>
