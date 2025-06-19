@@ -88,23 +88,6 @@ const Checkbox = forwardRef<HTMLDivElement, checkboxType>(
 
 		}
 
-		function X() {
-			return (
-				<motion.svg xmlns="http://www.w3.org/2000/svg" width='80%' height='80%' viewBox="0 0 24 24" fill="none" stroke={isValidColor(falseAccentColor) ? falseAccentColor : '#FE0000'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-					<motion.path d="M18 6 6 18" variants={animation} initial='hidden' animate={value === false ? 'show' : 'hidden'} />
-					<motion.path d="m6 6 12 12" variants={animation} initial='hidden' animate={value === false ? 'show' : 'hidden'} />
-				</motion.svg>
-			)
-		}
-
-		function Check() {
-			return (
-				<svg xmlns="http://www.w3.org/2000/svg" width='80%' height='80%' viewBox="0 0 24 24" fill="none" stroke={isValidColor(trueAccentColor) ? trueAccentColor : '#00CC44'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" >
-					<motion.path d="M20 6 9 17l-5-5" variants={animation} initial='hidden' animate={value === true ? 'show' : 'hidden'} />
-				</svg>
-			)
-		}
-
 		const style = {
 			width:`${size}px`,
 			height:`${size}px`
@@ -112,7 +95,16 @@ const Checkbox = forwardRef<HTMLDivElement, checkboxType>(
 
 		return (
 			<div ref={ref} className={checkboxVariants({ format, className:`${className}` })} onClick={() => setValue((prev: boolean) => !prev)} style={style} {...props}>
-				{value === true ? <Check /> : <X />}
+				{value === true ? 
+				<svg xmlns="http://www.w3.org/2000/svg" width='80%' height='80%' viewBox="0 0 24 24" fill="none" stroke={isValidColor(trueAccentColor) ? trueAccentColor : '#00CC44'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" >
+					<motion.path d="M20 6 9 17l-5-5" variants={animation} initial='hidden' animate={value === true ? 'show' : 'hidden'} />
+				</svg>
+				: 
+				<motion.svg xmlns="http://www.w3.org/2000/svg" width='80%' height='80%' viewBox="0 0 24 24" fill="none" stroke={isValidColor(falseAccentColor) ? falseAccentColor : '#FE0000'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+					<motion.path d="M18 6 6 18" variants={animation} initial='hidden' animate={value === false ? 'show' : 'hidden'} />
+					<motion.path d="m6 6 12 12" variants={animation} initial='hidden' animate={value === false ? 'show' : 'hidden'} />
+				</motion.svg>
+				}
 			</div>
 		)
 	}
