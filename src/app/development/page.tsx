@@ -12,7 +12,7 @@ export default function Component() {
 
             <button onClick={() => alert(t)}>alert</button>
 
-            <Calendar label='label test' labelClassname='text-white' date={t} setDate={st} showTime timeFormat='24' language='pt' showButtonBar showIcon format='dd MM yy hh:nn'/>
+            <Calendar label='label test' labelClassname='text-white' date={t} setDate={st} showTime timeFormat='24' language='pt-BR' showButtonBar showIcon format='dd MM yy hh:nn'/>
         </div>
     )
 }

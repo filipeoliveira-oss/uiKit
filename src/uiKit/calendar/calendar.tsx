@@ -55,7 +55,7 @@ interface ICalendar {
     disabled?: boolean
     label?: string,
     labelClassname?: string,
-    language?: 'pt' | 'en' | 'es',
+    language?: string,
     showIcon?: boolean,
     showButtonBar?: boolean,
     showTime?: boolean,
@@ -76,10 +76,11 @@ interface calendarDates {
 }
 
 
-export default function Calendar({ disabled, label, labelClassname, language = 'pt', setDate, date, showIcon, showButtonBar, showTime, timeFormat = '24', customLanguage, colors, timeOnly = false, dateTemplate, inline = false, view, format = 'dd/mm/yy' }: ICalendar) {
+export default function Calendar({ disabled, label, labelClassname, language = 'pt-BR', setDate, date, showIcon, showButtonBar, showTime, timeFormat = '24', customLanguage, colors, timeOnly = false, dateTemplate, inline = false, view, format = 'dd/mm/yy' }: ICalendar) {
     const today = new Date();
     const [currentMonth, setCurrentMonth] = useState(today.getMonth());
     const [currentYear, setCurrentYear] = useState(today.getFullYear());
+    const [actualDate, setActualDate] = useState<null | Date>(null)
     const [day, setDay] = useState(today.getDate())
     const [showCalendar, setShowCalendar] = useState(false);
     const [hour, setHour] = useState(today.getHours())
@@ -87,13 +88,25 @@ export default function Calendar({ disabled, label, labelClassname, language = '
     const [dayPeriod, setDayPeriod] = useState<'AM' | 'PM' | null>(timeFormat === "24" ? null : today.getHours() > 11 ? 'PM' : 'AM')
     const dates: Array<calendarDates> = getCalendarDates(currentYear, currentMonth);
     const [whatToShow, setWhatToShow] = useState<'days' | 'months' | 'years'>('days')
-    const [currentLanguages, setCurrentLanguages] = useState<ICustomLanguage>({
-        today: '',
-        close: '',
-        now: '',
-        weekDays: ['', '', '', '', '', '', '',],
-        months: ['', '', '', '', '', '', '', '', '', '', '', '']
-    })
+    const i18nLabels: Record<string, Record<'today' | 'now' | 'close', string>> = {
+        'en': { today: 'Today', now: 'Now', close: 'Close' },
+        'zh': { today: '今天', now: '现在', close: '关闭' }, // Chinese
+        'hi': { today: 'आज', now: 'अब', close: 'बंद करें' }, // Hindi
+        'es': { today: 'Hoy', now: 'Ahora', close: 'Cerrar' }, // Spanish
+        'fr': { today: 'Aujourd’hui', now: 'Maintenant', close: 'Fermer' }, // French
+        'ar': { today: 'اليوم', now: 'الآن', close: 'إغلاق' }, // Arabic
+        'bn': { today: 'আজ', now: 'এখন', close: 'বন্ধ করুন' }, // Bengali
+        'pt': { today: 'Hoje', now: 'Agora', close: 'Fechar' }, // Portuguese
+        'ru': { today: 'Сегодня', now: 'Сейчас', close: 'Закрыть' }, // Russian
+        'ur': { today: 'آج', now: 'ابھی', close: 'بند کریں' }, // Urdu
+        'id': { today: 'Hari ini', now: 'Sekarang', close: 'Tutup' }, // Indonesian
+        'de': { today: 'Heute', now: 'Jetzt', close: 'Schließen' }, // German
+    };
+
+    function getLabel(key: 'today' | 'now' | 'close'): string {
+        const lang = language.slice(0, 2); 
+        return i18nLabels[lang]?.[key] || i18nLabels['en'][key];
+    }
 
     const calendarColors: IColors = React.useMemo(() => {
         return {
@@ -118,50 +131,50 @@ export default function Calendar({ disabled, label, labelClassname, language = '
         }
     }, [timeFormat])
 
-    useEffect(() => {
-        if (customLanguage) {
-            setCurrentLanguages(customLanguage)
-        } else {
-            switch (language) {
-                case 'pt':
-                    setCurrentLanguages({
-                        close: 'Fechar',
-                        today: 'Hoje',
-                        weekDays: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-                        now: 'Agora',
-                        months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
-                    })
-                    break;
-                case 'en':
-                    setCurrentLanguages({
-                        close: 'Close',
-                        today: 'Today',
-                        weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                        now: 'Now',
-                        months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-                    })
-                    break;
-                case "es":
-                    setCurrentLanguages({
-                        close: 'Cerrar',
-                        today: 'Hoy',
-                        weekDays: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-                        now: 'Ahora',
-                        months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-                    })
-                    break;
-                default:
-                    setCurrentLanguages({
-                        close: 'Close',
-                        today: 'Today',
-                        weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                        now: 'now',
-                        months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-                    })
-                    break;
-            }
-        }
-    }, [customLanguage, language])
+    // useEffect(() => {
+    //     if (customLanguage) {
+    //         setCurrentLanguages(customLanguage)
+    //     } else {
+    //         switch (language) {
+    //             case 'pt':
+    //                 setCurrentLanguages({
+    //                     close: 'Fechar',
+    //                     today: 'Hoje',
+    //                     weekDays: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+    //                     now: 'Agora',
+    //                     months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+    //                 })
+    //                 break;
+    //             case 'en':
+    //                 setCurrentLanguages({
+    //                     close: 'Close',
+    //                     today: 'Today',
+    //                     weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    //                     now: 'Now',
+    //                     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    //                 })
+    //                 break;
+    //             case "es":
+    //                 setCurrentLanguages({
+    //                     close: 'Cerrar',
+    //                     today: 'Hoy',
+    //                     weekDays: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    //                     now: 'Ahora',
+    //                     months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+    //                 })
+    //                 break;
+    //             default:
+    //                 setCurrentLanguages({
+    //                     close: 'Close',
+    //                     today: 'Today',
+    //                     weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    //                     now: 'now',
+    //                     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    //                 })
+    //                 break;
+    //         }
+    //     }
+    // }, [customLanguage, language])
 
     useEffect(() => {
         if (inline) {
@@ -184,6 +197,7 @@ export default function Calendar({ disabled, label, labelClassname, language = '
             let str = `${showTime && `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`}${timeFormat === '12' ? ` ${period}` : ''}`
             setDate(str)
         } else {
+            setActualDate(new Date(year, month, day))
             const parts: FormatParts = {
                 day: day,
                 month: month,
@@ -300,7 +314,6 @@ export default function Calendar({ disabled, label, labelClassname, language = '
 
     }
 
-
     function handleChageDayPeriodOnDate(period: 'AM' | "PM") {
         formatDate(day, currentMonth, currentYear, hour, minutes, period)
     }
@@ -413,26 +426,25 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                                 </div>
 
                                 <div className="w-full h-fit grid grid-cols-7 text-center font-medium mt-2">
-                                    {currentLanguages.weekDays.map((day, i) => (
-                                        <div key={i} className="text-sm" style={{ color: calendarColors.weekDaysTextColor }}>{day}</div>
-                                    ))}
+                                    {customLanguage ? (
+                                        customLanguage.weekDays.map((day, i) => (
+                                            <div key={i} className="text-sm" style={{ color: calendarColors.weekDaysTextColor }}>{day}</div>
+                                        ))
+                                    ) : Array.from({ length: 7 }, (_, i) =>
+                                        <div key={i} className="text-sm" style={{ color: calendarColors.weekDaysTextColor }}>{new Intl.DateTimeFormat(language, { weekday: 'short' }).format(new Date(2021, 7, 1 + i)).replace('.', '')}</div>
+                                    )}
                                 </div>
 
                                 <div className="w-full grid grid-cols-7 auto-rows-fr gap-1 text-center mt-1">
                                     {dates.map((item, idx) => {
-                                        const aux = date.split(' ')[0]
-                                        const dateElements = aux.split('/')
-                                        const dayAux = dateElements[0]
-                                        const month = dateElements[1]
-                                        const year = dateElements[2]
-
                                         const isToday =
                                             item.currentMonth &&
                                             currentMonth === today.getMonth() &&
                                             currentYear === today.getFullYear() &&
                                             item.date === today.getDate();
 
-                                        const isSelected = dayAux === String(item.date).padStart(2, '0') && month == String(currentMonth + 1).padStart(2, '0') && year === String(currentYear).padStart(2, '0') && item.currentMonth
+                                        // const isSelected = dayAux === String(item.date).padStart(2, '0') && month == String(currentMonth + 1).padStart(2, '0') && year === String(currentYear).padStart(2, '0') && item.currentMonth
+                                        const isSelected = actualDate?.getTime() === new Date(currentYear, currentMonth, item.date).getTime() && item.currentMonth
                                         return (
                                             <div
                                                 key={idx}
@@ -491,11 +503,18 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                         </div>
 
                         <div className="w-full h-fit grid grid-cols-3 text-center mt-2" style={{ color: calendarColors.textColor }}>
-                            {Array.from({ length: 12 }, (_, i) => (
-                                <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); !view && setWhatToShow('days')}} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>
+                            {customLanguage ? (
+                                customLanguage.months.map((month, i) => (
+                                    <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); !view && setWhatToShow('days') }} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>
+                                        {month}
+                                    </div>
+                                ))
+                            ) : Array.from({ length: 12 }, (_, i) => (
+                                <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); !view && setWhatToShow('days') }} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>
                                     {new Date(2000, i).toLocaleString(language, { month: 'long' })}
                                 </div>
                             ))}
+
                         </div>
                     </>
                 )}
@@ -541,7 +560,7 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                                         setCurrentYear(today.getFullYear());
                                         formatDate(today.getDate(), today.getMonth(), today.getFullYear(), hour, minutes, dayPeriod);
                                     }}
-                                >{currentLanguages.today}</button>
+                                >{customLanguage?.today ?? getLabel("today")}</button>
                             )}
                             {timeOnly && (
                                 <button
@@ -554,14 +573,14 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                                         setDayPeriod(new Date().getHours() > 11 ? 'PM' : 'AM')
                                         formatDate(today.getDate(), today.getMonth(), today.getFullYear(), getDisplayHour(new Date().getHours()), new Date().getMinutes(), new Date().getHours() > 11 ? 'PM' : 'AM');
                                     }}
-                                >{currentLanguages.now}</button>
+                                >{customLanguage?.now ?? getLabel('now')}</button>
                             )}
                             <button
                                 type="button"
                                 style={{ color: calendarColors.textColor, "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
                                 className={`font-semibold py-1 px-1 rounded cursor-pointer hover:[background-color:var(--hover-color)]`}
                                 onClick={() => setShowCalendar(false)}
-                            >{currentLanguages.close}</button>
+                            >{customLanguage?.close ?? getLabel("close")}</button>
                         </div>
                     </div>
                 )}
