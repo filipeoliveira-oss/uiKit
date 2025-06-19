@@ -13,7 +13,7 @@ interface inputInterface extends ComponentProps<'input'> {
     placeholder?: string,
     mask?: string,
     value: string,
-    onChangeValue: (e:React.ChangeEvent<HTMLInputElement>) => void
+    onChangeValue: (e:string) => void
 }
 export const MaskInput = forwardRef<HTMLInputElement, inputInterface>(
     ({ className,  placeholder, mask = "(__)_____-____",onChangeValue,value, ...props }, ref) => {
@@ -29,7 +29,7 @@ export const MaskInput = forwardRef<HTMLInputElement, inputInterface>(
         return (
             <InputMask mask={mask} replacement={{ _: /\d/ }} className={cn("w-full h-10 rounded outline-none border border-[rgba(0,0,0,0.2)] pl-2 cursor-text text-base mt-2 text-black", className)}
                 value={formtValue(value)}
-                onChange={(e) => onChangeValue(e)}
+                onChange={(e) => onChangeValue(e.target.value)}
                 placeholder={placeholder}
                 {...props}
             />
