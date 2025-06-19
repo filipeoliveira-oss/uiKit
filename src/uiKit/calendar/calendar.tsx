@@ -1,23 +1,5 @@
 'use client'
-import React, { SetStateAction, useEffect, useState } from "react";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs))
-}
-
-/**ENHANCEMENTS 
- * 
- * 1- Min/Max
- * 2- Time only - FEITO
- * 3- Format - FEITO
- * 4- View (day, month, year) - FEITO
- * 5- Date template - FEITO
- * 6- Inline - FEITO
- * 
- * ADICIONAR SHOWCALENDAR ATTRIBUTE 
-*/
+import React, { SetStateAction, useEffect, useRef, useState } from "react";
 
 type FormatParts = {
     day: number
@@ -67,7 +49,9 @@ interface ICalendar {
     dateTemplate?: (date: number) => React.ReactNode,
     inline?: boolean,
     view?: 'month' | 'year',
-    format?: string
+    format?: string,
+    minDate?: Date
+    maxDate?: Date
 }
 
 interface calendarDates {
@@ -76,7 +60,7 @@ interface calendarDates {
 }
 
 
-export default function Calendar({ disabled, label, labelClassname, language = 'pt-BR', setDate, date, showIcon, showButtonBar, showTime, timeFormat = '24', customLanguage, colors, timeOnly = false, dateTemplate, inline = false, view, format = 'dd/mm/yy' }: ICalendar) {
+export default function Calendar({ disabled, label, labelClassname, language = 'pt-BR', setDate, date, showIcon, showButtonBar, showTime, timeFormat = '24', customLanguage, colors, timeOnly = false, dateTemplate, inline = false, view, format = 'dd/mm/yy', maxDate, minDate }: ICalendar) {
     const today = new Date();
     const [currentMonth, setCurrentMonth] = useState(today.getMonth());
     const [currentYear, setCurrentYear] = useState(today.getFullYear());
@@ -102,9 +86,9 @@ export default function Calendar({ disabled, label, labelClassname, language = '
         'id': { today: 'Hari ini', now: 'Sekarang', close: 'Tutup' }, // Indonesian
         'de': { today: 'Heute', now: 'Jetzt', close: 'Schließen' }, // German
     };
-
+    const wrapperRef = useRef<HTMLDivElement>(null);
     function getLabel(key: 'today' | 'now' | 'close'): string {
-        const lang = language.slice(0, 2); 
+        const lang = language.slice(0, 2);
         return i18nLabels[lang]?.[key] || i18nLabels['en'][key];
     }
 
@@ -131,50 +115,6 @@ export default function Calendar({ disabled, label, labelClassname, language = '
         }
     }, [timeFormat])
 
-    // useEffect(() => {
-    //     if (customLanguage) {
-    //         setCurrentLanguages(customLanguage)
-    //     } else {
-    //         switch (language) {
-    //             case 'pt':
-    //                 setCurrentLanguages({
-    //                     close: 'Fechar',
-    //                     today: 'Hoje',
-    //                     weekDays: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-    //                     now: 'Agora',
-    //                     months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
-    //                 })
-    //                 break;
-    //             case 'en':
-    //                 setCurrentLanguages({
-    //                     close: 'Close',
-    //                     today: 'Today',
-    //                     weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    //                     now: 'Now',
-    //                     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    //                 })
-    //                 break;
-    //             case "es":
-    //                 setCurrentLanguages({
-    //                     close: 'Cerrar',
-    //                     today: 'Hoy',
-    //                     weekDays: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-    //                     now: 'Ahora',
-    //                     months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-    //                 })
-    //                 break;
-    //             default:
-    //                 setCurrentLanguages({
-    //                     close: 'Close',
-    //                     today: 'Today',
-    //                     weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    //                     now: 'now',
-    //                     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    //                 })
-    //                 break;
-    //         }
-    //     }
-    // }, [customLanguage, language])
 
     useEffect(() => {
         if (inline) {
@@ -192,7 +132,28 @@ export default function Calendar({ disabled, label, labelClassname, language = '
         }
     }, [view])
 
+    useEffect(() => {
+        function handleClickOutside(event:any) {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+                setShowCalendar(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    function isValidDate(day: number) {
+        const checkDate = new Date(currentYear, currentMonth, day)
+
+        const checkTime = checkDate.getTime();
+        const minTime = minDate ? minDate.getTime() : -Infinity;
+        const maxTime = maxDate ? maxDate.getTime() : Infinity;
+        return checkTime > minTime && checkTime < maxTime;
+    }
+
     function formatDate(day: number, month: number, year: number, hour?: number, minute?: number, period?: 'PM' | 'AM' | null) {
+
         if (timeOnly) {
             let str = `${showTime && `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`}${timeFormat === '12' ? ` ${period}` : ''}`
             setDate(str)
@@ -385,11 +346,11 @@ export default function Calendar({ disabled, label, labelClassname, language = '
 
     return (
 
-        <label className="w-full h-fit flex flex-col gap-4 relative select-none" style={{ pointerEvents: disabled ? 'none' : 'auto', backgroundColor: calendarColors.containerBackgroundColor }}>
-            {label && <span className={labelClassname} style={{ color: calendarColors.labelTextColor }}>{label}</span>}
+        <div ref={wrapperRef} className="w-full h-fit flex flex-col gap-4 relative select-none" style={{ pointerEvents: disabled ? 'none' : 'auto', backgroundColor: calendarColors.containerBackgroundColor }}>
+            {label && <label className={labelClassname} style={{ color: calendarColors.labelTextColor }}>{label}</label>}
             {!inline && (
                 <div className="border border-zinc-500 w-full h-10 flex flex-row items-center rounded-lg overflow-hidden" >
-                    <input onFocus={() => setShowCalendar(true)} onBlur={() => setShowCalendar(false)} className="px-2 w-full h-full bg-transparent border-none outline-none" value={date} readOnly />
+                    <input onFocus={() => setShowCalendar(true)}  className="px-2 w-full h-full bg-transparent border-none outline-none" value={date} readOnly />
                     {showIcon && (
                         <div className="w-fit h-full px-2 flex items-center" style={{ backgroundColor: calendarColors.iconBackgroundColor }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={calendarColors.iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -403,188 +364,189 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                 </div>
             )}
 
-            <div className="w-full h-fit absolute top-full flex flex-col items-center justify-center" style={{ backgroundColor: calendarColors.calendarBackground }}>
+            {showCalendar && (
+                <div className="w-full h-fit absolute top-full flex flex-col items-center justify-center" style={{ backgroundColor: calendarColors.calendarBackground }} >
+                    {whatToShow === 'days' && (
+                        <>
+                            {!timeOnly && (
+                                <>
+                                    <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center" style={{ color: calendarColors.textColor }}>
+                                        <svg onClick={handlePrevMonth} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
+                                        <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
 
-                {whatToShow === 'days' && (
-                    <>
-                        {!timeOnly && (
-                            <>
-                                <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center" style={{ color: calendarColors.textColor }}>
-                                    <svg onClick={handlePrevMonth} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
-                                    <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
-
-                                        {whatToShow === 'days' && (
-                                            <span className={`hover:[color:var(--hover-color)] cursor-pointer`} onClick={() => setWhatToShow('months')} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>{new Date(currentYear, currentMonth).toLocaleString(language, {
-                                                month: 'long',
+                                            {whatToShow === 'days' && (
+                                                <span className={`hover:[color:var(--hover-color)] cursor-pointer`} onClick={() => setWhatToShow('months')} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>{new Date(currentYear, currentMonth).toLocaleString(language, {
+                                                    month: 'long',
+                                                })}</span>
+                                            )}
+                                            <span className={`hover:[color:var(--hover-color)] cursor-pointer`} onClick={() => setWhatToShow('years')} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>{new Date(currentYear, currentMonth).toLocaleString(language, {
+                                                year: 'numeric',
                                             })}</span>
-                                        )}
-                                        <span className={`hover:[color:var(--hover-color)] cursor-pointer`} onClick={() => setWhatToShow('years')} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>{new Date(currentYear, currentMonth).toLocaleString(language, {
-                                            year: 'numeric',
-                                        })}</span>
+                                        </div>
+                                        <svg onClick={handleNextMonth} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
                                     </div>
-                                    <svg onClick={handleNextMonth} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-                                </div>
 
-                                <div className="w-full h-fit grid grid-cols-7 text-center font-medium mt-2">
-                                    {customLanguage ? (
-                                        customLanguage.weekDays.map((day, i) => (
-                                            <div key={i} className="text-sm" style={{ color: calendarColors.weekDaysTextColor }}>{day}</div>
-                                        ))
-                                    ) : Array.from({ length: 7 }, (_, i) =>
-                                        <div key={i} className="text-sm" style={{ color: calendarColors.weekDaysTextColor }}>{new Intl.DateTimeFormat(language, { weekday: 'short' }).format(new Date(2021, 7, 1 + i)).replace('.', '')}</div>
+                                    <div className="w-full h-fit grid grid-cols-7 text-center font-medium mt-2">
+                                        {customLanguage ? (
+                                            customLanguage.weekDays.map((day, i) => (
+                                                <div key={i} className="text-sm" style={{ color: calendarColors.weekDaysTextColor }}>{day}</div>
+                                            ))
+                                        ) : Array.from({ length: 7 }, (_, i) =>
+                                            <div key={i} className="text-sm" style={{ color: calendarColors.weekDaysTextColor }}>{new Intl.DateTimeFormat(language, { weekday: 'short' }).format(new Date(2021, 7, 1 + i)).replace('.', '')}</div>
+                                        )}
+                                    </div>
+
+                                    <div className="w-full grid grid-cols-7 auto-rows-fr gap-1 text-center mt-1">
+                                        {dates.map((item, idx) => {
+                                            const isToday =
+                                                item.currentMonth &&
+                                                currentMonth === today.getMonth() &&
+                                                currentYear === today.getFullYear() &&
+                                                item.date === today.getDate();
+
+                                            const isSelected = actualDate?.getTime() === new Date(currentYear, currentMonth, item.date).getTime() && item.currentMonth
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    onClick={() => {handleSelectDay(item.date); setShowCalendar(false)}}
+                                                    className={`p-2 text-sm rounded ${item.currentMonth && isValidDate(item.date) ? '' : 'pointer-events-none'} group cursor-pointer w-full h-full flex items-center justify-center`} >
+                                                    <span
+                                                        className=" w-6 h-6 rounded-full flex items-center justify-center group-hover:[background-color:var(--hover-color)]"
+                                                        style={{ backgroundColor: isSelected ? calendarColors.selectedDayBackground : isToday ? calendarColors.todayBackground : '', ...{ ["--hover-color"]: calendarColors.hoverBackground, color: item.currentMonth && isValidDate(item.date) ? calendarColors.textColor : '#99a1af' } }}
+                                                    >{dateTemplate ? dateTemplate(item.date) : item.date}
+                                                    </span>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </>
+                            )}
+
+                            {showTime && (
+                                <div className="w-full h-20 border-t border-zinc-200 flex flex-row gap-2 items-center justify-center" style={{ color: calendarColors.textColor }}>
+                                    <div className="w-fit h-full flex flex-col gap:1 items-center justify-center">
+                                        <svg onClick={() => incrementHour()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+                                        <span className="select-none text-lg">{String(timeFormat === '12' && hour === 0 ? 12 : hour).padStart(2, '0')}</span>
+                                        <svg onClick={() => decrementHour()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                    </div>
+                                    <span className="select-none text-lg">:</span>
+                                    <div className="w-fit h-full flex flex-col gap:1 items-center justify-center">
+                                        <svg onClick={() => handleIncrementMinute()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+                                        <span className="select-none text-lg">{String(minutes).padStart(2, '0')}</span>
+                                        <svg onClick={() => handleDecrementMinute()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                    </div>
+                                    {timeFormat === '12' && (
+                                        <>
+                                            <span className="select-none text-lg">:</span>
+                                            <div className="w-fit h-full flex flex-col gap:1 items-center justify-center">
+                                                <svg onClick={() => { setDayPeriod(prev => prev === 'PM' ? 'AM' : 'PM'); handleChageDayPeriodOnDate(dayPeriod === 'AM' ? 'PM' : 'AM') }} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+                                                <span className="select-none text-lg">{dayPeriod}</span>
+                                                <svg onClick={() => { setDayPeriod(prev => prev === 'PM' ? 'AM' : 'PM'); handleChageDayPeriodOnDate(dayPeriod === 'AM' ? 'PM' : 'AM') }} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                            </div>
+                                        </>
                                     )}
                                 </div>
+                            )}
+                        </>
+                    )}
 
-                                <div className="w-full grid grid-cols-7 auto-rows-fr gap-1 text-center mt-1">
-                                    {dates.map((item, idx) => {
-                                        const isToday =
-                                            item.currentMonth &&
-                                            currentMonth === today.getMonth() &&
-                                            currentYear === today.getFullYear() &&
-                                            item.date === today.getDate();
+                    {whatToShow === 'months' && (
+                        <>
+                            <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center" style={{ color: calendarColors.textColor }}>
+                                <svg onClick={() => { setCurrentYear(prev => prev - 1); }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
+                                <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
+                                    <span className={`hover:[color:var(--hover-color)] cursor-pointer`} onClick={() => setWhatToShow('years')} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>{new Date(currentYear, currentMonth).toLocaleString(language, {
+                                        year: 'numeric',
+                                    })}</span>
+                                </div>
+                                <svg onClick={() => { setCurrentYear(prev => prev + 1) }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                            </div>
 
-                                        // const isSelected = dayAux === String(item.date).padStart(2, '0') && month == String(currentMonth + 1).padStart(2, '0') && year === String(currentYear).padStart(2, '0') && item.currentMonth
-                                        const isSelected = actualDate?.getTime() === new Date(currentYear, currentMonth, item.date).getTime() && item.currentMonth
-                                        return (
-                                            <div
-                                                key={idx}
-                                                onClick={() => handleSelectDay(item.date)}
-                                                className={`p-2 text-sm rounded ${item.currentMonth ? '' : 'pointer-events-none'} group cursor-pointer w-full h-full flex items-center justify-center`} >
-                                                <span
-                                                    className=" w-6 h-6 rounded-full flex items-center justify-center group-hover:[background-color:var(--hover-color)]"
-                                                    style={{ backgroundColor: isSelected ? calendarColors.selectedDayBackground : isToday ? calendarColors.todayBackground : '', ...{ ["--hover-color"]: calendarColors.hoverBackground, color: item.currentMonth ? calendarColors.textColor : '#99a1af  ' } }}
-                                                >{dateTemplate ? dateTemplate(item.date) : item.date}
-                                                </span>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            </>
-                        )}
-
-                        {showTime && (
-                            <div className="w-full h-20 border-t border-zinc-200 flex flex-row gap-2 items-center justify-center" style={{ color: calendarColors.textColor }}>
-                                <div className="w-fit h-full flex flex-col gap:1 items-center justify-center">
-                                    <svg onClick={() => incrementHour()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
-                                    <span className="select-none text-lg">{String(timeFormat === '12' && hour === 0 ? 12 : hour).padStart(2, '0')}</span>
-                                    <svg onClick={() => decrementHour()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-                                </div>
-                                <span className="select-none text-lg">:</span>
-                                <div className="w-fit h-full flex flex-col gap:1 items-center justify-center">
-                                    <svg onClick={() => handleIncrementMinute()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
-                                    <span className="select-none text-lg">{String(minutes).padStart(2, '0')}</span>
-                                    <svg onClick={() => handleDecrementMinute()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-                                </div>
-                                {timeFormat === '12' && (
-                                    <>
-                                        <span className="select-none text-lg">:</span>
-                                        <div className="w-fit h-full flex flex-col gap:1 items-center justify-center">
-                                            <svg onClick={() => { setDayPeriod(prev => prev === 'PM' ? 'AM' : 'PM'); handleChageDayPeriodOnDate(dayPeriod === 'AM' ? 'PM' : 'AM') }} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
-                                            <span className="select-none text-lg">{dayPeriod}</span>
-                                            <svg onClick={() => { setDayPeriod(prev => prev === 'PM' ? 'AM' : 'PM'); handleChageDayPeriodOnDate(dayPeriod === 'AM' ? 'PM' : 'AM') }} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                            <div className="w-full h-fit grid grid-cols-3 text-center mt-2" style={{ color: calendarColors.textColor }}>
+                                {customLanguage ? (
+                                    customLanguage.months.map((month, i) => (
+                                        <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); if (!view) setWhatToShow('days'); if (view === 'month') {formatDate(0, i + 1, currentYear, hour, minutes);setShowCalendar(false)} }} style={{ "--hover-color": calendarColors.hoverBackground, backgroundColor: actualDate?.getMonth() === i ? calendarColors.selectedDayBackground : ''  } as React.CSSProperties}>
+                                            {month}
                                         </div>
-                                    </>
-                                )}
-                            </div>
-                        )}
-                    </>
-                )}
-
-                {whatToShow === 'months' && (
-                    <>
-                        <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center" style={{ color: calendarColors.textColor }}>
-                            <svg onClick={() => { setCurrentYear(prev => prev - 1); }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
-                            <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
-                                <span className={`hover:[color:var(--hover-color)] cursor-pointer`} onClick={() => setWhatToShow('years')} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>{new Date(currentYear, currentMonth).toLocaleString(language, {
-                                    year: 'numeric',
-                                })}</span>
-                            </div>
-                            <svg onClick={() => { setCurrentYear(prev => prev + 1) }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-                        </div>
-
-                        <div className="w-full h-fit grid grid-cols-3 text-center mt-2" style={{ color: calendarColors.textColor }}>
-                            {customLanguage ? (
-                                customLanguage.months.map((month, i) => (
-                                    <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); !view && setWhatToShow('days') }} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>
-                                        {month}
+                                    ))
+                                ) : Array.from({ length: 12 }, (_, i) => (
+                                    <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); if (!view) setWhatToShow('days'); if (view === 'month') {formatDate(0, i + 1, currentYear, hour, minutes);setShowCalendar(false)} }} style={{ "--hover-color": calendarColors.hoverBackground, backgroundColor: actualDate?.getMonth() === i ? calendarColors.selectedDayBackground : '' } as React.CSSProperties}>
+                                        {new Date(2000, i).toLocaleString(language, { month: 'long' })}
                                     </div>
-                                ))
-                            ) : Array.from({ length: 12 }, (_, i) => (
-                                <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); !view && setWhatToShow('days') }} style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}>
-                                    {new Date(2000, i).toLocaleString(language, { month: 'long' })}
-                                </div>
-                            ))}
+                                ))}
 
-                        </div>
-                    </>
-                )}
-
-                {whatToShow === 'years' && (
-                    <>
-                        <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center" style={{ color: calendarColors.textColor }}>
-                            <svg onClick={() => { setCurrentYear(prev => prev - 10); }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
-                            <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
-                                <span>{Math.floor(currentYear / 10) * 10} - {(Math.floor(currentYear / 10) * 10) + 9}</span>
                             </div>
-                            <svg onClick={() => { setCurrentYear(prev => prev + 10) }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-                        </div>
+                        </>
+                    )}
 
-                        <div className="w-full h-fit grid grid-cols-2 text-center mt-2" style={{ color: calendarColors.textColor }}>
-                            {Array.from({ length: 10 }, (_, i) => Math.floor(currentYear / 10) * 10 + i).map((year) => (
-                                <div
-                                    key={year}
-                                    style={{ "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
-                                    className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)] rounded`}
-                                    onClick={() => {
-                                        setCurrentYear(year);
-                                        view !== "year" && setWhatToShow('months');
-                                    }}
-                                >
-                                    {year}
+                    {whatToShow === 'years' && (
+                        <>
+                            <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center" style={{ color: calendarColors.textColor }}>
+                                <svg onClick={() => { setCurrentYear(prev => prev - 10); }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
+                                <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
+                                    <span>{Math.floor(currentYear / 10) * 10} - {(Math.floor(currentYear / 10) * 10) + 9}</span>
                                 </div>
-                            ))}
-                        </div>
-                    </>
-                )}
+                                <svg onClick={() => { setCurrentYear(prev => prev + 10) }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                            </div>
 
-                {showButtonBar && (
-                    <div className="w-full h-10  flex items-center justify-between px-4 border-t border-zinc-200">
-                        <div className="flex gap-2 w-full justify-between">
-                            {!timeOnly && (
+                            <div className="w-full h-fit grid grid-cols-2 text-center mt-2" style={{ color: calendarColors.textColor }}>
+                                {Array.from({ length: 10 }, (_, i) => Math.floor(currentYear / 10) * 10 + i).map((year) => (
+                                    <div
+                                        key={year}
+                                        style={{ "--hover-color": calendarColors.hoverBackground, backgroundColor: actualDate?.getFullYear() === year ? calendarColors.selectedDayBackground : ''  } as React.CSSProperties}
+                                        className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)] rounded`}
+                                        onClick={() => {
+                                            setCurrentYear(year);
+                                            if (view !== "year") setWhatToShow('months');
+                                            if (view === "year") {formatDate(day, currentMonth, year);setShowCalendar(false)}
+                                        }}
+                                    >
+                                        {year}
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+
+                    {showButtonBar && (
+                        <div className="w-full h-10  flex items-center justify-between px-4 border-t border-zinc-200">
+                            <div className="flex gap-2 w-full justify-between">
+                                {!timeOnly && (
+                                    <button
+                                        type="button"
+                                        style={{ color: calendarColors.textColor, "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
+                                        className={`font-semibold py-1 px-1 rounded cursor-pointer hover:[background-color:var(--hover-color)]`}
+                                        onClick={() => {
+                                            setCurrentMonth(today.getMonth());
+                                            setCurrentYear(today.getFullYear());
+                                            formatDate(today.getDate(), today.getMonth(), today.getFullYear(), hour, minutes, dayPeriod);
+                                        }}
+                                    >{customLanguage?.today ?? getLabel("today")}</button>
+                                )}
+                                {timeOnly && (
+                                    <button
+                                        type="button"
+                                        style={{ color: calendarColors.textColor, "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
+                                        className={`font-semibold py-1 px-1 rounded cursor-pointer hover:[background-color:var(--hover-color)]`}
+                                        onClick={() => {
+                                            setHour(getDisplayHour(new Date().getHours()))
+                                            setMinutes(new Date().getMinutes())
+                                            setDayPeriod(new Date().getHours() > 11 ? 'PM' : 'AM')
+                                            formatDate(today.getDate(), today.getMonth(), today.getFullYear(), getDisplayHour(new Date().getHours()), new Date().getMinutes(), new Date().getHours() > 11 ? 'PM' : 'AM');
+                                        }}
+                                    >{customLanguage?.now ?? getLabel('now')}</button>
+                                )}
                                 <button
                                     type="button"
                                     style={{ color: calendarColors.textColor, "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
                                     className={`font-semibold py-1 px-1 rounded cursor-pointer hover:[background-color:var(--hover-color)]`}
-                                    onClick={() => {
-                                        setCurrentMonth(today.getMonth());
-                                        setCurrentYear(today.getFullYear());
-                                        formatDate(today.getDate(), today.getMonth(), today.getFullYear(), hour, minutes, dayPeriod);
-                                    }}
-                                >{customLanguage?.today ?? getLabel("today")}</button>
-                            )}
-                            {timeOnly && (
-                                <button
-                                    type="button"
-                                    style={{ color: calendarColors.textColor, "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
-                                    className={`font-semibold py-1 px-1 rounded cursor-pointer hover:[background-color:var(--hover-color)]`}
-                                    onClick={() => {
-                                        setHour(getDisplayHour(new Date().getHours()))
-                                        setMinutes(new Date().getMinutes())
-                                        setDayPeriod(new Date().getHours() > 11 ? 'PM' : 'AM')
-                                        formatDate(today.getDate(), today.getMonth(), today.getFullYear(), getDisplayHour(new Date().getHours()), new Date().getMinutes(), new Date().getHours() > 11 ? 'PM' : 'AM');
-                                    }}
-                                >{customLanguage?.now ?? getLabel('now')}</button>
-                            )}
-                            <button
-                                type="button"
-                                style={{ color: calendarColors.textColor, "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
-                                className={`font-semibold py-1 px-1 rounded cursor-pointer hover:[background-color:var(--hover-color)]`}
-                                onClick={() => setShowCalendar(false)}
-                            >{customLanguage?.close ?? getLabel("close")}</button>
+                                    onClick={() => setShowCalendar(false)}
+                                >{customLanguage?.close ?? getLabel("close")}</button>
+                            </div>
                         </div>
-                    </div>
-                )}
-            </div>
-        </label>
+                    )}
+                </div>
+            )}
+        </div>
     )
 }
