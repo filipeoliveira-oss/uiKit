@@ -1,27 +1,17 @@
 'use client'
-import { useRef } from 'react';
-import { PageLoader, plController } from '../../uiKit/pageProgress/pageProgress'
+import { useState } from 'react';
+import Calendar from '@/uiKit/calendar/calendar';
 
 export default function Component() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const handleStart = () => {
-        plController.start();
-        setTimeout(() => {
-            plController.end();
-        }, 5000);
-    };
+    const [t, st] = useState('')
 
     return (
-        <div className="w-full h-full">
-            {/* <PageLoader color='#8e51ff' /> */}
-            <button onClick={() => plController.start()} className="bg-blue-500 text-white p-2 rounded">
-                Show Loader
-            </button>
+        <div className="w-full h-full flex flex-col gap-8">
+            <input type='date' value={t} onChange={(e) => st(e.target.value)}/>
 
-            <button onClick={() => plController.end()} className="bg-blue-500 text-white p-2 rounded">
-                stop Loader
-            </button>
+            <button onClick={() => alert(t)}>alert</button>
 
+            <Calendar label='label test' labelClassname='text-white' date={t} setDate={st} showTime timeFormat='12' showButtonBar showIcon />
         </div>
     )
 }

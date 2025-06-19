@@ -44,6 +44,7 @@ export default function Sidebar() {
                 <div className="w-full ml-4">
                     <ul className="w-[80%] h-fit list-disc pl-4 ">
                         <SidebarElement url="/components/actionMenu" title="Action Menu" />
+                        <SidebarElement url="/components/autoComplete" title="Auto complete" />
                         <SidebarElement url="/components/button" title="Button" />
                         <SidebarElement url="/components/carousel" title="Carousel" />
                         <SidebarElement url="/components/checkbox" title="Checkbox" />

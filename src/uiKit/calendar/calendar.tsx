@@ -1,0 +1,411 @@
+'use client'
+import React, { SetStateAction, useEffect, useState } from "react";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs))
+}
+
+interface ICustomLanguage {
+    today: string,
+    close: string,
+    weekDays: [string, string, string, string, string, string, string]
+    months: [string, string, string, string, string, string, string, string, string, string, string, string]
+}
+
+interface IColors {
+    iconBackgroundColor?:string,
+    iconColor?: string,
+    selectedDayColor?: string,
+    todayColor?: string,
+    backgroundColor?: string,
+    textColor?: string,
+    weekDaysColor?: string,
+    borderColor?:string,
+    inputColor?:string
+}
+
+interface ICalendar {
+    date: string,
+    setDate: React.Dispatch<SetStateAction<string>>
+    disabled?: boolean
+    label?: string,
+    labelClassname?: string,
+    language?: 'pt' | 'en' | 'es',
+    showIcon?: boolean,
+    showButtonBar?: boolean,
+    showTime?: boolean,
+    timeFormat?: '12' | '24',
+    customLanguage?: ICustomLanguage,
+    colors?: IColors
+}
+
+interface calendarDates {
+    date: number,
+    currentMonth: boolean
+}
+
+
+export default function Calendar({ disabled, label, labelClassname, language = 'pt', setDate, date, showIcon, showButtonBar, showTime, timeFormat = '24', customLanguage, colors }: ICalendar) {
+    const today = new Date();
+    const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+    const [currentYear, setCurrentYear] = useState(today.getFullYear());
+    const [day, setDay] = useState(today.getDate())
+    const [showCalendar, setShowCalendar] = useState(false);
+    const [hour, setHour] = useState(today.getHours())
+    const [minutes, setMinutes] = useState(today.getMinutes())
+    const [dayPeriod, setDayPeriod] = useState<'AM' | 'PM' | null>(timeFormat === "24" ? null : today.getHours() > 11 ? 'PM' : 'AM')
+    const dates: Array<calendarDates> = getCalendarDates(currentYear, currentMonth);
+    const [whatToShow, setWhatToShow] = useState<'days' | 'months' | 'years'>('days')
+    const [currentLanguages, setCurrentLanguages] = useState<ICustomLanguage>({
+        today: '',
+        close: '',
+        weekDays: ['', '', '', '', '', '', '',],
+        months: ['', '', '', '', '', '', '', '', '', '', '', '']
+    })
+
+    const calendarColors:IColors = React.useMemo(() => {
+        return {
+            iconBackgroundColor: colors?.iconBackgroundColor ?? '#00bcff',
+            iconColor: colors?.iconColor ?? '#FFFFFF',
+            selectedDayColor: colors?.selectedDayColor ?? '#DFF2fE',
+            todayColor: colors?.todayColor ?? '#F4F4F5',
+            backgroundColor: colors?.backgroundColor ?? '#FFFFFF',
+            textColor: colors?.textColor ?? '#000000',
+            weekDaysColor: colors?.weekDaysColor ?? '#4A5565',
+            borderColor: colors?.backgroundColor ?? '#E4E4E7',
+            inputColor: colors?.inputColor ?? '#FFFFFF',
+        }
+    }, [colors])
+
+    useEffect(() => {
+        if (timeFormat === "12") {
+            setDayPeriod(today.getHours() > 12 ? 'PM' : 'AM')
+        } else {
+            setDayPeriod(null)
+        }
+    }, [timeFormat])
+
+    useEffect(() => {
+        if (customLanguage) {
+            setCurrentLanguages(customLanguage)
+        } else {
+            switch (language) {
+                case 'pt':
+                    setCurrentLanguages({
+                        close: 'Fechar',
+                        today: 'Hoje',
+                        weekDays: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                        months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+                    })
+                    break;
+                case 'en':
+                    setCurrentLanguages({
+                        close: 'Close',
+                        today: 'Today',
+                        weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                        months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+                    })
+                    break;
+                case "es":
+                    setCurrentLanguages({
+                        close: 'Cerrar',
+                        today: 'Hoy',
+                        weekDays: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                        months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+                    })
+                    break;
+                default:
+                    setCurrentLanguages({
+                        close: 'Close',
+                        today: 'Today',
+                        weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                        months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+                    })
+                    break;
+            }
+        }
+    }, [customLanguage, language])
+
+
+
+    function formatDate(day: number, month: number, year: number, hour?: number, minute?: number, period?: 'PM' | 'AM' | null) {
+        const str = `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}${showTime && ` ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`}${timeFormat === '12' && ` ${period}`}`
+        setDate(str)
+    }
+
+    function getCalendarDates(year: number, month: number) {
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+
+        const firstDayIndex = firstDay.getDay(); // 0 = Sunday
+        const lastDayIndex = lastDay.getDay();
+        const daysInMonth = lastDay.getDate();
+
+        const result: { date: number; currentMonth: boolean }[] = [];
+
+        // --- Leading days from prev month (if the month doesn't start on Sunday)
+        if (firstDayIndex > 0) {
+            const prevMonthDays = new Date(year, month, 0).getDate();
+            for (let i = firstDayIndex - 1; i >= 0; i--) {
+                result.push({
+                    date: prevMonthDays - i,
+                    currentMonth: false,
+                });
+            }
+        }
+
+        // --- Current month days
+        for (let i = 1; i <= daysInMonth; i++) {
+            result.push({ date: i, currentMonth: true });
+        }
+
+        // --- Trailing days from next month (to complete the last week)
+        if (lastDayIndex < 6) {
+            for (let i = 1; i <= 6 - lastDayIndex; i++) {
+                result.push({ date: i, currentMonth: false });
+            }
+        }
+
+        return result;
+    }
+
+    const handlePrevMonth = () => {
+        const newMonth = currentMonth - 1;
+        if (newMonth < 0) {
+            setCurrentMonth(11);
+            setCurrentYear(currentYear - 1);
+        } else {
+            setCurrentMonth(newMonth);
+        }
+    };
+
+    const handleNextMonth = () => {
+        const newMonth = currentMonth + 1;
+        if (newMonth > 11) {
+            setCurrentMonth(0);
+            setCurrentYear(currentYear + 1);
+        } else {
+            setCurrentMonth(newMonth);
+        }
+    };
+
+    function incrementHour() {
+        if (timeFormat === '24') {
+            const nextHour = (hour + 1) % 24;
+            setHour(nextHour);
+            formatDate(day, currentMonth, currentYear, nextHour, minutes, dayPeriod)
+
+        } else {
+            const nextHour = (hour + 1) % 12 === 0 ? 12 : (hour + 1) % 12;
+            if (hour === 11) {
+                setDayPeriod(prev => prev === 'AM' ? 'PM' : 'AM');
+            }
+            formatDate(day, currentMonth, currentYear, nextHour, minutes, dayPeriod)
+
+            setHour(nextHour);
+        }
+    }
+
+    function decrementHour() {
+        if (timeFormat === '24') {
+            const prevHour = hour === 0 ? 23 : hour - 1;
+            setHour(prevHour);
+            formatDate(day, currentMonth, currentYear, prevHour, minutes, dayPeriod)
+
+        } else {
+            const prevHour = hour === 1 ? 12 : hour - 1;
+            if (hour === 12) {
+                setDayPeriod(prev => (prev === 'AM' ? 'PM' : 'AM'));
+            }
+            formatDate(day, currentMonth, currentYear, prevHour, minutes, dayPeriod)
+
+            setHour(prevHour);
+        }
+    }
+
+    function handleIncrementMinute() {
+        const nextMinute = minutes === 59 ? 0 : minutes + 1
+        setMinutes(nextMinute)
+        formatDate(day, currentMonth, currentYear, hour, nextMinute, dayPeriod)
+
+    }
+
+    function handleDecrementMinute() {
+        const prevMinute = minutes === 0 ? 59 : minutes - 1
+        setMinutes(prevMinute)
+        formatDate(day, currentMonth, currentYear, hour, prevMinute, dayPeriod)
+
+    }
+
+
+    function handleChageDayPeriodOnDate(period: 'AM' | "PM") {
+        formatDate(day, currentMonth, currentYear, hour, minutes, period)
+    }
+
+    function handleSelectDay(day: number) {
+        setDay(day)
+        formatDate(day, currentMonth, currentYear, hour, minutes, dayPeriod)
+    }
+
+    return (
+        <label className="w-full h-fit flex flex-col gap-4 relative select-none" style={disabled ? { pointerEvents: 'none' } : {}}>
+            {label && <span className={cn(`text-black/60`, labelClassname)}>{label}</span>}
+            <div className="border border-zinc-500 w-full h-10 flex flex-row items-center rounded-lg overflow-hidden" >
+                <input onFocus={() => setShowCalendar(true)} onBlur={() => setShowCalendar(false)} className="px-2 w-full h-full bg-transparent border-none outline-none" value={date} readOnly />
+                {showIcon && (
+                    <div className="w-fit h-full bg-sky-400 px-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M8 2v4" />
+                            <path d="M16 2v4" />
+                            <rect width="18" height="18" x="3" y="4" rx="2" />
+                            <path d="M3 10h18" />
+                        </svg>
+                    </div>
+                )}
+            </div>
+
+            <div className="bg-white w-full h-fit absolute top-full flex flex-col items-center justify-center">
+
+                {whatToShow === 'days' && (
+                    <>
+                        <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center text-black">
+                            <svg onClick={handlePrevMonth} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
+                            <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
+
+                                {whatToShow === 'days' && (
+                                    <span className="hover:text-sky-400 cursor-pointer" onClick={() => setWhatToShow('months')}>{currentLanguages.months[currentMonth]}</span>
+                                )}
+                                <span className="hover:text-sky-400 cursor-pointer" onClick={() => setWhatToShow('years')}>{new Date(currentYear, currentMonth).toLocaleString(language, {
+                                    year: 'numeric',
+                                })}</span>
+                            </div>
+                            <svg onClick={handleNextMonth} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                        </div>
+
+                        <div className="w-full h-fit grid grid-cols-7 text-center font-medium mt-2">
+                            {currentLanguages.weekDays.map(day => (
+                                <div key={day} className="text-sm text-gray-600">{day}</div>
+                            ))}
+                        </div>
+
+                        <div className="w-full grid grid-cols-7 auto-rows-fr gap-1 text-center mt-1">
+                            {dates.map((item, idx) => {
+                                const isToday =
+                                    item.currentMonth &&
+                                    currentMonth === today.getMonth() &&
+                                    currentYear === today.getFullYear() &&
+                                    item.date === today.getDate();
+                                return (
+                                    <div
+                                        key={idx}
+                                        onClick={() => handleSelectDay(item.date)}
+                                        className={`p-2 text-sm rounded ${item.currentMonth ? 'text-black' : 'text-gray-300 pointer-events-none'} ${isToday ? 'bg-zinc-100 ' : ''} hover:bg-gray-200 cursor-pointer`}>
+                                        {item.date}
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        {showTime && (
+                            <div className="w-full h-20 border-t border-zinc-200 flex flex-row gap-2 items-center justify-center text-black">
+                                <div className="w-fit h-full flex flex-col gap:1 items-center justify-center">
+                                    <svg onClick={() => incrementHour()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+                                    <span className="select-none text-lg">{String(timeFormat === '12' && hour === 0 ? 12 : hour).padStart(2, '0')}</span>
+                                    <svg onClick={() => decrementHour()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                </div>
+                                <span className="select-none text-lg">:</span>
+                                <div className="w-fit h-full flex flex-col gap:1 items-center justify-center">
+                                    <svg onClick={() => handleIncrementMinute()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+                                    <span className="select-none text-lg">{String(minutes).padStart(2, '0')}</span>
+                                    <svg onClick={() => handleDecrementMinute()} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                </div>
+                                {timeFormat === '12' && (
+                                    <>
+                                        <span className="select-none text-lg">:</span>
+                                        <div className="w-fit h-full flex flex-col gap:1 items-center justify-center">
+                                            <svg onClick={() => { setDayPeriod(prev => prev === 'PM' ? 'AM' : 'PM'); handleChageDayPeriodOnDate(dayPeriod === 'AM' ? 'PM' : 'AM') }} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+                                            <span className="select-none text-lg">{dayPeriod}</span>
+                                            <svg onClick={() => { setDayPeriod(prev => prev === 'PM' ? 'AM' : 'PM'); handleChageDayPeriodOnDate(dayPeriod === 'AM' ? 'PM' : 'AM') }} className="cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
+                    </>
+                )}
+
+                {whatToShow === 'months' && (
+                    <>
+                        <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center text-black">
+                            <svg onClick={() => { setCurrentYear(prev => prev - 1); }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
+                            <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
+                                <span className="hover:text-sky-400 cursor-pointer" onClick={() => setWhatToShow('years')}>{new Date(currentYear, currentMonth).toLocaleString(language, {
+                                    year: 'numeric',
+                                })}</span>
+                            </div>
+                            <svg onClick={() => { setCurrentYear(prev => prev + 1) }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                        </div>
+
+                        <div className="w-full h-fit grid grid-cols-3 text-center mt-2 text-black">
+                            {Array.from({ length: 12 }, (_, i) => (
+                                <div key={i} className="py-2 cursor-pointer hover:bg-zinc-100" onClick={() => { setCurrentMonth(i); setWhatToShow('days') }}>
+                                    {new Date(2000, i).toLocaleString(language, { month: 'long' })}
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
+
+                {whatToShow === 'years' && (
+                    <>
+                        <div className="border-b border-zinc-200 w-full h-10 flex flex-row justify-between px-2 items-center text-black">
+                            <svg onClick={() => { setCurrentYear(prev => prev - 10); }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m15 18-6-6 6-6" /></svg>
+                            <div className="flex flex-row gap-2 w-fit h-full items-center justify-center capitalize">
+                                <span>{Math.floor(currentYear / 10) * 10} - {(Math.floor(currentYear / 10) * 10) + 9}</span>
+                            </div>
+                            <svg onClick={() => { setCurrentYear(prev => prev + 10) }} xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                        </div>
+
+                        <div className="w-full h-fit grid grid-cols-2 text-center mt-2 text-black">
+                            {Array.from({ length: 10 }, (_, i) => Math.floor(currentYear / 10) * 10 + i).map((year) => (
+                                <div
+                                    key={year}
+                                    className="py-2 cursor-pointer hover:bg-zinc-100 rounded"
+                                    onClick={() => {
+                                        setCurrentYear(year);
+                                        setWhatToShow('months');
+                                    }}
+                                >
+                                    {year}
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
+
+                {showButtonBar && (
+                    <div className="w-full h-10  flex items-center justify-between px-4 border-t border-zinc-200">
+                        <div className="flex gap-2 w-full justify-between">
+                            <button
+                                type="button"
+                                className="text-zinc-500 font-semibold py-1 rounded cursor-pointer hover:bg-zinc-100 "
+                                onClick={() => {
+                                    setCurrentMonth(today.getMonth());
+                                    setCurrentYear(today.getFullYear());
+                                    formatDate(today.getDate(), today.getMonth(), today.getFullYear(), hour, minutes);
+                                }}
+                            >{currentLanguages.today}</button>
+                            <button
+                                type="button"
+                                className="text-zinc-500 font-semibold py-1 rounded cursor-pointer hover:bg-zinc-100"
+                                onClick={() => setShowCalendar(false)}
+                            >{currentLanguages.close}</button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </label>
+    )
+}
