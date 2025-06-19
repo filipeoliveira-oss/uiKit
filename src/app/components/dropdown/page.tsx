@@ -50,7 +50,7 @@ Dropdown`
 
             <div className="w-full h-fit flex flex-col gap-2">
                 <span className="text-lg font-semibold">onChangeValue*</span>
-                <CodeBlock code="Function (e) => setValue(e)" showLineNumbers={false} />
+                <CodeBlock code="(e:element) => void" showLineNumbers={false} />
                 <span>Function to execute on change</span>
             </div>
 

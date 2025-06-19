@@ -65,7 +65,7 @@ Chips`
 
             <div className="w-full h-fit flex flex-col gap-2">
                 <span className="text-lg font-semibold">changeValue*</span>
-                <CodeBlock code="React.Dispatch<SetStateAction<Array<string>>>" language="js" showLineNumbers={false} />
+                <CodeBlock code="(e:string) => void" language="js" showLineNumbers={false} />
                 <span>Function to be executed when value changes</span>
             </div>
 

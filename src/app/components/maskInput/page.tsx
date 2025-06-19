@@ -28,19 +28,19 @@ Mask Input`
 
             <h2 className="text-3xl font-bold">Usage</h2>
 
-            <MaskInput onChangeValue={(e) => sv(e.target.value)} value={v} mask="" type="number" />
+            <MaskInput onChangeValue={(e) => sv(e)} value={v} mask="" type="number" />
 
             <h2 className="text-3xl font-bold">Parameters</h2>
 
             <div className="w-full h-fit flex flex-col gap-2">
                 <span className="text-lg font-semibold">onChangeValue*</span>
-                <CodeBlock code="(e) => setValue(e.target.value)" showLineNumbers={false} />
+                <CodeBlock code="(e:string) => void" showLineNumbers={false} />
                 <span>Value to executes when it changes</span>
             </div>
 
             <div className="w-full h-fit flex flex-col gap-2">
                 <span className="text-lg font-semibold">value*</span>
-                {/* <CodeBlock code="(e) => setValue(e.target.value)" showLineNumbers={false} /> */}
+                <CodeBlock code="string" showLineNumbers={false} />
                 <span>The current value</span>
             </div>
 

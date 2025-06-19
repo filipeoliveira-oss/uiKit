@@ -34,7 +34,7 @@ Checkbox`
 
             <div className="w-full h-fit flex flex-col gap-2">
                 <span className="text-lg font-semibold">setValue</span>
-                <CodeBlock code="Function" showLineNumbers={false} />
+                <CodeBlock code="(e:boolean) => void" language="js" showLineNumbers={false} />
                 <span>Function to execute when value change</span>
             </div>
 

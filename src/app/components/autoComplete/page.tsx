@@ -48,7 +48,7 @@ autoComplete`
 
             <div className="w-full h-fit flex flex-col gap-2">
                 <span className="text-lg font-semibold">onChangeValue*</span>
-                <CodeBlock code="(e) => function(e)" language="ts" showLineNumbers={false} />
+                <CodeBlock code="(e:string) => void" language="ts" showLineNumbers={false} />
                 <span>Function to execute when value change</span>
             </div>
 
