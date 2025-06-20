@@ -53,6 +53,7 @@ export default function Sidebar() {
                         <SidebarElement url="/components/currencyInput" title="Currency Input" />
                         <SidebarElement url="/components/customDropdownFilter" title="Custom Filter" />
                         <SidebarElement url="/components/dataTable" title="Data Table" />
+                        <SidebarElement url="/components/dataView" title="Data View - criar pagina" />
                         <SidebarElement url="/components/drawer" title="Drawer" />
                         <SidebarElement url="/components/dropdown" title="Dropdown" />
                         <SidebarElement url="/components/inputOtp" title="Input Otp - criar pagina" />
@@ -61,8 +62,10 @@ export default function Sidebar() {
                         <SidebarElement url="/components/loaders" title="Loaders" />
                         <SidebarElement url="/components/maskInput" title="Mask Input" />
                         <SidebarElement url="/components/modal" title="Modal" />
+                        <SidebarElement url="/components/orderList" title="Order List - criar pagina" />
                         <SidebarElement url="/components/pageLoader" title="Page Loader - rever component" />
-                        <SidebarElement url="/components/radioGroup" title="Radio Group - rever component" />
+                        <SidebarElement url="/components/radioGroup" title="Radio Group - criar pagina" />
+                        <SidebarElement url="/components/rating" title="Rating - criar pagina" />
                         <SidebarElement url="/components/tooltip" title="Tooltip" />
                     </ul>
                 </div>
