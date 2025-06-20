@@ -46,6 +46,7 @@ export default function Sidebar() {
                         <SidebarElement url="/components/actionMenu" title="Action Menu" />
                         <SidebarElement url="/components/autoComplete" title="Auto complete" />
                         <SidebarElement url="/components/button" title="Button" />
+                        <SidebarElement url="/components/calendar" title="Calendar - criar pagina" />
                         <SidebarElement url="/components/carousel" title="Carousel" />
                         <SidebarElement url="/components/checkbox" title="Checkbox" />
                         <SidebarElement url="/components/chips" title="Chips" />
@@ -54,10 +55,12 @@ export default function Sidebar() {
                         <SidebarElement url="/components/dataTable" title="Data Table" />
                         <SidebarElement url="/components/drawer" title="Drawer" />
                         <SidebarElement url="/components/dropdown" title="Dropdown" />
+                        <SidebarElement url="/components/inputOtp" title="Input Otp - criar pagina" />
+                        <SidebarElement url="/components/inputSwitch" title="Input Switch - criar pagina" />
                         <SidebarElement url="/components/loaders" title="Loaders" />
                         <SidebarElement url="/components/maskInput" title="Mask Input" />
                         <SidebarElement url="/components/modal" title="Modal" />
-                        <SidebarElement url="/components/pageLoader" title="Page Loader" />
+                        <SidebarElement url="/components/pageLoader" title="Page Loader - rever component" />
                         <SidebarElement url="/components/tooltip" title="Tooltip" />
                     </ul>
                 </div>
