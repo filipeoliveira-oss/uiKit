@@ -62,6 +62,7 @@ export default function Sidebar() {
                         <SidebarElement url="/components/maskInput" title="Mask Input" />
                         <SidebarElement url="/components/modal" title="Modal" />
                         <SidebarElement url="/components/pageLoader" title="Page Loader - rever component" />
+                        <SidebarElement url="/components/radioGroup" title="Radio Group - rever component" />
                         <SidebarElement url="/components/tooltip" title="Tooltip" />
                     </ul>
                 </div>
