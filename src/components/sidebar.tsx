@@ -57,6 +57,7 @@ export default function Sidebar() {
                         <SidebarElement url="/components/dropdown" title="Dropdown" />
                         <SidebarElement url="/components/inputOtp" title="Input Otp - criar pagina" />
                         <SidebarElement url="/components/inputSwitch" title="Input Switch - criar pagina" />
+                        <SidebarElement url="/components/inputTextArea" title="Input Text Area - criar pagina" />
                         <SidebarElement url="/components/loaders" title="Loaders" />
                         <SidebarElement url="/components/maskInput" title="Mask Input" />
                         <SidebarElement url="/components/modal" title="Modal" />
