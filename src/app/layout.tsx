@@ -1,3 +1,4 @@
+import Header from "@/components/header";
 import "./globals.css";
 
 export default function RootLayout({
@@ -7,7 +8,8 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`h-dvh w-dvw antialiased bg-background relative flex justify-center flex-col items-center  overflow-hidden `}>
+			<body className={`min-h-dvh w-dvw antialiased bg-lpbackground flex flex-col overflow-x-hidden text-white`}>
+				<Header/>
 				{children}
 			</body>
 		</html>
