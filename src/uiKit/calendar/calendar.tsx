@@ -44,7 +44,6 @@ interface ICalendar {
     timeFormat?: '12' | '24',
     customLanguage?: ICustomLanguage,
     colors?: IColors,
-    // ------ ENHANCEMENTS
     timeOnly?: boolean,
     dateTemplate?: (date: number) => React.ReactNode,
     inline?: boolean,
