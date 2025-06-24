@@ -2,8 +2,8 @@
 import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
-import { Button } from "@/uiKit/button/button";
-import Drawer from "@/uiKit/drawer/drawer";
+import { Button } from "@/uiKit/components/button/button";
+import Drawer from "@/uiKit/components/drawer/drawer";
 import { useState } from "react";
 
 export default function DrawerPage() {

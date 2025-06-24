@@ -3,7 +3,7 @@ import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
 import ComponentDisplay from "@/components/componentDisplay";
 import PageWrapper from "@/components/pageWrapper";
-import AutoComplete from "@/uiKit/autoComplete/autoComplete";
+import AutoComplete from "@/uiKit/components/autoComplete/autoComplete";
 import { useState } from "react";
 
 export default function AutoCompletePage() {

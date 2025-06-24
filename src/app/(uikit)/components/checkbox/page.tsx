@@ -2,7 +2,7 @@
 import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
-import Checkbox from "@/uiKit/checkBox/checkBox";
+import Checkbox from "@/uiKit/components/checkBox/checkBox";
 import { useState } from "react";
 
 export default function CheckboxPage() {

@@ -2,8 +2,8 @@
 import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
-import { Button } from "@/uiKit/button/button";
-import Modal from "@/uiKit/modal/modal";
+import { Button } from "@/uiKit/components/button/button";
+import Modal from "@/uiKit/components/modal/modal";
 import { useState } from "react";
 
 export default function ModalPage() {

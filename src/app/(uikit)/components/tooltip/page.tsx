@@ -1,7 +1,7 @@
 import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
-import { Tooltip } from "@/uiKit/tooltip/tooltip";
+import { Tooltip } from "@/uiKit/components/tooltip/tooltip";
 
 export default function TooltipPage() {
 

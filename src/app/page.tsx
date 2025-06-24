@@ -3,7 +3,7 @@ import Components from "@/components/home/components";
 import Footer from "@/components/home/footer";
 import Hero from "@/components/home/hero";
 import WhereUse from "@/components/home/whereUse";
-import useDocumentTitle from "@/uiKit/useDocumentTitle/useDocumentTitle";
+import useDocumentTitle from "@/uiKit/hooks/useDocumentTitle/useDocumentTitle";
 
 export default function Home() {
 

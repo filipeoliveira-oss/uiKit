@@ -3,7 +3,7 @@ import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
 import ComponentDisplay from "@/components/componentDisplay";
 import PageWrapper from "@/components/pageWrapper";
-import Calendar from "@/uiKit/calendar/calendar";
+import Calendar from "@/uiKit/components/calendar/calendar";
 import Link from "next/link";
 import { useState } from "react";
 

@@ -4,9 +4,9 @@ import CodeBlock from "@/components/codeBlock"
 import ColorText from "@/components/colorText"
 import ComponentDisplay from "@/components/componentDisplay"
 import PageWrapper from "@/components/pageWrapper"
-import OrderList from "@/uiKit/orderList/orderList"
-import RadioGroup from "@/uiKit/radioGroup/radioGroup"
-import Rating from "@/uiKit/rating/rating"
+import OrderList from "@/uiKit/components/orderList/orderList"
+import RadioGroup from "@/uiKit/components/radioGroup/radioGroup"
+import Rating from "@/uiKit/components/rating/rating"
 import { useState } from "react"
 
 export default function RatingPage() {

@@ -2,7 +2,7 @@
 import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
-import DataTable from "@/uiKit/dataTable/dataTable";
+import DataTable from "@/uiKit/components/dataTable/dataTable";
 import Link from "next/link";
 
 export default function DataTablePage() {

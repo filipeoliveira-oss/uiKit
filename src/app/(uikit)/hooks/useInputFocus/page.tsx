@@ -1,7 +1,7 @@
 'use client'
 import CodeBlock from '@/components/codeBlock';
 import PageWrapper from '@/components/pageWrapper';
-import useInputFocus from '@/uiKit/useInputFocus/useInputFocus';
+import useInputFocus from '@/uiKit/hooks/useInputFocus/useInputFocus';
 import { useRef } from 'react';
 
 export default function UseInputFocus() {

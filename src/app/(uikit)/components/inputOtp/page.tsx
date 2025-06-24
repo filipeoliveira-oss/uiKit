@@ -4,7 +4,7 @@ import CodeBlock from "@/components/codeBlock"
 import ColorText from "@/components/colorText"
 import ComponentDisplay from "@/components/componentDisplay"
 import PageWrapper from "@/components/pageWrapper"
-import InputOtp from "@/uiKit/inputOtp/inputOtp"
+import InputOtp from "@/uiKit/components/inputOtp/inputOtp"
 import { useState } from "react"
 
 export default function InputOtpPage() {

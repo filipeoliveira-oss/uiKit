@@ -1,7 +1,7 @@
 import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
-import { Button as UiButton } from "@/uiKit/button/button";
+import { Button as UiButton } from "@/uiKit/components/button/button";
 export default function Button() {
     const a = 
     `npx fouikit

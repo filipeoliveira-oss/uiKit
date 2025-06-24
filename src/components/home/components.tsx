@@ -1,9 +1,9 @@
 'use client'
 import ActionMenu from "@/app/(uikit)/components/actionMenu/page"
 import ActionsMenu from "@/uiKit/actionsMenu/actionsMenu"
-import Calendar from "@/uiKit/calendar/calendar"
+import Calendar from "@/uiKit/components/calendar/calendar"
 import { Dropdown } from "@/uiKit/dropdown/dropdown"
-import { GridLoader } from "@/uiKit/gridLoader/gridLoader"
+import { GridLoader } from "@/uiKit/loaders/gridLoader/gridLoader"
 import { X } from "lucide-react"
 import { useState } from "react"
 

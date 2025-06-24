@@ -3,7 +3,7 @@ import CodeBlock from "@/components/codeBlock"
 import ColorText from "@/components/colorText"
 import ComponentDisplay from "@/components/componentDisplay"
 import PageWrapper from "@/components/pageWrapper"
-import MaskInput from "@/uiKit/maskInput/maskInput"
+import MaskInput from "@/uiKit/components/maskInput/maskInput"
 import { useState } from "react"
 
 export default function MaskInputPage() {

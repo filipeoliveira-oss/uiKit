@@ -1,5 +1,5 @@
 'use client'
-import useDocumentTitle from "@/uiKit/useDocumentTitle/useDocumentTitle";
+import useDocumentTitle from "@/uiKit/hooks/useDocumentTitle/useDocumentTitle";
 import Link from "next/link";
 import React from "react";
 

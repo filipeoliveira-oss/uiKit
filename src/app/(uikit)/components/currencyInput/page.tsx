@@ -3,7 +3,7 @@ import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
 import ComponentDisplay from "@/components/componentDisplay";
 import PageWrapper from "@/components/pageWrapper";
-import CurrencyInput from "@/uiKit/currencyInput/currencyInput";
+import CurrencyInput from "@/uiKit/components/currencyInput/currencyInput";
 import { useState } from "react";
 
 export default function Currency() {

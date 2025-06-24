@@ -1,16 +1,16 @@
 'use client'
 import { act, useState } from 'react';
-import Checkbox from '@/uiKit/checkBox/checkBox';
+import Checkbox from '@/uiKit/components/checkBox/checkBox';
 import { useForm } from 'react-hook-form';
-import { Chips } from '@/uiKit/chips/chips';
-import Calendar from '@/uiKit/calendar/calendar';
-import InputSwitch from '@/uiKit/inputSwitch/inputSwitch';
-import InputOtp from '@/uiKit/inputOtp/inputOtp';
-import InputTextArea from '@/uiKit/inputTextArea/inputTextArea';
-import RadioGroup from '@/uiKit/radioGroup/radioGroup';
-import Rating from '@/uiKit/rating/rating';
-import DataView from '@/uiKit/dataView/dataView';
-import OrderList from '@/uiKit/orderList/orderList';
+import { Chips } from '@/uiKit/components/chips/chips';
+import Calendar from '@/uiKit/components/calendar/calendar';
+import InputSwitch from '@/uiKit/components/inputSwitch/inputSwitch';
+import InputOtp from '@/uiKit/components/inputOtp/inputOtp';
+import InputTextArea from '@/uiKit/components/inputTextArea/inputTextArea';
+import RadioGroup from '@/uiKit/components/radioGroup/radioGroup';
+import Rating from '@/uiKit/components/rating/rating';
+import DataView from '@/uiKit/components/dataView/dataView';
+import OrderList from '@/uiKit/components/orderList/orderList';
 
 
 interface teste {

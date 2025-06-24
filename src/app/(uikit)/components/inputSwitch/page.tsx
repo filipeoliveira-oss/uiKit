@@ -4,7 +4,7 @@ import CodeBlock from "@/components/codeBlock"
 import ColorText from "@/components/colorText"
 import ComponentDisplay from "@/components/componentDisplay"
 import PageWrapper from "@/components/pageWrapper"
-import InputSwitch from "@/uiKit/inputSwitch/inputSwitch"
+import InputSwitch from "@/uiKit/components/inputSwitch/inputSwitch"
 import { useState } from "react"
 
 export default function InputOtpPage() {

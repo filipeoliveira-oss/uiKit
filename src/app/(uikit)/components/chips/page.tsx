@@ -3,7 +3,7 @@ import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
 import ComponentDisplay from "@/components/componentDisplay";
 import PageWrapper from "@/components/pageWrapper";
-import { Chips } from "@/uiKit/chips/chips";
+import { Chips } from "@/uiKit/components/chips/chips";
 import { useState } from "react";
 
 export default function ChipsPage() {

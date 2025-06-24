@@ -1,7 +1,7 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
 import PageWrapper from "@/components/pageWrapper";
-import { useIsMobile } from "@/uiKit/useIsMobile/useIsMobile";
+import { useIsMobile } from "@/uiKit/hooks/useIsMobile/useIsMobile";
 
 export default function UseIsMobile() {
 

@@ -4,7 +4,7 @@ import CodeBlock from "@/components/codeBlock"
 import ColorText from "@/components/colorText"
 import ComponentDisplay from "@/components/componentDisplay"
 import PageWrapper from "@/components/pageWrapper"
-import OrderList from "@/uiKit/orderList/orderList"
+import OrderList from "@/uiKit/components/orderList/orderList"
 import { useState } from "react"
 
 export default function OrderListPage() {

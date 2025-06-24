@@ -1,7 +1,7 @@
 'use client'
 import CodeBlock from '@/components/codeBlock';
 import PageWrapper from '@/components/pageWrapper';
-import useDocumentTitle from '@/uiKit/useDocumentTitle/useDocumentTitle';
+import useDocumentTitle from '@/uiKit/hooks/useDocumentTitle/useDocumentTitle';
 import { useState } from 'react';
 
 export default function useDocumentTitlePage() {

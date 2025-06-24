@@ -4,7 +4,7 @@ import CodeBlock from "@/components/codeBlock"
 import ColorText from "@/components/colorText"
 import ComponentDisplay from "@/components/componentDisplay"
 import PageWrapper from "@/components/pageWrapper"
-import InputTextArea from "@/uiKit/inputTextArea/inputTextArea"
+import InputTextArea from "@/uiKit/components/inputTextArea/inputTextArea"
 import { useState } from "react"
 
 export default function InputTextAreaPage() {
