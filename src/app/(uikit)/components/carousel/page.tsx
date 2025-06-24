@@ -1,12 +1,13 @@
 'use client'
 import CodeBlock from "@/components/codeBlock"
 import PageWrapper from "@/components/pageWrapper"
-import c4 from '../../../../public/card4.png'
-import c2 from '../../../../public/card2.jpg'
-import c3 from '../../../../public/card3.png'
+import c4 from '/public/card4.png'
+import c2 from '/public/card2.jpg'
+import c3 from '/public/card3.png'
 import { Slide, Carousel } from "@/uiKit/carousel/carousel"
 import { Dropdown } from "@/uiKit/dropdown/dropdown"
 import { useState } from "react"
+import ColorText from "@/components/colorText"
 
 export default function CarouselPage() {
     const [currentType, setCurrentType] = useState('slide')
@@ -34,7 +35,7 @@ carousel`
 
     return (
         <PageWrapper requirements={deps} title="Checkbox">
-            <h1 className="text-4xl font-bold">Carousel</h1>
+            <ColorText text="Carousel"/>
             <span>A custom Carousel and slide component</span>
 
             <CodeBlock code={a} />

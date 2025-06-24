@@ -1,4 +1,5 @@
 'use client'
+import { componentsList, hooksList } from "@/lib/uiKitElements";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -15,7 +16,7 @@ export default function Sidebar() {
     }
 
     return (
-        <div className="w-[15%] h-full  overflow-y-auto overflow-x-hidden shrink-0 gap-2 flex flex-col">
+        <div className="w-[15%] h-full  overflow-y-auto overflow-x-hidden shrink-0 gap-4 flex flex-col">
             <div className="w-full h-fit flex flex-col gap-2 ">
                 <span className="font-semibold">Getting Started</span>
                 <div className="w-full ml-4">
@@ -31,10 +32,21 @@ export default function Sidebar() {
                 <span className="font-semibold">Hooks</span>
                 <div className="w-full ml-4">
                     <ul className="w-[80%] h-fit list-disc pl-4 ">
-                        <SidebarElement url="/hooks/useDocumentTitle" title="useDocumentTitle" />
-                        <SidebarElement url="/hooks/useInputFocus" title="useInputFocus" />
-                        <SidebarElement url='/hooks/useIsMobile' title="useIsMobile" />
-                        <SidebarElement url='/hooks/useOnClickOutside' title="useOnClickOutside" />
+                        {hooksList
+                            .sort((a, b) => a.title.localeCompare(b.title))
+                            .map((hook) => (
+                                <SidebarElement key={hook.url} url={hook.url} title={hook.title} />
+                            ))}
+                    </ul>
+                </div>
+            </div>
+
+            <div className="w-full h-fit flex flex-col gap-2 ">
+                <span className="font-semibold">Loaders</span>
+                <div className="w-full ml-4">
+                    <ul className="w-[80%] h-fit list-disc pl-4 ">
+                        <SidebarElement url="/loaders" title="Loaders preview" />
+                        <SidebarElement url="/loaders/pageloader" title="Page loader - rever component" />
                     </ul>
                 </div>
             </div>
@@ -43,30 +55,11 @@ export default function Sidebar() {
                 <span className="font-semibold">Components</span>
                 <div className="w-full ml-4">
                     <ul className="w-[80%] h-fit list-disc pl-4 ">
-                        <SidebarElement url="/components/actionMenu" title="Action Menu" />
-                        <SidebarElement url="/components/autoComplete" title="Auto complete" />
-                        <SidebarElement url="/components/button" title="Button" />
-                        <SidebarElement url="/components/calendar" title="Calendar - criar pagina" />
-                        <SidebarElement url="/components/carousel" title="Carousel" />
-                        <SidebarElement url="/components/checkbox" title="Checkbox" />
-                        <SidebarElement url="/components/chips" title="Chips" />
-                        <SidebarElement url="/components/currencyInput" title="Currency Input" />
-                        <SidebarElement url="/components/customDropdownFilter" title="Custom Filter" />
-                        <SidebarElement url="/components/dataTable" title="Data Table" />
-                        <SidebarElement url="/components/dataView" title="Data View - criar pagina" />
-                        <SidebarElement url="/components/drawer" title="Drawer" />
-                        <SidebarElement url="/components/dropdown" title="Dropdown" />
-                        <SidebarElement url="/components/inputOtp" title="Input Otp - criar pagina" />
-                        <SidebarElement url="/components/inputSwitch" title="Input Switch - criar pagina" />
-                        <SidebarElement url="/components/inputTextArea" title="Input Text Area - criar pagina" />
-                        <SidebarElement url="/components/loaders" title="Loaders" />
-                        <SidebarElement url="/components/maskInput" title="Mask Input" />
-                        <SidebarElement url="/components/modal" title="Modal" />
-                        <SidebarElement url="/components/orderList" title="Order List - criar pagina" />
-                        <SidebarElement url="/components/pageLoader" title="Page Loader - rever component" />
-                        <SidebarElement url="/components/radioGroup" title="Radio Group - criar pagina" />
-                        <SidebarElement url="/components/rating" title="Rating - criar pagina" />
-                        <SidebarElement url="/components/tooltip" title="Tooltip" />
+                        {componentsList
+                            .sort((a, b) => a.title.localeCompare(b.title))
+                            .map((component) => (
+                                <SidebarElement key={component.url} url={component.url} title={component.title} />
+                            ))}
                     </ul>
                 </div>
             </div>

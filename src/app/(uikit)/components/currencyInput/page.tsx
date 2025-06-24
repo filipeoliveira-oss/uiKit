@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import CurrencyInput from "@/uiKit/currencyInput/currencyInput";
 import { useState } from "react";
@@ -23,7 +24,7 @@ const deps = [
 
     return (
         <PageWrapper requirements={deps} title="Currency Input">
-            <h1 className="text-4xl font-bold">Currency inputs</h1>
+            <ColorText text="Currency input"/>
 
             <CodeBlock code={a} />
 

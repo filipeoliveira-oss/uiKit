@@ -1,4 +1,5 @@
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import { Button as UiButton } from "@/uiKit/button/button";
 export default function Button() {
@@ -18,7 +19,7 @@ Button`
 
     return (
         <PageWrapper requirements={deps} title="Button">
-            <h1 className="text-4xl font-bold">Button</h1>
+            <ColorText text="Button"/>
             <span>A default button for the project</span>
 
             <CodeBlock code={a} />

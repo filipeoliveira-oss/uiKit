@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock"
+import ColorText from "@/components/colorText"
 import PageWrapper from "@/components/pageWrapper"
 import { Button } from "@/uiKit/button/button"
 import { useState } from "react"
@@ -21,7 +22,7 @@ pageLoader`
 
         <PageWrapper requirements={deps} title="Page Loader">
             <PageLoader />
-            <h1 className="text-4xl font-bold">Page Loader</h1>
+            <ColorText text="Page Loader"/>
 
             <CodeBlock code={a} />
 

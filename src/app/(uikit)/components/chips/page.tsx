@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import { Chips } from "@/uiKit/chips/chips";
 import { useState } from "react";
@@ -39,7 +40,7 @@ Chips`
 
     return (
         <PageWrapper requirements={deps} title="Chips">
-            <h1 className="text-4xl font-bold">Chips</h1>
+            <ColorText text="Chips"/>
             <div className="flex flex-col gap-2">
                 <span>Chips is used to enter multiple values on an input field.</span>
                 <span>Chips is a HTMLInputElement replica, that means that every Input property works on the element</span>

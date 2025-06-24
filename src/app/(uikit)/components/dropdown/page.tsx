@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import { Dropdown } from "@/uiKit/dropdown/dropdown";
 import { useState } from "react";
@@ -26,7 +27,7 @@ Dropdown`
 
     return (
         <PageWrapper requirements={deps} title="Dropdown">
-            <h1 className="text-4xl font-bold">Dropdown</h1>
+            <ColorText text="Dropdown"/>
 
             <CodeBlock code={a} />
 

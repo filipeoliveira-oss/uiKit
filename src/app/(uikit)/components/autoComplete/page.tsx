@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import AutoComplete from "@/uiKit/autoComplete/autoComplete";
 import { useState } from "react";
@@ -22,7 +23,7 @@ autoComplete`
 
     return (
         <PageWrapper requirements={deps} title="AutoComplete">
-            <h1 className="text-4xl font-bold">AutoComplete</h1>
+            <ColorText text="AutoComplete"/>
             <span>AutoComplete is an input component that provides real-time suggestions while being typed</span>
 
             <CodeBlock code={a} />

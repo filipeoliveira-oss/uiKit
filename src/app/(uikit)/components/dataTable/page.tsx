@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import DataTable from "@/uiKit/dataTable/dataTable";
 import Link from "next/link";
@@ -20,7 +21,7 @@ Data table`
     ] 
     return (
         <PageWrapper requirements={deps} title="Data Table">
-            <h1 className="text-4xl font-bold">Currency inputs</h1>
+            <ColorText text="Data Table"/>
             <span>This is a boiler plate of <Link href={'https://www.ag-grid.com/react-data-grid/getting-started/'} className="underline text-zinc-300">React AG Grid</Link>. All the creation process should be assigned to them</span>
 
             <CodeBlock code={a} />

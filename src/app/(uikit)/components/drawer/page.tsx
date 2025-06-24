@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import { Button } from "@/uiKit/button/button";
 import Drawer from "@/uiKit/drawer/drawer";
@@ -31,7 +32,7 @@ Drawer`
                 <Button onClick={() => setOpen(false)}>Close drawer</Button>
             </Drawer>
 
-            <h1 className="text-4xl font-bold">Drawer</h1>
+            <ColorText text="Drawer"/>
 
             <CodeBlock code={a} />
 

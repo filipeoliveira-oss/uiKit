@@ -1,4 +1,5 @@
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import { Tooltip } from "@/uiKit/tooltip/tooltip";
 
@@ -18,7 +19,7 @@ Tooltip`
 
     return (
         <PageWrapper requirements={deps} title="Tooltip">
-            <h1 className="text-4xl font-bold">Tooltip</h1>
+            <ColorText text="Tooltip"/>
 
             <CodeBlock code={a} />
 

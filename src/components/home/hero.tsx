@@ -72,7 +72,7 @@ export default function Hero() {
             });
 
             gsap.to(loaders, {
-                val: 8,
+                val: 10,
                 duration: 1,
                 ease: "power1.out",
                 onUpdate: () => {

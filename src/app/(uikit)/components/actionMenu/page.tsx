@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock"
+import ColorText from "@/components/colorText"
 import PageWrapper from "@/components/pageWrapper"
 import ActionsMenu from "@/uiKit/actionsMenu/actionsMenu"
 import { useState } from "react"
@@ -21,7 +22,7 @@ ActionMenu`
     ]
     return (
         <PageWrapper requirements={deps} title="Action Menu">
-            <h1 className="text-4xl font-bold">Actions Menu</h1>
+            <ColorText text="Actions Menu"/>
             <span>Actions menu is a menu dropdown</span>
 
             <CodeBlock code={a} />

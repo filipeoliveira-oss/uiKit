@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import { Button } from "@/uiKit/button/button";
 import Modal from "@/uiKit/modal/modal";
@@ -30,7 +31,7 @@ Modal`
                 <Button onClick={() => setOpen(false)}>Close modal</Button>
             </Modal>
 
-            <h1 className="text-4xl font-bold">Modal</h1>
+            <ColorText text="Modal"/>
 
             <CodeBlock code={a} />
 

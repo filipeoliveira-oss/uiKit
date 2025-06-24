@@ -8,8 +8,8 @@ export default function Footer() {
                 <div className="w-fit h-fit flex flex-col gap-2">
                     <span className="font-bold mb-8">General</span>
                     <Link href={'/docs/introduction'}>Documentation</Link>
-                    <Link href={hooksList[0].url}>Hooks</Link>
-                    <Link href={componentsList[0].url}>Components</Link>
+                    <Link href={hooksList.sort((a,b) => a.title.localeCompare(b.title))[0].url}>Hooks</Link>
+                    <Link href={componentsList.sort((a,b) => a.title.localeCompare(b.title))[0].url}>Components</Link>
                     <Link href={'/loaders'}>Loaders</Link>
                 </div>
 

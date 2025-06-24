@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import Checkbox from "@/uiKit/checkBox/checkBox";
 import { useState } from "react";
@@ -21,7 +22,7 @@ Checkbox`
 
     return (
         <PageWrapper requirements={deps} title="Checkbox">
-            <h1 className="text-4xl font-bold">Checkbox</h1>
+            <ColorText text="Checkbox"/>
             <span>A custom Checkbox for the project</span>
 
             <CodeBlock code={a} />

@@ -24,7 +24,6 @@ export const componentsList: Array<IUikitElements> = [
     { url: "/components/maskInput", title: "Mask Input" },
     { url: "/components/modal", title: "Modal" },
     { url: "/components/orderList", title: "Order List - criar pagina" },
-    { url: "/components/pageLoader", title: "Page Loader - rever component" },
     { url: "/components/radioGroup", title: "Radio Group - criar pagina" },
     { url: "/components/rating", title: "Rating - criar pagina" },
     { url: "/components/tooltip", title: "Tooltip" },

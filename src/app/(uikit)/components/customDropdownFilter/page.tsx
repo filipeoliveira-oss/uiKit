@@ -1,8 +1,10 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import CustomDropdownFilter from "@/uiKit/customDropdownFilterGrid/customDropdownFilterGrid";
 import DataTable from "@/uiKit/dataTable/dataTable";
+import Link from "next/link";
 
 export default function CustomDropdownFilterAgGridPage() {
 
@@ -21,8 +23,8 @@ Custom Dropdown Filter For AG Grid`
 
     return (
         <PageWrapper requirements={deps} title="Custom Dropdown">
-            <h1 className="text-4xl font-bold">Currency inputs</h1>
-            <span>This element MUST be used with the Data Table component</span>
+            <ColorText text="Custom Dropdown Filter"/>
+            <span>This element MUST be used with the <Link href={'/components/dataTable'} className="underline ">Data Table component</Link></span>
 
             <CodeBlock code={a} />
 

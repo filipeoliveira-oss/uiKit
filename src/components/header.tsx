@@ -14,8 +14,8 @@ export default function Header() {
 
                 <ul className="flex flex-row w-fit h-full items-center justify-center gap-8">
                     <li className="w-fit h-full flex items-center justify-center"><Link href={'/docs/introduction'} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/docs') ? 'border-reactblue': 'border-transparent'}`}>Docs</Link></li>
-                    <li className="w-fit h-full flex items-center justify-center"><Link href={hooksList[0].url} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/hooks') ? 'border-reactblue': 'border-transparent'}`}>Hooks</Link></li>
-                    <li className="w-fit h-full flex items-center justify-center"><Link href={componentsList[0].url} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/components') ? 'border-reactblue': 'border-transparent'}`}>Components</Link></li>
+                    <li className="w-fit h-full flex items-center justify-center"><Link href={hooksList.sort((a,b) => a.title.localeCompare(b.title))[0].url} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/hooks') ? 'border-reactblue': 'border-transparent'}`}>Hooks</Link></li>
+                    <li className="w-fit h-full flex items-center justify-center"><Link href={componentsList.sort((a,b) => a.title.localeCompare(b.title))[0].url} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/components') ? 'border-reactblue': 'border-transparent'}`}>Components</Link></li>
                     <li className="w-fit h-full flex items-center justify-center"><Link href={'/loaders'} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/loaders') ? 'border-reactblue': 'border-transparent'}`}>Loaders</Link></li>
                 </ul>
 

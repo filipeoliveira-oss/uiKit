@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock"
+import ColorText from "@/components/colorText"
 import PageWrapper from "@/components/pageWrapper"
 import MaskInput from "@/uiKit/maskInput/maskInput"
 import { useState } from "react"
@@ -22,7 +23,7 @@ Mask Input`
 
     return (
         <PageWrapper requirements={deps} title="Mask Input">
-            <h1 className="text-4xl font-bold">Dropdown</h1>
+            <ColorText text="Mask Input"/>
 
             <CodeBlock code={a} />
 
