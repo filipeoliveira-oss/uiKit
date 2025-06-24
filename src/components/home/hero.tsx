@@ -17,6 +17,7 @@ export default function Hero() {
     const loadersRef = useRef<HTMLSpanElement>(null)
     const snippetBig = useRef(null)
     const snippetSmall = useRef(null)
+    const wordsRef = useRef<HTMLSpanElement>(null)
 
     useEffect(() => {
         const components = { val: 0 };
@@ -37,9 +38,12 @@ export default function Hero() {
                 type: 'words',
                 mask: 'words',
                 onSplit: (self) => {
+                    gsap.set(wordsRef.current,{
+                        opacity:1
+                    })
+
                     gsap.from(self.words, {
                         y: 100,
-                        opacity: 0,
                         autoAlpha: 0,
                         stagger: 0.1,
                         onComplete: () => {
@@ -82,15 +86,24 @@ export default function Hero() {
                 },
             });
 
+            gsap.set(snippetBig.current,{
+                opacity:1
+            })
+
+             gsap.set(snippetSmall.current,{
+                opacity:1
+            })
+
+            tl.from(snippetBig.current, {
+                x: 2000,
+                duration: 1,
+            }).from(snippetSmall.current, {
+                x: 2000,
+                duration: 1,
+            })
         })
 
-        tl.from(snippetBig.current, {
-            x: 2000,
-            duration: 1,
-        }).from(snippetSmall.current, {
-            x: 2000,
-            duration: 1,
-        })
+
     }, [])
 
 
@@ -103,7 +116,7 @@ export default function Hero() {
 
                     <div className="flex flex-col w-full h-fit mt-4">
                         <h2 className="font-bold text-3xl">Accelerate development with <br /> ready-to-use React UI code snippets</h2>
-                        <span className="text-2xl text-zinc-300" id="tagline">Define it. Adapt it. Reuse it.</span>
+                        <span className="text-2xl text-zinc-300 opacity-0" ref={wordsRef} id="tagline">Define it. Adapt it. Reuse it.</span>
                     </div>
 
                     <Link href={'/docs/introduction'} className="mt-11">
@@ -115,8 +128,8 @@ export default function Hero() {
                 </div>
 
                 <div className="flex flex-col w-[60%] h-[60%] relative">
-                    <Image src={codeSnippetBig} alt="Hook Code Snippet" className="absolute top-0 left-30" ref={snippetBig} />
-                    <Image src={codeSnippetSmall} alt="Hook Code Snippet" className="absolute top-[25%] left-0" ref={snippetSmall} />
+                    <Image src={codeSnippetBig} alt="Hook Code Snippet" className="absolute top-0 left-30 opacity-0" ref={snippetBig} />
+                    <Image src={codeSnippetSmall} alt="Hook Code Snippet" className="absolute top-[25%] left-0 opacity-0" ref={snippetSmall} />
                 </div>
             </div>
 

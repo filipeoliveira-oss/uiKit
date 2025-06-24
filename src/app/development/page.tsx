@@ -11,7 +11,6 @@ import RadioGroup from '@/uiKit/radioGroup/radioGroup';
 import Rating from '@/uiKit/rating/rating';
 import DataView from '@/uiKit/dataView/dataView';
 import OrderList from '@/uiKit/orderList/orderList';
-import { Dropdown } from '@/uiKit/dropdown/dropdown';
 
 
 interface teste {
@@ -19,12 +18,25 @@ interface teste {
     price: string
 }
 export default function Component() {
-    const [a, b] = useState('')
-    const [c, d] = useState('')
+    const items = Array.from({ length: 50 }, (_, i) => ({
+        name: `Item ${i + 1}`,
+        price: Math.floor(Math.random() * 100) + 1, // random price from 1 to 100
+    }));
+    const [a, sa] = useState<Array<any>>(items)
+
+
+    const item = (item: teste) => {
+        return (
+            <div className='w-[60vw] h-fit flex flex-row justify-between items-center py-4 px-2'>
+                <span>{item.name}</span>
+                <span>R${item.price}</span>
+            </div>
+        )
+    }
+
     return (
-        <div className="w-screen h-screen flex flex-col gap-20 items-center justify-center">
-            <Dropdown content={['1', '2']} value={c} onChangeValue={(e) => d(e)} className='text-white'/>
-            <Calendar date={a} setDate={(e) => b(e)} showButtonBar showIcon/>
+        <div className="w-screen h-screen items-center justify-center flex flex-col gap-8">
+            <OrderList value={a} itemTemplate={item} changeValue={(e) => sa(e)} header='Items disponíveis' dragAndDrop/>
         </div>
     )
 }

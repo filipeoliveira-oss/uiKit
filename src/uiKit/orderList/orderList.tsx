@@ -119,7 +119,7 @@ export default function OrderList({ itemTemplate, value, changeValue, dragAndDro
                     {value.map((item, i) => (
                         <React.Fragment key={i}>
                             {dragAndDrop && (
-                                <div className={`w-full h-2 shrink-0 ${overIndex === i ? 'bg-sky-200' : 'bg-red-500'}`} onDragLeave={() => setOverIndex(null)}
+                                <div className={`w-full h-2 shrink-0 ${overIndex === i ? 'bg-sky-200' : 'bg-transparent'}`} onDragLeave={() => setOverIndex(null)}
                                     onDragOver={e => {
                                         if (draggedItemIndex !== i && draggedItemIndex !== i - 1) {
                                             e.preventDefault();
@@ -146,7 +146,7 @@ export default function OrderList({ itemTemplate, value, changeValue, dragAndDro
 
 
                     {dragAndDrop && (
-                        <div className={`w-full h-2 shrink-0 ${overIndex === value.length ? 'bg-sky-200' : 'bg-red-500'}`} onDragLeave={() => setOverIndex(null)}
+                        <div className={`w-full h-2 shrink-0 ${overIndex === value.length ? 'bg-sky-200' : 'bg-transparent'}`} onDragLeave={() => setOverIndex(null)}
                             onDragOver={e => {
                                 if (draggedItemIndex !== value.length - 1) {
                                     e.preventDefault();
