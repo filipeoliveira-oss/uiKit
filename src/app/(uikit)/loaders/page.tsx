@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock"
+import ColorText from "@/components/colorText"
 import PageWrapper from "@/components/pageWrapper"
 import { BarLoader } from "@/uiKit/barLoader/barLoader"
 import { BeatLoader } from "@/uiKit/beatLoader/beatLoader"
@@ -39,7 +40,7 @@ loaders
 
         <PageWrapper requirements={deps} title="Loaders">
 
-            <h1 className="text-4xl font-bold">Loaders</h1>
+            <ColorText text="Loaders"/>
 
             <CodeBlock code={a} />
 
