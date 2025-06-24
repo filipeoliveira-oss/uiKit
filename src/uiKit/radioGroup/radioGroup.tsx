@@ -1,16 +1,16 @@
 interface IRadioGroup {
-    options: Array<string>,
     value: string,
     changeValue: (e: string) => void,
-    selectedColor?: string,
+    options: Array<string>,
     name: string,
+    selectedColor?: string,
     disabled?: boolean
 }
 
 export default function RadioGroup({ changeValue, options, value, selectedColor = '#00bcff', name, disabled = false }: IRadioGroup) {
     return (
         <>
-            <div className={`w-fit h-fit flex flex-col gap-2 ${disabled ? 'pointer-events-none' : ''}`}>
+            <div className={`w-fit h-fit flex flex-col gap-2 text-black ${disabled ? 'pointer-events-none' : ''}`}>
                 {options.map((option, i) => {
                     const isSelected = option === value;
                     return (

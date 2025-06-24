@@ -7,10 +7,10 @@ function cn(...inputs: ClassValue[]) {
 }
 
 interface ITextarea {
-    label?: string,
-    autoResize?:boolean,
     value:string,
     changeValue:(e:string) => void,
+    label?: string,
+    autoResize?:boolean,
     cols?:number,
     rows?:number
 }

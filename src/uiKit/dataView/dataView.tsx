@@ -11,7 +11,7 @@ interface IDataView {
 }
 
 
-export default function DataView({ values, itemTemplate, header, pagination = false, rows, maxVisiblePages = 6, showItemBorder = true }: IDataView) {
+export default function DataView({ values, itemTemplate, header, pagination = false, rows = 10, maxVisiblePages = 6, showItemBorder = true }: IDataView) {
     const [currentItems, setCurrentItems] = useState<Array<any>>([])
     const [currentIndex, setCurrentIndex] = useState(0)
     const [totalPagesLength, setTotalPagesLength] = useState(0)

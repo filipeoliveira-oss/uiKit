@@ -82,7 +82,7 @@ export default function InputOtp({ changeOtp, tokenLength, value, disabled, inte
                             ref={(el) => { inputRefs.current[i] = el; }}
                             onKeyDown={(e) => handleKeyDown(e, i)}
                             onPaste={(e) => handlePaste(e, i)}
-                            className="uppercase text-sm w-8 border border-zinc-400 rounded-lg text-center text-white"
+                            className="uppercase text-sm w-8 border border-zinc-400 rounded-lg text-center text-black"
                             value={valueArray[i] ?? ''}
                             onChange={(e) => handleChange(e.target.value, i)}
                             maxLength={1}

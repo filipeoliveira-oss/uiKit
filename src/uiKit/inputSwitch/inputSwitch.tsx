@@ -13,7 +13,7 @@ interface iInputSwitch{
     height?:string
 }
 
-export default function InputSwitch({checked=false,onChangeChecked,disabled=false, height='40px',showText=false,falseText='off',trueText='on', falseBackgroundColor='#d4d4d8', trueBackgroundColor='#00bcff', widthMultiplier=2}:iInputSwitch){
+export default function InputSwitch({checked=false,onChangeChecked,disabled=false, height='40px',showText=false,falseText='Off',trueText='On', falseBackgroundColor='#d4d4d8', trueBackgroundColor='#00bcff', widthMultiplier=2}:iInputSwitch){
     
     const inputSwitch = {
             false: { x:0,transition: {
@@ -28,7 +28,7 @@ export default function InputSwitch({checked=false,onChangeChecked,disabled=fals
         }
 
     return(
-        <div className={`rounded-full relative cursor-pointer flex flex-row ${disabled ? 'pointer-events-none opacity-90' : ''}`} style={{width:`calc(${height} * ${widthMultiplier})`, height, backgroundColor: checked ? trueBackgroundColor : falseBackgroundColor}} onClick={() => onChangeChecked(!checked)}>
+        <div className={`shrink-0 rounded-full relative cursor-pointer flex flex-row ${disabled ? 'pointer-events-none opacity-90' : ''}`} style={{width:`calc(${height} * ${widthMultiplier})`, height, backgroundColor: checked ? trueBackgroundColor : falseBackgroundColor}} onClick={() => onChangeChecked(!checked)}>
             {showText && <span className='flex w-full h-full items-center justify-center capitalize' style={{fontSize:`calc(${height} / 3)`}}>{trueText}</span>}
             <motion.div className="bg-white rounded-full absolute top-0 left-0" style={{height:'100%', width:'50%'}}  variants={inputSwitch} initial={checked ? 'true' : 'false'} animate={checked ? 'true' : 'false'}></motion.div>
             {showText && <span className='flex w-full h-full items-center justify-center capitalize' style={{fontSize:`calc(${height} / 3)`}}>{falseText}</span>}
