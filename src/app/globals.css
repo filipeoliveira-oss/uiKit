@@ -1,7 +1,11 @@
 @import "tailwindcss";
 
 @theme{
-    --color-background: #0a0a0a
+    --color-background: #0a0a0a;
+    --color-lpbackground:#011519;
+    --color-reactblue:#00d8ff;
+    --color-lighterteal:#05878a;
+    --spacing-defaultWidth: 80%;
 }
 
 /* width */
@@ -25,4 +29,26 @@
 ::-webkit-scrollbar-thumb:hover {
   background: oklch(70.5% 0.015 286.067);
   
+}
+
+@font-face {
+  font-family: Poppins;
+  font-weight: 500;
+  src: url('/public/fonts/poppins/Poppins-Regular.ttf') format('ttf');
+}
+
+@font-face {
+  font-family: Poppins;
+  font-weight: 600;
+  src: url('/public/fonts/poppins/Poppins-Medium.ttf') format('ttf');
+}
+
+@font-face {
+  font-family: Poppins;
+  font-weight: 700;
+  src: url('/public/fonts/poppins/Poppins-Bold.ttf') format('ttf');
+}
+
+*{
+  font-family: 'Poppins';
 }

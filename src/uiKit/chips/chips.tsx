@@ -99,7 +99,7 @@ export const Chips = forwardRef<HTMLInputElement, chipsProps>(
 
                     {/* Element container */}
                     <div className="min-w-[100px] h-8 flex-1 rounded">
-                        <input className={cn('w-full h-full outline-none rounded-sm px-1', inputClassName)} value={currentItem} onChange={(e) => handleChange(e)} {...props} />
+                        <input className={cn('w-full h-full outline-none rounded-sm px-1 text-black', inputClassName)} value={currentItem} onChange={(e) => handleChange(e)} {...props} />
                     </div>
                 </div>
             </label>

@@ -1,10 +1,5 @@
-'use client'
-import "./globals.css";
-import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
-
-
-
+import "./globals.css";
 
 export default function RootLayout({
 	children,
@@ -13,17 +8,18 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`h-dvh w-dvw antialiased bg-background relative flex justify-center flex-col items-center  overflow-hidden `}>
-				<div className="w-[50vh] h-1/2 bg-gradient-to-tr from-[#aa4b6b] via-bg-[#6b6b83] to-[#3b8d99] absolute top-[10%] right-8 rounded-full blur-[120px] opacity-40"></div>
-				<div className="w-[50vh] h-1/2 bg-gradient-to-tr from-[#a8ff78] to-[#78ffd6] absolute bottom-[10%] left-8 rounded-full blur-[120px] opacity-30"></div>
+			<title>FOUIKIT</title>
+			<meta charSet="UTF-8"/>
+			<meta httpEquiv="X-UA-Compatible" content="IE-edge"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="description" content="Accelerate development with ready-to-use React UI code snippets"/>
+			<meta name="author" content="Filipe Oliveira"/>
+			<meta property="og:title" content="FOUIKIT" />
+			<meta property="og:description" content="ccelerate development with ready-to-use React UI code snippets" />
+			<meta property="og:image" content="IMAGE" />
+			<body className={`min-h-dvh w-dvw antialiased bg-lpbackground flex flex-col overflow-x-hidden text-white items-center`}>
 				<Header/>
-
-				<div className="w-[80%] h-[92%] backdrop-blur-lg text-white  flex flex-row ">
-					<Sidebar/>
-					<div className="w-full h-full pl-8  prose text-white!">
-						{children}
-					</div>
-				</div>
+				{children}
 			</body>
 		</html>
 	);

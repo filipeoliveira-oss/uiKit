@@ -128,8 +128,8 @@ const Carousel = forwardRef<HTMLDivElement, CarouselProps>(
                     }
                     return (
                         validChildren.map((child, i) => (
-                            <div className="w-full h-full absolute flex items-center justify-center">
-                                <motion.div key={i} initial='prev' variants={fadeVariant} animate={i === currentSlide ? 'active' : 'prev'} transition={{ duration: animationDuration, ease: 'easeInOut' }} >
+                            <div key={i} className="w-full h-full absolute flex items-center justify-center">
+                                <motion.div initial='prev' variants={fadeVariant} animate={i === currentSlide ? 'active' : 'prev'} transition={{ duration: animationDuration, ease: 'easeInOut' }} >
                                     {validChildren[currentSlide]}
                                 </motion.div>
                             </div>

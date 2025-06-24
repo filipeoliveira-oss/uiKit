@@ -33,7 +33,7 @@ interface IColors {
 
 interface ICalendar {
     date: string,
-    setDate: (e:string) => void
+    setDate: (e: string) => void
     disabled?: boolean
     label?: string,
     labelClassname?: string,
@@ -44,7 +44,6 @@ interface ICalendar {
     timeFormat?: '12' | '24',
     customLanguage?: ICustomLanguage,
     colors?: IColors,
-    // ------ ENHANCEMENTS
     timeOnly?: boolean,
     dateTemplate?: (date: number) => React.ReactNode,
     inline?: boolean,
@@ -87,6 +86,7 @@ export default function Calendar({ disabled, label, labelClassname, language = '
         'de': { today: 'Heute', now: 'Jetzt', close: 'Schließen' }, // German
     };
     const wrapperRef = useRef<HTMLDivElement>(null);
+
     function getLabel(key: 'today' | 'now' | 'close'): string {
         const lang = language.slice(0, 2);
         return i18nLabels[lang]?.[key] || i18nLabels['en'][key];
@@ -133,8 +133,8 @@ export default function Calendar({ disabled, label, labelClassname, language = '
     }, [view])
 
     useEffect(() => {
-        function handleClickOutside(event:any) {
-            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        function handleClickOutside(event: any) {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target) && !inline) {
                 setShowCalendar(false);
             }
         }
@@ -344,13 +344,22 @@ export default function Calendar({ disabled, label, labelClassname, language = '
         return result;
     }
 
+    function handleOpenCalendar(){
+        if(actualDate){
+            setCurrentMonth(actualDate.getMonth())
+            setCurrentYear(actualDate.getFullYear())
+        }
+
+        setShowCalendar(true)
+    }
+
     return (
 
         <div ref={wrapperRef} className="w-full h-fit flex flex-col gap-4 relative select-none" style={{ pointerEvents: disabled ? 'none' : 'auto', backgroundColor: calendarColors.containerBackgroundColor }}>
             {label && <label className={labelClassname} style={{ color: calendarColors.labelTextColor }}>{label}</label>}
             {!inline && (
                 <div className="border border-zinc-500 w-full h-10 flex flex-row items-center rounded-lg overflow-hidden" >
-                    <input onFocus={() => setShowCalendar(true)}  className="px-2 w-full h-full bg-transparent border-none outline-none" value={date} readOnly />
+                    <input onFocus={() => handleOpenCalendar()} className="px-2 w-full h-full bg-transparent border-none outline-none" value={date} readOnly />
                     {showIcon && (
                         <div className="w-fit h-full px-2 flex items-center" style={{ backgroundColor: calendarColors.iconBackgroundColor }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={calendarColors.iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -408,7 +417,7 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                                             return (
                                                 <div
                                                     key={idx}
-                                                    onClick={() => {handleSelectDay(item.date); setShowCalendar(false)}}
+                                                    onClick={() => { handleSelectDay(item.date); if (!inline) setShowCalendar(false) }}
                                                     className={`p-2 text-sm rounded ${item.currentMonth && isValidDate(item.date) ? '' : 'pointer-events-none'} group cursor-pointer w-full h-full flex items-center justify-center`} >
                                                     <span
                                                         className=" w-6 h-6 rounded-full flex items-center justify-center group-hover:[background-color:var(--hover-color)]"
@@ -465,12 +474,12 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                             <div className="w-full h-fit grid grid-cols-3 text-center mt-2" style={{ color: calendarColors.textColor }}>
                                 {customLanguage ? (
                                     customLanguage.months.map((month, i) => (
-                                        <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); if (!view) setWhatToShow('days'); if (view === 'month') {formatDate(0, i + 1, currentYear, hour, minutes);setShowCalendar(false)} }} style={{ "--hover-color": calendarColors.hoverBackground, backgroundColor: actualDate?.getMonth() === i ? calendarColors.selectedDayBackground : ''  } as React.CSSProperties}>
+                                        <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); if (!view) setWhatToShow('days'); if (view === 'month') { formatDate(0, i + 1, currentYear, hour, minutes); if (!inline) setShowCalendar(false) } }} style={{ "--hover-color": calendarColors.hoverBackground, backgroundColor: actualDate?.getMonth() === i ? calendarColors.selectedDayBackground : '' } as React.CSSProperties}>
                                             {month}
                                         </div>
                                     ))
                                 ) : Array.from({ length: 12 }, (_, i) => (
-                                    <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); if (!view) setWhatToShow('days'); if (view === 'month') {formatDate(0, i + 1, currentYear, hour, minutes);setShowCalendar(false)} }} style={{ "--hover-color": calendarColors.hoverBackground, backgroundColor: actualDate?.getMonth() === i ? calendarColors.selectedDayBackground : '' } as React.CSSProperties}>
+                                    <div key={i} className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)]`} onClick={() => { setCurrentMonth(i); if (!view) setWhatToShow('days'); if (view === 'month') { formatDate(0, i + 1, currentYear, hour, minutes); if (!inline) setShowCalendar(false) } }} style={{ "--hover-color": calendarColors.hoverBackground, backgroundColor: actualDate?.getMonth() === i ? calendarColors.selectedDayBackground : '' } as React.CSSProperties}>
                                         {new Date(2000, i).toLocaleString(language, { month: 'long' })}
                                     </div>
                                 ))}
@@ -493,12 +502,12 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                                 {Array.from({ length: 10 }, (_, i) => Math.floor(currentYear / 10) * 10 + i).map((year) => (
                                     <div
                                         key={year}
-                                        style={{ "--hover-color": calendarColors.hoverBackground, backgroundColor: actualDate?.getFullYear() === year ? calendarColors.selectedDayBackground : ''  } as React.CSSProperties}
+                                        style={{ "--hover-color": calendarColors.hoverBackground, backgroundColor: actualDate?.getFullYear() === year ? calendarColors.selectedDayBackground : '' } as React.CSSProperties}
                                         className={`py-2 cursor-pointer hover:[background-color:var(--hover-color)] rounded`}
                                         onClick={() => {
                                             setCurrentYear(year);
                                             if (view !== "year") setWhatToShow('months');
-                                            if (view === "year") {formatDate(day, currentMonth, year);setShowCalendar(false)}
+                                            if (view === "year") { formatDate(day, currentMonth, year); if (!inline) setShowCalendar(false) }
                                         }}
                                     >
                                         {year}
@@ -536,12 +545,14 @@ export default function Calendar({ disabled, label, labelClassname, language = '
                                         }}
                                     >{customLanguage?.now ?? getLabel('now')}</button>
                                 )}
-                                <button
-                                    type="button"
-                                    style={{ color: calendarColors.textColor, "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
-                                    className={`font-semibold py-1 px-1 rounded cursor-pointer hover:[background-color:var(--hover-color)]`}
-                                    onClick={() => setShowCalendar(false)}
-                                >{customLanguage?.close ?? getLabel("close")}</button>
+                                {!inline && (
+                                    <button
+                                        type="button"
+                                        style={{ color: calendarColors.textColor, "--hover-color": calendarColors.hoverBackground } as React.CSSProperties}
+                                        className={`font-semibold py-1 px-1 rounded cursor-pointer hover:[background-color:var(--hover-color)]`}
+                                        onClick={() => setShowCalendar(false)}
+                                    >{customLanguage?.close ?? getLabel("close")}</button>
+                                )}
                             </div>
                         </div>
                     )}

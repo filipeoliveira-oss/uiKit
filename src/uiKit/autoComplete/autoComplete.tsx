@@ -44,7 +44,7 @@ export const AutoComplete = forwardRef<HTMLInputElement, autoCompleteProps>(
                 <div
                     className={cn(`mt-1 w-full h-10 rounded outline-none border border-zinc-300 pl-2 text-base text-black  bg-transparent flex  items-center relative ${disabled ? 'cursor-auto opacity-85' : 'cursor-text'}`)}>
 
-                    <input {...props} style={!value ? { color: '#757575' } : {}} value={value || placeholder || ''} onChange={(e) => onChangeValue(e.target.value)} className={cn('w-full h-full outline-none border-none text-base', inputClassName)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} ref={ref} />
+                    <input {...props} style={!value ? { color: '#757575' } : {}} value={value || placeholder || ''} onChange={(e) => onChangeValue(e.target.value)} className={cn('w-full h-full outline-none border-none text-base text-black', inputClassName)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} ref={ref} />
 
                     <motion.div className="w-full h-fit max-h-56 bg-white absolute top-full left-0 overflow-y-auto overflow-x-hidden text-black border border-zinc-300 rounded-sm shadow-2xl" variants={list} initial='closed' animate={isFocused ? 'open' : 'closed'} style={contentMaxHeight ? { maxHeight: contentMaxHeight } : {}}>
 

@@ -14,7 +14,7 @@ export default function PageWrapper({ children, requirements, showRequirements =
     useDocumentTitle(`FOUIKIT | ${title}`)
 
     return (
-        <div className="w-full h-full overflow-auto flex flex-col gap-8 pb-12">
+        <div className="w-full h-full overflow-auto flex flex-col gap-8 pb-12 px-4">
             {showRequirements && (
                 <>
                     <h2 className="text-2xl font-semibold">Requirements</h2>

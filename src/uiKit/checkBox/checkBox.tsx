@@ -26,7 +26,7 @@ interface props {
 
 
 const checkboxVariants = tv({
-	base: ' border border-zinc-400 cursor-pointer flex flex-row gap-2 items-center justify-center',
+	base: ' border border-zinc-400 cursor-pointer flex flex-row gap-2 items-center justify-center shrink-0',
 	variants: {
 		format: {
 			square: 'rounded-md',
