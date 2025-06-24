@@ -1,11 +1,10 @@
 'use client'
-import { ComponentProps, forwardRef, useRef, useState } from "react";
+import { ComponentProps, forwardRef, useEffect, useRef, useState } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { Ellipsis } from "lucide-react";
 import { motion } from "framer-motion"
-import useOnClickOutside from "../useOnClickOutside/useOnClickOutside";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -40,17 +39,19 @@ type ActionsMenuProps = ComponentProps<'div'> & VariantProps<typeof actionsMenu>
 const ActionsMenu = forwardRef<HTMLDivElement, ActionsMenuProps>(
     ({ buttonClassName, icon = <Ellipsis color="#000"/>,children,position,className, ...props}, ref) => {
 
-        const dropdownRef = useRef(null)
+        const dropdownRef = useRef<HTMLButtonElement>(null)
         const [isOpen, setIsOpen] = useState(false)
 
-        const handleClickOutside = () => {
-            if (isOpen) {
-                setIsOpen(false)
-            }
-        }
+        useEffect(() => {
+                function handleClickOutside(event: any) {
+                    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                        setIsOpen(false)
+                    }
+                }
         
-        //@ts-ignore
-        useOnClickOutside(dropdownRef, handleClickOutside)
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => document.removeEventListener("mousedown", handleClickOutside);
+            }, []);
 
         const list = {
             closed: { opacity: 0, display: 'none' },

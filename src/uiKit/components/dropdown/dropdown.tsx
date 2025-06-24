@@ -1,10 +1,9 @@
 import { Check, ChevronDown, Search } from "lucide-react";
-import { ComponentProps, forwardRef, useRef, useState } from "react"
+import { ComponentProps, forwardRef, useEffect, useRef, useState } from "react"
 import { motion } from 'framer-motion'
 
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import useOnClickOutside from "../useOnClickOutside/useOnClickOutside";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -31,14 +30,18 @@ export const Dropdown = forwardRef<HTMLDivElement, dropdownProps>(
         const dropdownRef = useRef<HTMLDivElement>(null)
         const [search, setSearch] = useState<string>('')
 
-        const handleClickOutside = () => {
-            if (isOpen) {
-                setIsOpen(false)
-            }
-        }
 
-        // @ts-expect-error ref is initially set to null
-        useOnClickOutside(dropdownRef, handleClickOutside)
+        useEffect(() => {
+                function handleClickOutside(event: any) {
+                    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                        setIsOpen(false)
+                    }
+                }
+        
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => document.removeEventListener("mousedown", handleClickOutside);
+            }, []);
+
 
         const icon = {
             closed: { rotate: '0deg' },
