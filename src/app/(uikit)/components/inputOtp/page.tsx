@@ -72,7 +72,7 @@ Input Otp`
             <div className="w-full h-fit flex flex-col gap-2">
                 <span className="text-lg font-semibold">disabled</span>
                 <CodeBlock code="React.ReactNode" language="ts" showLineNumbers={false} />
-                <span>If disabled is not possible to focus or change</span>
+                <span>When disabled, it cannot be focused or modified</span>
             </div>
 
         </PageWrapper>

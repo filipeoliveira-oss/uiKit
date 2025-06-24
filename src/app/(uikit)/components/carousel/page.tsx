@@ -7,7 +7,7 @@ import c3 from '/public/card3.png'
 import { Slide, Carousel } from "@/uiKit/components/carousel/carousel"
 import { useState } from "react"
 import ColorText from "@/components/colorText"
-import { Dropdown } from "@/uiKit/components/dropdown/dropdown"
+import  Dropdown  from "@/uiKit/components/dropdown/dropdown"
 
 export default function CarouselPage() {
     const [currentType, setCurrentType] = useState('slide')
@@ -59,7 +59,7 @@ carousel`
 
             <div className="flex flex-col gap-2 w-full h-fit">
                 <span>Select the animation type</span>
-                <Dropdown content={['slide', 'globe', 'fade','none']} onChangeValue={(e) => setCurrentType(e)} value={currentType} className="bg-zinc-300 " />
+                <Dropdown options={['slide', 'globe', 'fade','none']} onChangeValue={(e) => setCurrentType(e)} value={currentType} className="bg-zinc-300 " />
             </div>
 
             <h2 className="text-3xl font-bold">Carousel parameters</h2>

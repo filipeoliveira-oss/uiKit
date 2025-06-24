@@ -2,7 +2,7 @@
 import ActionMenu from "@/app/(uikit)/components/actionMenu/page"
 import ActionsMenu from "@/uiKit/components/actionsMenu/actionsMenu"
 import Calendar from "@/uiKit/components/calendar/calendar"
-import { Dropdown } from "@/uiKit/components/dropdown/dropdown"
+import Dropdown from "@/uiKit/components/dropdown/dropdown"
 import { GridLoader } from "@/uiKit/loaders/gridLoader/gridLoader"
 import { X } from "lucide-react"
 import { useState } from "react"
@@ -50,7 +50,7 @@ export default function Components() {
                 </Element>
 
                 <Element title="Dropdown" >
-                    <Dropdown value={dropdown} onChangeValue={(e) => setDropdow(e)} content={['Option 1', 'Option 2', 'Option 3']} className="border border-zinc-200 text-white" placeholder="Select an option" />
+                    <Dropdown value={dropdown} onChangeValue={(e) => setDropdow(e)} options={['Option 1', 'Option 2', 'Option 3']} className="border border-zinc-200 text-white" placeholder="Select an option" />
                 </Element>
 
                 <Element title="Action menu" >
