@@ -118,8 +118,8 @@ export default function Hero() {
                         <span className="text-2xl text-zinc-300 opacity-0" ref={wordsRef} id="tagline">Define it. Adapt it. Reuse it.</span>
                     </div>
 
-                    <Link href={'/docs/introduction'} className="mt-11">
-                        <button className="hover:shadow-[0_0_12px_#00ffffaa] mt-4 w-fit px-6 py-3 cursor-pointer rounded-lg bg-gradient-to-r from-lighterteal to-reactblue flex flex-row items-center justify-between">
+                    <Link href={'/docs/introduction'} className="mt-11 w-fit h-fit">
+                        <button className="hover:shadow-[0_0_12px_#00ffffaa] w-fit px-6 py-3 cursor-pointer rounded-lg bg-gradient-to-r from-lighterteal to-reactblue flex flex-row items-center justify-between">
                             <span>Get started</span>
                             <ArrowRight />
                         </button>
