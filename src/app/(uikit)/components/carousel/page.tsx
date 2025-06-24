@@ -5,9 +5,9 @@ import c4 from '/public/card4.png'
 import c2 from '/public/card2.jpg'
 import c3 from '/public/card3.png'
 import { Slide, Carousel } from "@/uiKit/components/carousel/carousel"
-import { Dropdown } from "@/uiKit/dropdown/dropdown"
 import { useState } from "react"
 import ColorText from "@/components/colorText"
+import { Dropdown } from "@/uiKit/components/dropdown/dropdown"
 
 export default function CarouselPage() {
     const [currentType, setCurrentType] = useState('slide')

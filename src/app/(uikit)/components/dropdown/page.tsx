@@ -3,7 +3,7 @@ import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
 import ComponentDisplay from "@/components/componentDisplay";
 import PageWrapper from "@/components/pageWrapper";
-import { Dropdown } from "@/uiKit/dropdown/dropdown";
+import { Dropdown } from "@/uiKit/components/dropdown/dropdown";
 import { useState } from "react";
 
 export default function DropdownPage() {

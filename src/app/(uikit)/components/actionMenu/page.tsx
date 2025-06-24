@@ -2,7 +2,7 @@
 import CodeBlock from "@/components/codeBlock"
 import ColorText from "@/components/colorText"
 import PageWrapper from "@/components/pageWrapper"
-import ActionsMenu from "@/uiKit/actionsMenu/actionsMenu"
+import ActionsMenu from "@/uiKit/components/actionsMenu/actionsMenu"
 import { useState } from "react"
 
 export default function ActionMenu() {
