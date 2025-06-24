@@ -19,7 +19,10 @@ export const componentsList: Array<IUikitElements> = [
     { url: "/components/dropdown", title: "Dropdown" },
     { url: "/components/inputOtp", title: "Input Otp - criar pagina" },
     { url: "/components/inputSwitch", title: "Input Switch - criar pagina" },
-    { url: "/components/inputTextArea", title: "Input Text Area - criar pagina",},
+    {
+        url: "/components/inputTextArea",
+        title: "Input Text Area - criar pagina",
+    },
     { url: "/components/loaders", title: "Loaders" },
     { url: "/components/maskInput", title: "Mask Input" },
     { url: "/components/modal", title: "Modal" },
@@ -29,9 +32,9 @@ export const componentsList: Array<IUikitElements> = [
     { url: "/components/tooltip", title: "Tooltip" },
 ];
 
-export const hooksList:Array<IUikitElements> = [
+export const hooksList: Array<IUikitElements> = [
     { url: "/hooks/useDocumentTitle", title: "useDocumentTitle" },
-  { url: "/hooks/useInputFocus", title: "useInputFocus" },
-  { url: "/hooks/useIsMobile", title: "useIsMobile" },
-  { url: "/hooks/useOnClickOutside", title: "useOnClickOutside" },
-]
+    { url: "/hooks/useInputFocus", title: "useInputFocus" },
+    { url: "/hooks/useIsMobile", title: "useIsMobile" },
+    { url: "/hooks/useOnClickOutside", title: "useOnClickOutside" },
+];
