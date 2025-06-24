@@ -7,7 +7,7 @@ export const componentsList: Array<IUikitElements> = [
     { url: "/components/actionMenu", title: "Action Menu" },
     { url: "/components/autoComplete", title: "Auto complete" },
     { url: "/components/button", title: "Button" },
-    { url: "/components/calendar", title: "Calendar - criar pagina" },
+    { url: "/components/calendar", title: "Calendar" },
     { url: "/components/carousel", title: "Carousel" },
     { url: "/components/checkbox", title: "Checkbox" },
     { url: "/components/chips", title: "Chips" },

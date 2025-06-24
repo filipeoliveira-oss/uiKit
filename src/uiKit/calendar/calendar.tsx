@@ -31,6 +31,11 @@ interface IColors {
     weekDaysTextColor?: string
 }
 
+interface calendarDates {
+    date: number,
+    currentMonth: boolean
+}
+
 interface ICalendar {
     date: string,
     setDate: (e: string) => void
@@ -42,9 +47,9 @@ interface ICalendar {
     showButtonBar?: boolean,
     showTime?: boolean,
     timeFormat?: '12' | '24',
+    timeOnly?: boolean,
     customLanguage?: ICustomLanguage,
     colors?: IColors,
-    timeOnly?: boolean,
     dateTemplate?: (date: number) => React.ReactNode,
     inline?: boolean,
     view?: 'month' | 'year',
@@ -52,12 +57,6 @@ interface ICalendar {
     minDate?: Date
     maxDate?: Date
 }
-
-interface calendarDates {
-    date: number,
-    currentMonth: boolean
-}
-
 
 export default function Calendar({ disabled, label, labelClassname, language = 'pt-BR', setDate, date, showIcon, showButtonBar, showTime, timeFormat = '24', customLanguage, colors, timeOnly = false, dateTemplate, inline = false, view, format = 'dd/mm/yy', maxDate, minDate }: ICalendar) {
     const today = new Date();
@@ -99,7 +98,7 @@ export default function Calendar({ disabled, label, labelClassname, language = '
             hoverBackground: colors?.hoverBackground ?? '#e4e4e7',
             iconBackgroundColor: colors?.iconBackgroundColor ?? '#00bcff',
             iconColor: colors?.iconColor ?? '#FFFFFF',
-            labelTextColor: colors?.labelTextColor ?? '#FFFFFF',
+            labelTextColor: colors?.labelTextColor ?? '#9f9fa9',
             selectedDayBackground: colors?.selectedDayBackground ?? '#00bcff',
             textColor: colors?.textColor ?? '#000000',
             todayBackground: colors?.todayBackground ?? '#e5e7eb',
@@ -355,7 +354,7 @@ export default function Calendar({ disabled, label, labelClassname, language = '
 
     return (
 
-        <div ref={wrapperRef} className="w-full h-fit flex flex-col gap-4 relative select-none" style={{ pointerEvents: disabled ? 'none' : 'auto', backgroundColor: calendarColors.containerBackgroundColor }}>
+        <div ref={wrapperRef} className="w-full h-fit flex flex-col gap-2 relative select-none text-black " style={{ pointerEvents: disabled ? 'none' : 'auto', backgroundColor: calendarColors.containerBackgroundColor }}>
             {label && <label className={labelClassname} style={{ color: calendarColors.labelTextColor }}>{label}</label>}
             {!inline && (
                 <div className="border border-zinc-500 w-full h-10 flex flex-row items-center rounded-lg overflow-hidden" >
@@ -374,7 +373,7 @@ export default function Calendar({ disabled, label, labelClassname, language = '
             )}
 
             {showCalendar && (
-                <div className="w-full h-fit absolute top-full flex flex-col items-center justify-center" style={{ backgroundColor: calendarColors.calendarBackground }} >
+                <div className={`w-full h-fit top-full flex flex-col items-center justify-center ${inline ? 'block' : 'absolute'}`} style={{ backgroundColor: calendarColors.calendarBackground }} >
                     {whatToShow === 'days' && (
                         <>
                             {!timeOnly && (
