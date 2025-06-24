@@ -107,7 +107,6 @@ export default function Hero() {
     }, [])
 
 
-
     return (
         <div className="w-full h-dvh flex justify-center relative" style={{ backgroundImage: 'url(/landingPage/pattern.webp)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
             <div className="w-defaultWidth h-full flex items-center justify-between gap-2">

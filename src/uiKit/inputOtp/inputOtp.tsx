@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 interface IInputOtp {
     value: string,
@@ -76,20 +76,20 @@ export default function InputOtp({ changeOtp, tokenLength, value, disabled, inte
         <div className={`w-fit h-12 flex flex-row gap-2 uppercase ${disabled ? 'pointer-events-none' : ''}`}>
             {Array.from({ length: tokenLength }, (_, i) => {
                 return (
-                    <>
+                    <React.Fragment key={i}>
                         <input
                             key={i}
                             ref={(el) => { inputRefs.current[i] = el; }}
                             onKeyDown={(e) => handleKeyDown(e, i)}
                             onPaste={(e) => handlePaste(e, i)}
                             className="uppercase text-sm w-8 border border-zinc-400 rounded-lg text-center text-white"
-                            value={valueArray[i]}
+                            value={valueArray[i] ?? ''}
                             onChange={(e) => handleChange(e.target.value, i)}
                             maxLength={1}
                             disabled={disabled}
                         />
                         {((i !== tokenLength - 1) && separator) && (<span className="w-fit h-full flex items-center justify-center">{separator}</span>)}
-                    </>
+                    </React.Fragment>
                 )
             }
             )}

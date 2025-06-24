@@ -18,25 +18,11 @@ interface teste {
     price: string
 }
 export default function Component() {
-    const items = Array.from({ length: 50 }, (_, i) => ({
-        name: `Item ${i + 1}`,
-        price: Math.floor(Math.random() * 100) + 1, // random price from 1 to 100
-    }));
-    const [a, sa] = useState<Array<any>>(items)
-
-
-    const item = (item: teste) => {
-        return (
-            <div className='w-[60vw] h-fit flex flex-row justify-between items-center py-4 px-2'>
-                <span>{item.name}</span>
-                <span>R${item.price}</span>
-            </div>
-        )
-    }
+    const [a,b] = useState('')
 
     return (
         <div className="w-screen h-screen items-center justify-center flex flex-col gap-8">
-            <OrderList value={a} itemTemplate={item} changeValue={(e) => sa(e)} header='Items disponíveis' dragAndDrop/>
+            <InputOtp changeOtp={(e) => b(e)} value={a} tokenLength={6}/>
         </div>
     )
 }
