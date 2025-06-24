@@ -86,6 +86,7 @@ export default function Calendar({ disabled, label, labelClassname, language = '
         'de': { today: 'Heute', now: 'Jetzt', close: 'Schließen' }, // German
     };
     const wrapperRef = useRef<HTMLDivElement>(null);
+
     function getLabel(key: 'today' | 'now' | 'close'): string {
         const lang = language.slice(0, 2);
         return i18nLabels[lang]?.[key] || i18nLabels['en'][key];
@@ -343,13 +344,22 @@ export default function Calendar({ disabled, label, labelClassname, language = '
         return result;
     }
 
+    function handleOpenCalendar(){
+        if(actualDate){
+            setCurrentMonth(actualDate.getMonth())
+            setCurrentYear(actualDate.getFullYear())
+        }
+
+        setShowCalendar(true)
+    }
+
     return (
 
         <div ref={wrapperRef} className="w-full h-fit flex flex-col gap-4 relative select-none" style={{ pointerEvents: disabled ? 'none' : 'auto', backgroundColor: calendarColors.containerBackgroundColor }}>
             {label && <label className={labelClassname} style={{ color: calendarColors.labelTextColor }}>{label}</label>}
             {!inline && (
                 <div className="border border-zinc-500 w-full h-10 flex flex-row items-center rounded-lg overflow-hidden" >
-                    <input onFocus={() => setShowCalendar(true)} className="px-2 w-full h-full bg-transparent border-none outline-none" value={date} readOnly />
+                    <input onFocus={() => handleOpenCalendar()} className="px-2 w-full h-full bg-transparent border-none outline-none" value={date} readOnly />
                     {showIcon && (
                         <div className="w-fit h-full px-2 flex items-center" style={{ backgroundColor: calendarColors.iconBackgroundColor }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={calendarColors.iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
