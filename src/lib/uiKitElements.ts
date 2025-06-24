@@ -23,7 +23,6 @@ export const componentsList: Array<IUikitElements> = [
         url: "/components/inputTextArea",
         title: "Input Text Area - criar pagina",
     },
-    { url: "/components/loaders", title: "Loaders" },
     { url: "/components/maskInput", title: "Mask Input" },
     { url: "/components/modal", title: "Modal" },
     { url: "/components/orderList", title: "Order List - criar pagina" },

@@ -1,6 +1,7 @@
 'use client'
 import CodeBlock from "@/components/codeBlock"
 import ColorText from "@/components/colorText"
+import ComponentDisplay from "@/components/componentDisplay"
 import PageWrapper from "@/components/pageWrapper"
 import MaskInput from "@/uiKit/maskInput/maskInput"
 import { useState } from "react"
@@ -29,7 +30,9 @@ Mask Input`
 
             <h2 className="text-3xl font-bold">Usage</h2>
 
-            <MaskInput onChangeValue={(e) => sv(e)} value={v} mask="" type="number" />
+            <ComponentDisplay>
+                <MaskInput onChangeValue={(e) => sv(e)} value={v} type="number" label="Phone"/>
+            </ComponentDisplay>
 
             <h2 className="text-3xl font-bold">Parameters</h2>
 
@@ -43,6 +46,24 @@ Mask Input`
                 <span className="text-lg font-semibold">value*</span>
                 <CodeBlock code="string" showLineNumbers={false} />
                 <span>The current value</span>
+            </div>
+
+            <div className="w-full h-fit flex flex-col gap-2">
+                <span className="text-lg font-semibold">Type</span>
+                <CodeBlock code="'string' | 'number' | 'all'" showLineNumbers={false} />
+                <span>Define which keys will be accepted. Default to all</span>
+            </div>
+
+            <div className="w-full h-fit flex flex-col gap-2">
+                <span className="text-lg font-semibold">Label</span>
+                <CodeBlock code="String" showLineNumbers={false} />
+                <span>Label that will be shown above the component</span>
+            </div>
+
+            <div className="w-full h-fit flex flex-col gap-2">
+                <span className="text-lg font-semibold">showMask</span>
+                <CodeBlock code="Boolean" showLineNumbers={false} />
+                <span>Show current mask or not</span>
             </div>
 
             <div className="w-full h-fit flex flex-col gap-2">

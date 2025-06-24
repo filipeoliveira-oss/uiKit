@@ -1,6 +1,7 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
+import ComponentDisplay from "@/components/componentDisplay";
 import PageWrapper from "@/components/pageWrapper";
 import CurrencyInput from "@/uiKit/currencyInput/currencyInput";
 import { useState } from "react";
@@ -30,7 +31,9 @@ const deps = [
 
             <h2 className="text-3xl font-bold">Usage</h2>
 
-            <CurrencyInput onChangeValue={(e) => setValue} value={value} className="text-black bg-zinc-50" />
+            <ComponentDisplay>
+                <CurrencyInput onChangeValue={(e) => setValue} value={value} label="Value"/>
+            </ComponentDisplay>
 
             <h2 className="text-3xl font-bold">Parameters</h2>
 
@@ -44,6 +47,12 @@ const deps = [
                 <span className="text-lg font-semibold">value*</span>
                 <CodeBlock code="Boolean" showLineNumbers={false} />
                 <span>The current value</span>
+            </div>
+
+            <div className="w-full h-fit flex flex-col gap-2">
+                <span className="text-lg font-semibold">Label</span>
+                <CodeBlock code="string" showLineNumbers={false} />
+                <span>Label that will be shown above the component</span>
             </div>
 
             <div className="w-full h-fit flex flex-col gap-2">

@@ -1,6 +1,7 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
+import ComponentDisplay from "@/components/componentDisplay";
 import PageWrapper from "@/components/pageWrapper";
 import { Chips } from "@/uiKit/chips/chips";
 import { useState } from "react";
@@ -52,9 +53,9 @@ Chips`
 
             <CodeBlock code={code} showLineNumbers={false} language="js" />
 
-            <div className="w-full h-fit p-4 bg-white rounded-lg">
-                <Chips value={value} changeValue={setValue} inputClassName="text-black" />
-            </div>
+            <ComponentDisplay>
+                <Chips value={value} changeValue={setValue} label="Label"/>
+            </ComponentDisplay>
 
             <h2 className="text-3xl font-bold">Parameters</h2>
 

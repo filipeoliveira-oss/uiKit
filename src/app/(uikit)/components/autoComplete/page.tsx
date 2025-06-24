@@ -1,6 +1,7 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
 import ColorText from "@/components/colorText";
+import ComponentDisplay from "@/components/componentDisplay";
 import PageWrapper from "@/components/pageWrapper";
 import AutoComplete from "@/uiKit/autoComplete/autoComplete";
 import { useState } from "react";
@@ -31,7 +32,9 @@ autoComplete`
 
             <h2 className="text-3xl font-bold">Usage</h2>
 
-            <AutoComplete suggestions={['Filipe', 'Munique', 'Lucas', 'Rhayssa', 'André', 'Larissa']} label="Nome" onChangeValue={st} value={t} inputClassName="bg-white text-black" className="bg-white p-2" />
+            <ComponentDisplay>
+                <AutoComplete suggestions={['Filipe', 'Munique', 'Lucas', 'Rhayssa', 'André', 'Larissa']} label="Nome" onChangeValue={st} value={t} />
+            </ComponentDisplay>
 
             <h2 className="text-3xl font-bold">Parameters</h2>
 
