@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from "@/components/codeBlock";
+import ColorText from "@/components/colorText";
 import PageWrapper from "@/components/pageWrapper";
 import { useIsMobile } from "@/uiKit/hooks/useIsMobile/useIsMobile";
 
@@ -26,8 +27,8 @@ const isMobile = useIsMobile(500)`
 ]
 
     return (
-        <PageWrapper requirements={deps} title="UseIsMobile">
-            <h1 className="text-4xl font-bold">useInputFocus</h1>
+        <PageWrapper requirements={deps} title="useIsMobile">
+            <ColorText text='useIsMobile'/>
             <span>useIsMobile accepts a max-width to define if the screen is on a mobile width or not.</span>
             <span>By default the max-width is 768px (screen MD from tailwind)</span>
 

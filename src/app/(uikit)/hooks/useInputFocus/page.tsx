@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from '@/components/codeBlock';
+import ColorText from '@/components/colorText';
 import PageWrapper from '@/components/pageWrapper';
 import useInputFocus from '@/uiKit/hooks/useInputFocus/useInputFocus';
 import { useRef } from 'react';
@@ -28,7 +29,7 @@ const isFocused = useInputFocus(inputRef)
 
     return (
         <PageWrapper requirements={deps} title="UseInputFocus">
-            <h1 className="text-4xl font-bold">useInputFocus</h1>
+            <ColorText text='useInputFocus'/>
             <span>useInputFocus is a hook that will display whether the input is focused or not</span>
 
             <CodeBlock code={a} />

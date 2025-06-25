@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from '@/components/codeBlock';
+import ColorText from '@/components/colorText';
 import PageWrapper from '@/components/pageWrapper';
 
 export default function useDocumentTitlePage() {
@@ -26,9 +27,9 @@ export default function useDocumentTitlePage() {
     ]
 
     return (
-        <PageWrapper requirements={deps} title="UseDocumentTitle">
-            <h1 className="text-4xl font-bold">useDocumentTitle</h1>
-            <span>useInputFocus is a hook that will change the window document title</span>
+        <PageWrapper requirements={deps} title="useOnClickOutside">
+            <ColorText text='useOnClickOutside'/>
+            <span>useOnClickOutside is a hook that will trigger a function when the element is blurred.</span>
 
             <CodeBlock code={a} />
 

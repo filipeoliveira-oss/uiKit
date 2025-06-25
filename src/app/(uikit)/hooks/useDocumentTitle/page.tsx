@@ -1,5 +1,6 @@
 'use client'
 import CodeBlock from '@/components/codeBlock';
+import ColorText from '@/components/colorText';
 import PageWrapper from '@/components/pageWrapper';
 import useDocumentTitle from '@/uiKit/hooks/useDocumentTitle/useDocumentTitle';
 import { useState } from 'react';
@@ -22,7 +23,7 @@ useDocumentTitle`
 
     return (
         <PageWrapper requirements={deps} title="UseDocumentTitle">
-            <h1 className="text-4xl font-bold">useDocumentTitle</h1>
+            <ColorText text='useDocumentTitle'/>
             <span>useDocumentTitle is a hook that will change the window document title</span>
 
             <CodeBlock code={a} />

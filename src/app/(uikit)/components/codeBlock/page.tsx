@@ -36,9 +36,7 @@ Code Block`
             <h2 className="text-3xl font-bold">Usage</h2>
 
             <CodeBlock code="const [state, setState] = useState<boolean>(false)" filename="app.tsx" />
-
-
-
+            
             <h2 className="text-3xl font-bold">Parameters</h2>
 
             <div className="w-full h-fit flex flex-col gap-2">
