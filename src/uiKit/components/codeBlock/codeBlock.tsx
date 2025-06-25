@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { codeToHtml } from 'shiki'
+import { BundledTheme, codeToHtml, StringLiteralUnion, ThemeRegistrationAny } from 'shiki'
 
 interface CodeBlockProps {
     code: string
     filename?: string
     language?: string,
-    copy?: boolean
+    copy?: boolean,
+    theme?:ThemeRegistrationAny | StringLiteralUnion<BundledTheme, string>
 }
 
-const theme = {
+const expoTheme = {
     "$schema": "vscode://schemas/color-theme",
     "tokenColors": [
         {
@@ -1243,7 +1244,7 @@ const theme = {
     }
 }
 
-export default function CodeBlock({ code, filename, language = 'tsx', copy = true }: CodeBlockProps) {
+export default function CodeBlock({ code, filename, language = 'tsx', copy = true, theme }: CodeBlockProps) {
     const [currentCode, setCurrentCode] = useState('')
 
 
@@ -1253,10 +1254,11 @@ export default function CodeBlock({ code, filename, language = 'tsx', copy = tru
         }
     }, [code])
 
+
     async function highlightCode(code: string, lang: string) {
         const response = await codeToHtml(code, {
             lang,
-            theme: theme
+            theme: theme ?? expoTheme
         })
 
         setCurrentCode(response)
@@ -1277,8 +1279,7 @@ export default function CodeBlock({ code, filename, language = 'tsx', copy = tru
             )}
 
             <div
-                className="p-2 overflow-auto text-sm font-mono shrink-0"
-                style={{ backgroundColor: theme.colors['editor.background'] }}
+                className="overflow-auto text-sm font-mono shrink-0"
                 dangerouslySetInnerHTML={{ __html: currentCode }}
             />
 
