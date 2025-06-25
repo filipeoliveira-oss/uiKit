@@ -1,6 +1,6 @@
 'use client'
 import { Check, ChevronDown, Search } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { motion } from 'framer-motion'
 
 import { clsx, type ClassValue } from "clsx"
@@ -14,7 +14,7 @@ interface IDropdown {
     value: string | number | Record<string, any> | null;
     onChangeValue: (e: any) => void;
     options: Array<string> | Array<Record<string, any>>,
-    
+
     placeholder?: string,
     disabled?: boolean,
     filter?: boolean,
@@ -29,9 +29,23 @@ export default function Dropdown({ onChangeValue, options, value, disabled, filt
     const [isOpen, setIsOpen] = useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null)
     const [search, setSearch] = useState<string>('')
+    const debouncedSearch = useDebounce(search, 250);
+
+    const filteredOptions = useMemo(() => {
+        return options.filter((item) => {
+            const text = typeof item === "object" ? item[filterKey ?? ''] : item;
+            return String(text)
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .includes(debouncedSearch.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase());
+        });
+    }, [options, filterKey, debouncedSearch]);
+
+    const selectedIndex = useMemo(() => {
+        return options.findIndex(opt => deepEqual(opt, value));
+    }, [options, value]);
 
     useEffect(() => {
-        console.log(value)
         function handleClickOutside(event: any) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false)
@@ -65,7 +79,6 @@ export default function Dropdown({ onChangeValue, options, value, disabled, filt
     }
 
     function deepEqual(a: any, b: any, seen = new WeakMap()): boolean {
-
         // Strict equality (covers primitives and reference equality)
         if (a === b) return true;
 
@@ -134,6 +147,18 @@ export default function Dropdown({ onChangeValue, options, value, disabled, filt
         return true;
     }
 
+    function useDebounce<T>(value: T, delay: number = 300): T {
+        const [debounced, setDebounced] = useState(value);
+
+        useEffect(() => {
+            const handler = setTimeout(() => setDebounced(value), delay);
+
+            return () => clearTimeout(handler);
+        }, [value, delay]);
+
+        return debounced;
+    }
+
     return (
         <div className={cn(`shrink-0 w-full h-10 rounded outline-none border border-zinc-400 pl-2 text-base mt-2 text-black  bg-transparent flex items-center relative ${disabled ? 'cursor-auto opacity-85' : 'cursor-pointer'}`, className)} onClick={() => !disabled && setIsOpen(!isOpen)} ref={dropdownRef}>
 
@@ -175,17 +200,11 @@ export default function Dropdown({ onChangeValue, options, value, disabled, filt
                 {/* CONTENT DISPLAY */}
                 <div className="w-full h-fit max-h-52 overflow-x-hidden overflow-y-auto relative">
                     {
-                        options.filter((item: string | Record<string, any>) => {
-                            const text = typeof item === "object" ? item[filterKey ?? ''] : item
-                            
-                            return String(text).normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(search.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase());
-                        }).map((item: string | Record<string, any>, index: number) => (
-                            <div key={index} onClick={() => onChangeValue(item)} className={`min-w-full w-fit h-fit py-1 px-2 hover:bg-zinc-200 flex flex-row ${deepEqual(item, value) ? 'bg-zinc-200 pointer-events-none' : 'bg-transparent cursor-pointer'}`}>
+                        filteredOptions.map((item: string | Record<string, any>, index: number) => (
+                            <div key={index} onClick={() => onChangeValue(item)} className={`min-w-full w-fit h-fit py-1 px-2 hover:bg-zinc-200 flex flex-row ${selectedIndex === index ? 'bg-zinc-200 pointer-events-none' : 'bg-transparent cursor-pointer'}`}>
                                 {typeof item === "object" ? (itemTemplate ? itemTemplate(item) : <span>{JSON.stringify(item)}</span>) : <span>{item}</span>}
-                                <span>{JSON.stringify(value)}</span>
-                                <span>{JSON.stringify(item)}</span>
 
-                                {deepEqual(item, value) && <Check className="absolute right-4" />}
+                                {selectedIndex === index && <Check className="absolute right-4" />}
                             </div>
                         ))
                     }

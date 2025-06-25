@@ -10,7 +10,7 @@ interface teste {
     price: string
 }
 export default function Component() {
-    const [a, b] = useState<{ item: string; price: number } | undefined>()
+    const [a, b] = useState<any>()
     const [c, d] = useState<{ item: string; price: number }[]>([])
     const optionsString = ['Filipe', 'Munique', 'Cubas', 'filipinhoo']
 
@@ -22,9 +22,15 @@ export default function Component() {
     }
 
     useEffect(() => {
-        const items = Array.from({ length: 10 }, (_, i) => ({
+        const items = Array.from({ length: 500 }, (_, i) => ({
             item: `Item ${i + 1}`,
-            price: Math.random()
+            price: Math.random(),
+            item2: `Item ${i + 1}`,
+            price2: Math.random(),
+            item4: `Item ${i + 1}`,
+            price4: Math.random(),
+            item5: `Item ${i + 1}`,
+            price5: Math.random()
         }))
 
         d(items)
@@ -34,11 +40,8 @@ export default function Component() {
     return (
         <div className="w-screen h-screen items-center justify-center flex flex-col gap-8">
             <ComponentDisplay>
-                <Dropdown onChangeValue={(e) => { b(e); console.log(e) }} value={''} options={c} itemTemplate={Item} filter filterKey="item" />
+                <Dropdown onChangeValue={(e) => { b(e); console.log(e) }} value={a} options={c} itemTemplate={Item} filter filterKey="item" />
             </ComponentDisplay>
         </div>
     )
 }
-
-
-// nao marca o object qnd ja inicia com valor
