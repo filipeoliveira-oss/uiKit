@@ -11,6 +11,7 @@ export const componentsList: Array<IUikitElements> = [
     { url: "/components/carousel", title: "Carousel" },
     { url: "/components/checkbox", title: "Checkbox" },
     { url: "/components/chips", title: "Chips" },
+    { url: "/components/codeBlock", title: "Code Block" },
     { url: "/components/currencyInput", title: "Currency Input" },
     { url: "/components/customDropdownFilter", title: "Custom Filter" },
     { url: "/components/dataTable", title: "Data Table" },
