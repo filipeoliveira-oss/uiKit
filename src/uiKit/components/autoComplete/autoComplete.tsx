@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Check } from "lucide-react";
-import { ComponentProps, forwardRef, useRef, useState } from "react";
+import { ComponentProps, forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -16,13 +16,13 @@ interface IAutoComplete {
     label?: string,
     disabled?: boolean,
     contentMaxHeight?: string,
-    inputClassName?:string
+    inputClassName?: string
 }
 
 type autoCompleteProps = ComponentProps<'input'> & IAutoComplete
 
 export const AutoComplete = forwardRef<HTMLInputElement, autoCompleteProps>(
-    ({ className, onChangeValue, value, placeholder, disabled = false, suggestions = [], label, required, contentMaxHeight, inputClassName, ...props }, ref) => {
+    ({ className, onChangeValue, value='', placeholder, disabled = false, suggestions = [], label, required, contentMaxHeight, inputClassName, ...props }, ref) => {
 
         const [isFocused, setIsFocused] = useState(false)
 
@@ -37,6 +37,28 @@ export const AutoComplete = forwardRef<HTMLInputElement, autoCompleteProps>(
                 }
             }
         }
+        const debouncedSearch = useDebounce(value, 250);
+
+        const filteredOptions = useMemo(() => {
+            return suggestions.filter((item) => {
+                return String(item)
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase()
+                    .includes(debouncedSearch.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase());
+            });
+        }, [suggestions, debouncedSearch]);
+
+        function useDebounce<T>(value: T, delay: number = 300): T {
+            const [debounced, setDebounced] = useState(value);
+
+            useEffect(() => {
+                const handler = setTimeout(() => setDebounced(value), delay);
+
+                return () => clearTimeout(handler);
+            }, [value, delay]);
+
+            return debounced;
+        }
 
         return (
             <div className={cn('w-full h-fit flex flex-col', className)}>
@@ -48,7 +70,7 @@ export const AutoComplete = forwardRef<HTMLInputElement, autoCompleteProps>(
 
                     <motion.div className="w-full h-fit max-h-56 bg-white absolute top-full left-0 overflow-y-auto overflow-x-hidden text-black border border-zinc-300 rounded-sm shadow-2xl" variants={list} initial='closed' animate={isFocused ? 'open' : 'closed'} style={contentMaxHeight ? { maxHeight: contentMaxHeight } : {}}>
 
-                        {suggestions.filter((content) => content.toLowerCase().includes(value.toLowerCase() || '')).map((content, i: number) => {
+                        {filteredOptions.map((content, i: number) => {
                             return (
                                 <div
                                     className={`w-full h-fit px-2 py-1  relative hover:bg-zinc-100 ${value === content ? 'bg-zinc-300  cursor-auto pointer-events-none' : 'bg-white text-black cursor-pointer'}`}

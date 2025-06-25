@@ -1,6 +1,7 @@
 'use client'
 
 import ComponentDisplay from "@/components/componentDisplay"
+import AutoComplete from "@/uiKit/components/autoComplete/autoComplete"
 import Dropdown from "@/uiKit/components/dropdown/dropdown"
 import { useEffect, useState } from "react"
 
@@ -21,26 +22,11 @@ export default function Component() {
         )
     }
 
-    useEffect(() => {
-        const items = Array.from({ length: 500 }, (_, i) => ({
-            item: `Item ${i + 1}`,
-            price: Math.random(),
-            item2: `Item ${i + 1}`,
-            price2: Math.random(),
-            item4: `Item ${i + 1}`,
-            price4: Math.random(),
-            item5: `Item ${i + 1}`,
-            price5: Math.random()
-        }))
-
-        d(items)
-        b(items[0])
-    },[])
 
     return (
         <div className="w-screen h-screen items-center justify-center flex flex-col gap-8">
             <ComponentDisplay>
-                <Dropdown onChangeValue={(e) => { b(e); console.log(e) }} value={a} options={c} itemTemplate={Item} filter filterKey="item" />
+                <AutoComplete value={a} onChangeValue={(e) => b(e)} suggestions={['Filipe', 'Munique']}/>
             </ComponentDisplay>
         </div>
     )
