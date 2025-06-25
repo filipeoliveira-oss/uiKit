@@ -1,5 +1,5 @@
 'use client'
-import React, { useSyncExternalStore } from "react";
+import React, { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 // --- Controller logic ---
@@ -15,9 +15,9 @@ class PageLoaderController {
     start = () => {
         this.isActive = true;
         this.progress = 0;
+        this.startProgress();
         this.updateSnapshot();
         this.emit();
-        this.startProgress();
     };
 
 
@@ -31,7 +31,7 @@ class PageLoaderController {
             if (!this.isActive) return;
 
 
-            const increment = Math.random() * (0.3 - 0.05) + 0.02; 
+            const increment = Math.random() * (0.3 - 0.05) + 0.02;
             const nextProgress = this.progress + increment;
 
             if (nextProgress >= 98) return;
@@ -84,25 +84,33 @@ export const plController = new PageLoaderController();
 // --- Component ---
 interface IPageLoader {
     template?: React.ReactNode,
-    color?: string
+    color?: string,
+    glow?: boolean,
+    height?: string
 }
-export const PageLoader = ({ template, color = '#ff0000' }: IPageLoader) => {
+export const PageLoader = ({ template, color = '#ff0000', glow = true, height }: IPageLoader) => {
 
     const { active, progress } = useSyncExternalStore(
         plController.subscribe,
-        plController.getValue
+        plController.getValue,
+        plController.getValue,
     );
 
     const style = {
         width: `${progress}%`,
         backgroundColor: color,
+        height:height ?? '2px',
+        ...(glow ? { boxShadow: `0 0 10px ${color}, 0 0 25px ${color}, 0 0 50px ${color}, 0 0 80px ${color} , 0 0 100px ${color}` } : {})
     }
 
     function LoaderComponent() {
+
         return (
-            <div className="h-[2px] absolute top-0 left-0 transition-[width] duration-500 ease-out" style={style}></div>
+            <div className="absolute top-0 left-0 transition-[width] duration-500 ease-out z-[99999]" style={style}></div>
+
         )
     }
+
 
     return (
         active && createPortal(template ?? <LoaderComponent />, document.body)

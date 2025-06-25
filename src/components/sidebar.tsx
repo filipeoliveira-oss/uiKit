@@ -46,7 +46,7 @@ export default function Sidebar() {
                 <div className="w-full ml-4">
                     <ul className="w-[80%] h-fit list-disc pl-4 ">
                         <SidebarElement url="/loaders" title="Loaders preview" />
-                        {/* <SidebarElement url="/loaders/pageloader" title="Page loader - rever component" /> */}
+                        <SidebarElement url="/loaders/pageloader" title="Page loader" />
                     </ul>
                 </div>
             </div>
