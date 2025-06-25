@@ -27,7 +27,7 @@ useDebounce`
 const debounceSearch = useDebounce(search, 250)`} language='js' />
 
             <h2 className="text-3xl font-bold">Parameters</h2>
-                <CodeBlock code={`useDebounce<T>(value: T, delay: number = 300)`} language='js' />
+            <CodeBlock code={`useDebounce<T>(value: T, delay: number = 300)`} language='js' />
 
         </PageWrapper>
     )
