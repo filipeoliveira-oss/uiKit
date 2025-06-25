@@ -29,6 +29,7 @@ export const componentsList: Array<IUikitElements> = [
 ];
 
 export const hooksList: Array<IUikitElements> = [
+    { url: "/hooks/useDebounce", title: "useDebounce" },
     { url: "/hooks/useDocumentTitle", title: "useDocumentTitle" },
     { url: "/hooks/useInputFocus", title: "useInputFocus" },
     { url: "/hooks/useIsMobile", title: "useIsMobile" },
