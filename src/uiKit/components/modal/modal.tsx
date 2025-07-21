@@ -1,4 +1,4 @@
-import { ComponentProps, forwardRef } from "react"
+import { ComponentProps, forwardRef, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { tv, type VariantProps } from 'tailwind-variants'
 import { X } from "lucide-react"
@@ -49,11 +49,34 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
             }
         }
 
+        
+        useEffect(() => {
+            if (isOpen) {
+                const scrollY = window.scrollY;
+                document.body.style.position = 'fixed';
+                document.body.style.top = `-${scrollY}px`;
+                document.body.style.left = '0';
+                document.body.style.right = '0';
+                document.body.style.width = '100%';
+
+                return () => {
+                    document.body.style.position = '';
+                    document.body.style.top = '';
+                    document.body.style.left = '';
+                    document.body.style.right = '';
+                    document.body.style.width = '';
+
+                    window.scrollTo(0, scrollY);
+                };
+            }
+        }, [isOpen]);
+
+        if (typeof window === "undefined") return null;
 
         return (
             isOpen && (
                 createPortal(
-                    <div className={cn("w-dvw h-dvh absolute top-0 left-0 bg-[rgba(0,0,0,0.2)] flex items-center justify-center z-[999999]", overlayClassName)} ref={ref} {...props}>
+                    <div className={cn("w-dvw h-dvh fixed top-0 left-0 bg-[rgba(0,0,0,0.2)] flex items-center justify-center z-[999999]", overlayClassName)} ref={ref} {...props}>
                         <motion.div className={modal({ className })} variants={disableAnimation === false ? modalAnimation : {}} initial='closed' animate={isOpen ? 'open' : 'closed'}>
                             <div className="w-full h-12  flex items-center">
                                 <span className="text-lg font-semibold w-fit h-fit">{title}</span>
