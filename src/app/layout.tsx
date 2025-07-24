@@ -1,6 +1,6 @@
 import Header from "@/components/header";
 import "./globals.css";
-
+import { ToastContainer } from 'react-toastify';
 export default function RootLayout({
 	children,
 }: Readonly<{
@@ -18,6 +18,7 @@ export default function RootLayout({
 			<meta property="og:description" content="ccelerate development with ready-to-use React UI code snippets" />
 			<meta property="og:image" content="IMAGE" />
 			<body className={`min-h-dvh w-dvw antialiased bg-lpbackground flex flex-col overflow-x-hidden text-white items-center`}>
+				<ToastContainer autoClose={false}/>
 				<Header/>
 				{children}
 			</body>
