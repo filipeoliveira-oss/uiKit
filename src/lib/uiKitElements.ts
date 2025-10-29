@@ -35,5 +35,6 @@ export const hooksList: Array<IUikitElements> = [
     { url: "/hooks/useDocumentTitle", title: "useDocumentTitle" },
     { url: "/hooks/useInputFocus", title: "useInputFocus" },
     { url: "/hooks/useIsMobile", title: "useIsMobile" },
+    { url: "/hooks/useMousePosition", title: "useMousePosition" },
     { url: "/hooks/useOnClickOutside", title: "useOnClickOutside" },
 ];
