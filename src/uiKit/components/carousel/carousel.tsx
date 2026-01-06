@@ -3,9 +3,7 @@ import React, { ComponentProps, forwardRef, useEffect, useState } from "react"
 import {  motion } from 'framer-motion'
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import Image from "next/image"
 
-import type { StaticImageData } from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 type RGB = `rgb(${number}, ${number}, ${number})`;
@@ -181,30 +179,20 @@ const Carousel = forwardRef<HTMLDivElement, CarouselProps>(
 
 
 
-type ISlide = relativePath | staticImage
-type relativePath = {slideSrc: string; alt: string, label?: string, width:number, height:number}
-type staticImage = {slideSrc: StaticImageData; alt: string, label?: string}
 
-type SlideProps = Pick<ComponentProps<'img'>, 'className'> & ISlide
+type SlideProps = Pick<ComponentProps<'img'>, 'className'> & {children: React.ReactNode, label?:string}
 
 interface SlideComponent extends React.ForwardRefExoticComponent<SlideProps & React.RefAttributes<HTMLImageElement>> {
     _fouikit_is_slide: true;
 }
 
 const Slide = forwardRef<HTMLImageElement, SlideProps>(
-    ({ className, slideSrc, alt, label, ...props }, ref) => {
+    ({ className, children, label, ...props }, ref) => {
         return (
             <div className="w-full h-full shrink-0 relative">
-                <Image
-                    ref={ref}
-                    className={cn('w-full h-full shrink-0', className)}
-                    src={slideSrc}
-                    alt={alt}
-                    data-slider-id='fouikitslider'
-                    {...props}
-                />
+                {children}
                 {label && (
-                    <span className="absolute bottom-0 left-0 w-full max-h-24 min-h-12 px-2 py-1 bg-black/70 z-50 overflow-hidden line-clamp-3">
+                    <span className="absolute flex items-center bottom-0 left-0 w-full max-h-24 min-h-12 px-2 py-1 bg-black/70 z-50 overflow-hidden line-clamp-3">
                         {label}
                     </span>
                 )}

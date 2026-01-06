@@ -13,7 +13,7 @@ export default function useDocumentTitlePage() {
 
     const code =
         `    const ref = useRef(null)
-    const handle = () => {
+    const handleClickOutside = () => {
         console.log('clicked outside!')
     }
 
