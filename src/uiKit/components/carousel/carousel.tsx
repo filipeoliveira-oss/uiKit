@@ -189,7 +189,7 @@ interface SlideComponent extends React.ForwardRefExoticComponent<SlideProps & Re
 const Slide = forwardRef<HTMLImageElement, SlideProps>(
     ({ className, children, label, ...props }, ref) => {
         return (
-            <div className="w-full h-full shrink-0 relative">
+            <div className="w-full h-full shrink-0 relative" {...props}>
                 {children}
                 {label && (
                     <span className="absolute flex items-center bottom-0 left-0 w-full max-h-24 min-h-12 px-2 py-1 bg-black/70 z-50 overflow-hidden line-clamp-3">

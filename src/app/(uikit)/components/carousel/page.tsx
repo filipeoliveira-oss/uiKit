@@ -51,9 +51,15 @@ carousel`
 
             <div className="w-full h-96 shrink-0">
                 <Carousel showDots={true} animationType={currentType as any}>
-                    <Slide alt="image1" slideSrc={c4} label="This is the label" />
-                    <Slide alt="image2" slideSrc={c2} />
-                    <Slide alt="image3" slideSrc={c3} />
+                    <Slide   label="This is the label" >
+                        <img src={'/public/card2.jpg'}/>
+                    </Slide>
+                    <Slide   label="This is the label" >
+                        <img src={'/public/card4.jpg'}/>
+                    </Slide>
+                    <Slide   label="This is the label" >
+                        <img src={'/public/card3.jpg'}/>
+                    </Slide>
                 </Carousel>
             </div>
 
