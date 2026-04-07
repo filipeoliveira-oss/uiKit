@@ -1,0 +1,1469 @@
+<style>
+    :root {
+        --color-background-primary: #ffffff;
+        --color-background-secondary: #f5f5f3;
+        --color-background-tertiary: #eeede9;
+        --color-text-primary: #1a1a18;
+        --color-text-secondary: #6b6b67;
+        --color-border-tertiary: rgba(0, 0, 0, 0.12);
+        --color-border-secondary: rgba(0, 0, 0, 0.22);
+        --color-border-primary: rgba(0, 0, 0, 0.35);
+        --border-radius-md: 8px;
+        --border-radius-lg: 12px;
+        --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-mono: "Fira Code", "Cascadia Code", "Consolas", monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --color-background-primary: #1e1e1c;
+            --color-background-secondary: #2a2a28;
+            --color-background-tertiary: #141412;
+            --color-text-primary: #f0ede6;
+            --color-text-secondary: #8a8a86;
+            --color-border-tertiary: rgba(255, 255, 255, 0.1);
+            --color-border-secondary: rgba(255, 255, 255, 0.18);
+            --color-border-primary: rgba(255, 255, 255, 0.28);
+        }
+    }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        font-family: var(--font-sans);
+        font-size: 13px;
+        color: var(--color-text-primary);
+    }
+    .app {
+        display: flex;
+        height: 100%;
+        min-height: 600px;
+        flex-direction: column;
+        width: 100% !important;
+    }
+    .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+        background: var(--color-background-primary);
+        flex-wrap: wrap;
+    }
+    .toolbar-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .sep {
+        width: 0.5px;
+        height: 20px;
+        background: var(--color-border-tertiary);
+        margin: 0 4px;
+    }
+    .main {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+    .sidebar {
+        width: 300px;
+        min-width: 220px;
+        border-right: 0.5px solid var(--color-border-tertiary);
+        background: var(--color-background-primary);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .sidebar-header {
+        padding: 10px 12px;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--color-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+    }
+    .table-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 6px;
+    }
+    .table-item {
+        padding: 8px 10px;
+        border-radius: var(--border-radius-md);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 0.5px solid transparent;
+        margin-bottom: 3px;
+    }
+    .table-item:hover {
+        background: var(--color-background-secondary);
+    }
+    .table-item.active {
+        background: var(--color-background-secondary);
+        border-color: var(--color-border-secondary);
+    }
+    .table-item-name {
+        font-weight: 500;
+        font-size: 13px;
+    }
+    .table-item-meta {
+        font-size: 11px;
+        color: var(--color-text-secondary);
+    }
+    .canvas-area {
+        flex: 1;
+        overflow: auto;
+        position: relative;
+        background: var(--color-background-tertiary);
+    }
+    .canvas {
+        position: relative;
+        min-width: 100%;
+        min-height: 100%;
+    }
+    .editor-panel {
+        width: 380px;
+        min-width: 300px;
+        border-left: 0.5px solid var(--color-border-tertiary);
+        background: var(--color-background-primary);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .editor-panel.hidden {
+        display: none;
+    }
+    .panel-header {
+        padding: 10px 12px;
+        font-size: 13px;
+        font-weight: 500;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .panel-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+    }
+    .field-group {
+        margin-bottom: 12px;
+    }
+    .field-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--color-text-secondary);
+        margin-bottom: 4px;
+        display: block;
+    }
+    .field-input {
+        width: 100%;
+        padding: 6px 8px;
+        border: 0.5px solid var(--color-border-secondary);
+        border-radius: var(--border-radius-md);
+        font-size: 13px;
+        background: var(--color-background-primary);
+        color: var(--color-text-primary);
+    }
+    .field-input:focus {
+        outline: none;
+        border-color: var(--color-border-primary);
+    }
+    .col-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto auto auto auto;
+        gap: 4px;
+        align-items: center;
+        padding: 5px 6px;
+        border: 0.5px solid var(--color-border-tertiary);
+        border-radius: var(--border-radius-md);
+        margin-bottom: 4px;
+        background: var(--color-background-primary);
+    }
+    .col-row:hover {
+        background: var(--color-background-secondary);
+    }
+    .col-input {
+        padding: 4px 6px;
+        border: 0.5px solid transparent;
+        border-radius: 4px;
+        font-size: 12px;
+        width: 100%;
+        background: transparent;
+        color: var(--color-text-primary);
+    }
+    .col-input:focus {
+        outline: none;
+        border-color: var(--color-border-secondary);
+        background: var(--color-background-primary);
+    }
+    .col-select {
+        padding: 4px 4px;
+        border: 0.5px solid transparent;
+        border-radius: 4px;
+        font-size: 11px;
+        background: transparent;
+        color: var(--color-text-primary);
+        cursor: pointer;
+    }
+    .col-select:focus {
+        outline: none;
+        border-color: var(--color-border-secondary);
+        background: var(--color-background-primary);
+    }
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+        font-size: 10px;
+        font-weight: 500;
+        cursor: pointer;
+        border: 0.5px solid var(--color-border-tertiary);
+        background: var(--color-background-secondary);
+        color: var(--color-text-secondary);
+    }
+    .badge.active {
+        background: #e6f1fb;
+        color: #0c447c;
+        border-color: #b5d4f4;
+    }
+    .badge.pk.active {
+        background: #eeedfe;
+        color: #3c3489;
+        border-color: #cecbf6;
+    }
+    .badge.danger {
+        background: #fcebeb;
+        color: #a32d2d;
+        border-color: #f7c1c1;
+    }
+    .btn {
+        padding: 5px 10px;
+        border-radius: var(--border-radius-md);
+        border: 0.5px solid var(--color-border-secondary);
+        background: var(--color-background-primary);
+        color: var(--color-text-primary);
+        cursor: pointer;
+        font-size: 12px;
+        font-family: var(--font-sans);
+    }
+    .btn:hover {
+        background: var(--color-background-secondary);
+    }
+    .btn.primary {
+        background: #185fa5;
+        color: #e6f1fb;
+        border-color: #0c447c;
+    }
+    .btn.primary:hover {
+        background: #0c447c;
+    }
+    .btn.sm {
+        padding: 3px 8px;
+        font-size: 11px;
+    }
+    .db-tab {
+        padding: 4px 10px;
+        border-radius: var(--border-radius-md);
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        border: 0.5px solid transparent;
+        color: var(--color-text-secondary);
+    }
+    .db-tab:hover {
+        background: var(--color-background-secondary);
+    }
+    .db-tab.active {
+        background: var(--color-background-secondary);
+        border-color: var(--color-border-secondary);
+        color: var(--color-text-primary);
+    }
+    .table-card {
+        position: absolute;
+        background: var(--color-background-primary);
+        border: 1.5px solid var(--color-border-secondary);
+        border-radius: var(--border-radius-lg);
+        min-width: 220px;
+        cursor: move;
+        user-select: none;
+        box-shadow: none;
+    }
+    .table-card-header {
+        padding: 8px 12px;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    }
+    .table-card-title {
+        font-weight: 500;
+        font-size: 13px;
+    }
+    .table-card-col {
+        padding: 4px 12px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+    }
+    .table-card-col:last-child {
+        border-bottom: none;
+    }
+    .col-type-badge {
+        font-size: 10px;
+        color: var(--color-text-secondary);
+        padding: 1px 5px;
+        border-radius: 3px;
+        background: var(--color-background-secondary);
+    }
+    .fk-badge {
+        font-size: 10px;
+        color: #0c447c;
+        background: #e6f1fb;
+        padding: 1px 5px;
+        border-radius: 3px;
+    }
+    .sql-view {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .sql-modal {
+        background: var(--color-background-primary);
+        border-radius: var(--border-radius-lg);
+        border: 0.5px solid var(--color-border-secondary);
+        width: 680px;
+        max-width: 95vw;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .sql-modal-header {
+        padding: 12px 16px;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .sql-tabs {
+        display: flex;
+        gap: 4px;
+        padding: 8px 12px;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+    }
+    .sql-body {
+        flex: 1;
+        overflow: auto;
+        padding: 12px;
+    }
+    .sql-code {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        background: var(--color-background-tertiary);
+        border-radius: var(--border-radius-md);
+        padding: 12px;
+        white-space: pre;
+        overflow: auto;
+        min-height: 200px;
+        color: var(--color-text-primary);
+        border: 0.5px solid var(--color-border-tertiary);
+    }
+    .import-area {
+        padding: 16px;
+        border: 1.5px dashed var(--color-border-secondary);
+        border-radius: var(--border-radius-lg);
+        text-align: center;
+        cursor: pointer;
+        color: var(--color-text-secondary);
+        margin-bottom: 12px;
+    }
+    .import-area:hover {
+        border-color: var(--color-border-primary);
+        background: var(--color-background-secondary);
+    }
+    .constraint-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 0;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+    }
+    .constraint-row:last-child {
+        border-bottom: none;
+    }
+    .fk-row {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 6px;
+        align-items: center;
+        padding: 5px 0;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+        font-size: 12px;
+    }
+    svg.canvas-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+    }
+    .tab-section {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 12px;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+        padding-bottom: 8px;
+    }
+    .tab-btn {
+        padding: 4px 10px;
+        border-radius: var(--border-radius-md);
+        font-size: 12px;
+        cursor: pointer;
+        border: 0.5px solid transparent;
+        color: var(--color-text-secondary);
+        background: transparent;
+    }
+    .tab-btn.active {
+        background: var(--color-background-secondary);
+        border-color: var(--color-border-secondary);
+        color: var(--color-text-primary);
+    }
+    .notice {
+        padding: 8px 10px;
+        border-radius: var(--border-radius-md);
+        font-size: 12px;
+        color: var(--color-text-secondary);
+        background: var(--color-background-secondary);
+        margin-bottom: 8px;
+    }
+</style>
+
+<div class="app">
+    <div class="toolbar">
+        <span style="font-weight: 500; font-size: 13px; margin-right: 4px"
+            >Schema Designer</span
+        >
+        <div class="sep"></div>
+        <div class="toolbar-group">
+            <button class="btn sm" onclick="addTable()">+ Tabela</button>
+            <button class="btn sm" onclick="openImport()">Importar SQL</button>
+        </div>
+        <div class="sep"></div>
+        <div class="toolbar-group">
+            <span style="font-size: 11px; color: var(--color-text-secondary)"
+                >Banco:</span
+            >
+            <span
+                class="db-tab active"
+                onclick="setActiveDb('postgresql', this)"
+                >PostgreSQL</span
+            >
+            <span class="db-tab" onclick="setActiveDb('mysql', this)"
+                >MySQL</span
+            >
+            <span class="db-tab" onclick="setActiveDb('oracle', this)"
+                >Oracle</span
+            >
+            <span class="db-tab" onclick="setActiveDb('sqlserver', this)"
+                >SQL Server</span
+            >
+        </div>
+        <div class="sep"></div>
+        <button class="btn sm primary" onclick="openExport()">
+            Exportar SQL
+        </button>
+    </div>
+    <div class="main">
+        <div class="sidebar">
+            <div class="sidebar-header">Tabelas</div>
+            <div class="table-list" id="tableList"></div>
+        </div>
+        <div class="canvas-area" id="canvasArea">
+            <div class="canvas" id="canvas">
+                <svg class="canvas-svg" id="canvasSvg"></svg>
+            </div>
+        </div>
+        <div class="editor-panel hidden" id="editorPanel">
+            <div class="panel-header">
+                <span id="editorTitle">Editar tabela</span>
+                <button
+                    class="btn sm"
+                    style="color: red; border-color: #f7c1c1"
+                    onclick="deleteTable()"
+                >
+                    Excluir
+                </button>
+            </div>
+            <div class="panel-body" id="editorBody"></div>
+        </div>
+    </div>
+</div>
+
+<div id="sqlModal" style="display: none" class="sql-view">
+    <div class="sql-modal">
+        <div class="sql-modal-header">
+            <span style="font-weight: 500" id="sqlModalTitle">SQL gerado</span>
+            <button class="btn sm" onclick="closeSqlModal()">Fechar</button>
+        </div>
+        <div class="sql-tabs" id="sqlModalTabs"></div>
+        <div class="sql-body">
+            <div class="sql-code" id="sqlModalCode"></div>
+            <div style="display: flex; gap: 8px; margin-top: 10px">
+                <button class="btn sm" onclick="copySql()">Copiar</button>
+                <button class="btn sm" onclick="downloadSql()">Download</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="importModal" style="display: none" class="sql-view">
+    <div class="sql-modal">
+        <div class="sql-modal-header">
+            <span style="font-weight: 500">Importar SQL</span>
+            <button class="btn sm" onclick="closeImport()">Fechar</button>
+        </div>
+        <div class="sql-body">
+            <p class="notice">
+                Cole um script CREATE TABLE (PostgreSQL, MySQL, Oracle ou SQL
+                Server). O designer vai detectar o banco automaticamente e
+                importar as tabelas, colunas e constraints.
+            </p>
+            <textarea
+                class="field-input sql-code"
+                id="importText"
+                style="min-height: 260px; resize: vertical"
+                placeholder="-- Cole seu script aqui...&#10;CREATE TABLE usuarios (&#10;  id SERIAL PRIMARY KEY,&#10;  nome VARCHAR(255) NOT NULL,&#10;  email VARCHAR(255) UNIQUE&#10;);"
+            ></textarea>
+            <div style="display: flex; gap: 8px; margin-top: 10px">
+                <button class="btn sm primary" onclick="runImport()">
+                    Importar
+                </button>
+                <button class="btn sm" onclick="closeImport()">Cancelar</button>
+                <span
+                    id="importMsg"
+                    style="
+                        font-size: 12px;
+                        color: var(--color-text-secondary);
+                        margin-left: 4px;
+                    "
+                ></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let schema = { tables: [], nextId: 1 };
+    let activeDb = "postgresql";
+    let selectedTableId = null;
+    let editorTab = "columns";
+    let dragState = null;
+
+    const TYPES_GENERIC = [
+        "VARCHAR",
+        "TEXT",
+        "INT",
+        "BIGINT",
+        "DECIMAL",
+        "FLOAT",
+        "BOOLEAN",
+        "DATE",
+        "DATETIME",
+        "TIMESTAMP",
+        "BLOB",
+        "JSON",
+        "UUID",
+    ];
+    const TYPES_PG = [
+        "SERIAL",
+        "BIGSERIAL",
+        "VARCHAR",
+        "TEXT",
+        "INTEGER",
+        "BIGINT",
+        "NUMERIC",
+        "REAL",
+        "BOOLEAN",
+        "DATE",
+        "TIMESTAMP",
+        "TIMESTAMPTZ",
+        "JSONB",
+        "UUID",
+        "BYTEA",
+    ];
+    const TYPES_MYSQL = [
+        "VARCHAR",
+        "TEXT",
+        "TINYTEXT",
+        "MEDIUMTEXT",
+        "INT",
+        "BIGINT",
+        "TINYINT",
+        "DECIMAL",
+        "FLOAT",
+        "BOOLEAN",
+        "DATE",
+        "DATETIME",
+        "TIMESTAMP",
+        "BLOB",
+        "JSON",
+    ];
+    const TYPES_ORACLE = [
+        "NUMBER",
+        "VARCHAR2",
+        "NVARCHAR2",
+        "CHAR",
+        "CLOB",
+        "NCLOB",
+        "DATE",
+        "TIMESTAMP",
+        "FLOAT",
+        "BLOB",
+        "XMLTYPE",
+        "RAW",
+    ];
+    const TYPES_SS = [
+        "VARCHAR",
+        "NVARCHAR",
+        "TEXT",
+        "NTEXT",
+        "INT",
+        "BIGINT",
+        "SMALLINT",
+        "DECIMAL",
+        "FLOAT",
+        "BIT",
+        "DATE",
+        "DATETIME",
+        "DATETIME2",
+        "UNIQUEIDENTIFIER",
+        "VARBINARY",
+        "XML",
+    ];
+
+    function getTypes() {
+        if (activeDb === "postgresql") return TYPES_PG;
+        if (activeDb === "mysql") return TYPES_MYSQL;
+        if (activeDb === "oracle") return TYPES_ORACLE;
+        if (activeDb === "sqlserver") return TYPES_SS;
+        return TYPES_GENERIC;
+    }
+
+    function setActiveDb(db, el) {
+        activeDb = db;
+        document
+            .querySelectorAll(".db-tab")
+            .forEach((e) => e.classList.remove("active"));
+        el.classList.add("active");
+        if (selectedTableId) renderEditor();
+    }
+
+    function save() {
+        try {
+            localStorage.setItem(
+                "schema_designer_v1",
+                JSON.stringify({ schema, nextId: schema.nextId || 1 }),
+            );
+        } catch (e) {}
+    }
+    function load() {
+        try {
+            const d = localStorage.getItem("schema_designer_v1");
+            if (d) {
+                const p = JSON.parse(d);
+                schema = p.schema || { tables: [], nextId: 1 };
+                schema.nextId = p.nextId || schema.tables.length + 1;
+            }
+        } catch (e) {}
+    }
+
+    function addTable(name, x, y) {
+        const id = schema.nextId++;
+        const tname = name || "tabela_" + id;
+        const pos = nextCardPos(x, y);
+        schema.tables.push({
+            id,
+            name: tname,
+            columns: [
+                {
+                    id: 1,
+                    name: "id",
+                    type: "SERIAL",
+                    pk: true,
+                    notNull: true,
+                    unique: false,
+                    default: "",
+                    fk: null,
+                },
+            ],
+            nextColId: 2,
+            x: pos.x,
+            y: pos.y,
+            constraints: [],
+            indexes: [],
+        });
+        save();
+        renderAll();
+        selectTable(id);
+    }
+
+    function nextCardPos(x, y) {
+        if (x !== undefined) return { x, y };
+        const taken = schema.tables.map((t) => ({ x: t.x, y: t.y }));
+        let cx = 40,
+            cy = 40;
+        for (let i = 0; i < 20; i++) {
+            if (
+                !taken.find(
+                    (p) => Math.abs(p.x - cx) < 50 && Math.abs(p.y - cy) < 50,
+                )
+            )
+                break;
+            cx += 260;
+            if (cx > 900) {
+                cx = 40;
+                cy += 200;
+            }
+        }
+        return { x: cx, y: cy };
+    }
+
+    function selectTable(id) {
+        selectedTableId = id;
+        editorTab = "columns";
+        renderAll();
+        document.getElementById("editorPanel").classList.remove("hidden");
+        renderEditor();
+    }
+
+    function deleteTable() {
+        if (!selectedTableId) return;
+        schema.tables = schema.tables.filter((t) => t.id !== selectedTableId);
+        schema.tables.forEach((t) =>
+            t.columns.forEach((c) => {
+                if (c.fk && c.fk.tableId === selectedTableId) c.fk = null;
+            }),
+        );
+        selectedTableId = null;
+        document.getElementById("editorPanel").classList.add("hidden");
+        save();
+        renderAll();
+    }
+
+    function getTable(id) {
+        return schema.tables.find((t) => t.id == id);
+    }
+
+    function renderAll() {
+        renderTableList();
+        renderCanvas();
+    }
+
+    function renderTableList() {
+        const el = document.getElementById("tableList");
+        if (schema.tables.length === 0) {
+            el.innerHTML =
+                '<div style="padding:12px;font-size:12px;color:var(--color-text-secondary);text-align:center">Nenhuma tabela ainda.<br>Clique em "+ Tabela" para começar.</div>';
+            return;
+        }
+        el.innerHTML = schema.tables
+            .map(
+                (t) => `
+    <div class="table-item${selectedTableId === t.id ? " active" : ""}" onclick="selectTable(${t.id})">
+      <div>
+        <div class="table-item-name">${t.name}</div>
+        <div class="table-item-meta">${t.columns.length} coluna${t.columns.length !== 1 ? "s" : ""}</div>
+      </div>
+    </div>
+  `,
+            )
+            .join("");
+    }
+
+    function renderCanvas() {
+        const canvas = document.getElementById("canvas");
+        const svg = document.getElementById("canvasSvg");
+        const cards = canvas.querySelectorAll(".table-card");
+        cards.forEach((c) => c.remove());
+        schema.tables.forEach((t) => {
+            const card = document.createElement("div");
+            card.className = "table-card";
+            card.dataset.id = t.id;
+            card.style.left = t.x + "px";
+            card.style.top = t.y + "px";
+            const hdrColor =
+                selectedTableId === t.id
+                    ? "#56a0e6"
+                    : "var(--color-background-secondary)";
+            card.innerHTML = `
+      <div class="table-card-header" style="background:${hdrColor}">
+        <span class="table-card-title">${t.name}</span>
+        <button class="btn sm" onclick="selectTable(${t.id})" style="font-size:10px">Editar</button>
+      </div>
+      ${t.columns
+          .map(
+              (c) => `
+        <div class="table-card-col">
+          ${c.pk ? '<span class="badge pk active" title="PK" style="width:16px;height:16px;font-size:9px">PK</span>' : ""}
+          <span style="font-weight:${c.pk ? 500 : 400}">${c.name}</span>
+          <span class="col-type-badge">${c.type}${c.length ? "(" + c.length + ")" : ""}</span>
+          ${c.notNull && !c.pk ? '<span style="font-size:10px;color:var(--color-text-secondary)">NN</span>' : ""}
+          ${c.unique ? '<span style="font-size:10px;color:var(--color-text-secondary)">UQ</span>' : ""}
+          ${c.fk ? `<span class="fk-badge">→ ${getFkLabel(c.fk)}</span>` : ""}
+        </div>
+      `,
+          )
+          .join("")}
+    `;
+            makeDraggable(card, t);
+            canvas.appendChild(card);
+        });
+        drawRelationships(svg);
+        // resize canvas
+        const maxX = Math.max(800, ...schema.tables.map((t) => t.x + 260));
+        const maxY = Math.max(500, ...schema.tables.map((t) => t.y + 200));
+        canvas.style.width = maxX + "px";
+        canvas.style.height = maxY + "px";
+        svg.setAttribute("width", maxX);
+        svg.setAttribute("height", maxY);
+    }
+
+    function getFkLabel(fk) {
+        const t = getTable(fk.tableId);
+        if (!t) return "?";
+        const c = t.columns.find((c) => c.id === fk.columnId);
+        return t.name + "." + (c ? c.name : "?");
+    }
+
+    function drawRelationships(svg) {
+        svg.innerHTML =
+            '<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#185FA5"/></marker></defs>';
+        schema.tables.forEach((t) => {
+            t.columns.forEach((c) => {
+                if (!c.fk) return;
+                const toT = getTable(c.fk.tableId);
+                if (!toT) return;
+                const fromX = t.x + 220,
+                    fromY = t.y + 30;
+                const toX = toT.x,
+                    toY = toT.y + 30;
+                const mx = (fromX + toX) / 2;
+                svg.innerHTML += `<path d="M${fromX},${fromY} C${mx},${fromY} ${mx},${toY} ${toX},${toY}" stroke="#185FA5" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arr)" opacity="0.7"/>`;
+            });
+        });
+    }
+
+    function makeDraggable(card, t) {
+        card.addEventListener("mousedown", (e) => {
+            if (
+                e.target.tagName === "BUTTON" ||
+                e.target.tagName === "INPUT" ||
+                e.target.tagName === "SELECT"
+            )
+                return;
+            const rect = card.getBoundingClientRect();
+            const canvasRect = document
+                .getElementById("canvasArea")
+                .getBoundingClientRect();
+            dragState = {
+                id: t.id,
+                ox:
+                    e.clientX -
+                    (t.x +
+                        canvasRect.left -
+                        document.getElementById("canvasArea").scrollLeft),
+                oy:
+                    e.clientY -
+                    (t.y +
+                        canvasRect.top -
+                        document.getElementById("canvasArea").scrollTop),
+            };
+            e.preventDefault();
+        });
+    }
+
+    document.addEventListener("mousemove", (e) => {
+        if (!dragState) return;
+        const area = document.getElementById("canvasArea");
+        const canvasRect = area.getBoundingClientRect();
+        const t = getTable(dragState.id);
+        if (!t) return;
+        t.x = Math.max(
+            0,
+            e.clientX - dragState.ox - canvasRect.left + area.scrollLeft,
+        );
+        t.y = Math.max(
+            0,
+            e.clientY - dragState.oy - canvasRect.top + area.scrollTop,
+        );
+        const card = document.querySelector(
+            `.table-card[data-id="${dragState.id}"]`,
+        );
+        if (card) {
+            card.style.left = t.x + "px";
+            card.style.top = t.y + "px";
+        }
+        drawRelationships(document.getElementById("canvasSvg"));
+    });
+    document.addEventListener("mouseup", () => {
+        if (dragState) {
+            save();
+            dragState = null;
+        }
+    });
+
+    function renderEditor() {
+        const t = getTable(selectedTableId);
+        if (!t) return;
+        document.getElementById("editorTitle").textContent =
+            "Tabela: " + t.name;
+        const body = document.getElementById("editorBody");
+        const types = getTypes();
+        const typeOpts = types
+            .map((tp) => `<option value="${tp}">${tp}</option>`)
+            .join("");
+        const otherTables = schema.tables.filter((tt) => tt.id !== t.id);
+
+        body.innerHTML = `
+    <div class="tab-section">
+      <span class="tab-btn${editorTab === "columns" ? " active" : ""}" onclick="setEditorTab('columns')">Colunas</span>
+      <span class="tab-btn${editorTab === "constraints" ? " active" : ""}" onclick="setEditorTab('constraints')">Constraints</span>
+      <span class="tab-btn${editorTab === "indexes" ? " active" : ""}" onclick="setEditorTab('indexes')">Índices</span>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Nome da tabela</label>
+      <input class="field-input" value="${t.name}" onchange="renameTable(this.value)" style="font-weight:500"/>
+    </div>
+    ${editorTab === "columns" ? renderColumnsTab(t, typeOpts, otherTables) : ""}
+    ${editorTab === "constraints" ? renderConstraintsTab(t, otherTables) : ""}
+    ${editorTab === "indexes" ? renderIndexesTab(t) : ""}
+  `;
+    }
+
+    function setEditorTab(tab) {
+        editorTab = tab;
+        renderEditor();
+    }
+
+    function renderColumnsTab(t, typeOpts, otherTables) {
+        const fkOpts =
+            '<option value="">— sem FK —</option>' +
+            otherTables
+                .map((ot) =>
+                    ot.columns
+                        .map(
+                            (oc) =>
+                                `<option value="${ot.id}:${oc.id}">${ot.name}.${oc.name}</option>`,
+                        )
+                        .join(""),
+                )
+                .join("");
+        return `
+    <div style="display:grid;grid-template-columns:1fr 1fr auto auto auto auto;gap:4px;margin-bottom:4px;padding:0 6px">
+      <span style="font-size:10px;color:var(--color-text-secondary)">Nome</span>
+      <span style="font-size:10px;color:var(--color-text-secondary)">Tipo</span>
+      <span style="font-size:10px;color:var(--color-text-secondary)" title="Primary Key">PK</span>
+      <span style="font-size:10px;color:var(--color-text-secondary)" title="Not Null">NN</span>
+      <span style="font-size:10px;color:var(--color-text-secondary)" title="Unique">UQ</span>
+      <span style="font-size:10px;color:var(--color-text-secondary)"></span>
+    </div>
+    ${t.columns
+        .map(
+            (c) => `
+      <div class="col-row" id="colrow_${c.id}">
+        <input class="col-input" value="${c.name}" onchange="updateCol(${t.id},${c.id},'name',this.value)" placeholder="nome"/>
+        <select class="col-select" onchange="updateCol(${t.id},${c.id},'type',this.value)">
+          ${typeOpts.replace(`value="${c.type}"`, `value="${c.type}" selected`)}
+        </select>
+        <span class="badge pk${c.pk ? " active" : ""}" title="PK" onclick="toggleCol(${t.id},${c.id},'pk')">PK</span>
+        <span class="badge${c.notNull ? " active" : ""}" title="NOT NULL" onclick="toggleCol(${t.id},${c.id},'notNull')">NN</span>
+        <span class="badge${c.unique ? " active" : ""}" title="UNIQUE" onclick="toggleCol(${t.id},${c.id},'unique')">UQ</span>
+        <span class="badge danger" title="Remover" onclick="removeCol(${t.id},${c.id})">✕</span>
+      </div>
+      <div style="padding:2px 6px 6px;font-size:11px;color:var(--color-text-secondary);display:flex;gap:8px;align-items:center">
+        <span>Tamanho:</span>
+        <input class="col-input" style="width:60px" value="${c.length || ""}" placeholder="ex: 255" onchange="updateCol(${t.id},${c.id},'length',this.value)"/>
+        <span>Default:</span>
+        <input class="col-input" style="flex:1" value="${c.default || ""}" placeholder="valor padrão" onchange="updateCol(${t.id},${c.id},'default',this.value)"/>
+        <span>FK:</span>
+        <select class="col-select" style="flex:1" onchange="updateFk(${t.id},${c.id},this.value)">
+          ${fkOpts.replace(`value="${c.fk ? c.fk.tableId + ":" + c.fk.columnId : ""}"`, `value="${c.fk ? c.fk.tableId + ":" + c.fk.columnId : ""}" selected`)}
+        </select>
+      </div>
+    `,
+        )
+        .join("")}
+    <button class="btn sm" onclick="addColumn(${t.id})" style="margin-top:6px;width:100%">+ Coluna</button>
+  `;
+    }
+
+    function renderConstraintsTab(t, otherTables) {
+        const fkCols = t.columns.filter((c) => c.fk);
+        return `
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px">Chaves estrangeiras (FK)</div>
+      ${
+          fkCols.length === 0
+              ? '<p style="font-size:12px;color:var(--color-text-secondary)">Nenhuma FK definida. Configure nas colunas.</p>'
+              : fkCols
+                    .map(
+                        (c) => `
+          <div class="fk-row">
+            <span>${t.name}.${c.name}</span>
+            <span style="color:var(--color-text-secondary)">→</span>
+            <span>${getFkLabel(c.fk)}</span>
+          </div>
+        `,
+                    )
+                    .join("")
+      }
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px">Constraints adicionais</div>
+      ${(t.constraints || [])
+          .map(
+              (ct, i) => `
+        <div class="constraint-row">
+          <select class="col-select" style="width:80px" onchange="updateConstraint(${t.id},${i},'type',this.value)">
+            <option value="CHECK"${ct.type === "CHECK" ? " selected" : ""}>CHECK</option>
+            <option value="UNIQUE"${ct.type === "UNIQUE" ? " selected" : ""}>UNIQUE</option>
+          </select>
+          <input class="col-input field-input" style="flex:1" value="${ct.expr}" placeholder="expressão" onchange="updateConstraint(${t.id},${i},'expr',this.value)"/>
+          <span class="badge danger" onclick="removeConstraint(${t.id},${i})">✕</span>
+        </div>
+      `,
+          )
+          .join("")}
+      <button class="btn sm" onclick="addConstraint(${t.id})" style="margin-top:6px">+ Constraint</button>
+    </div>
+  `;
+    }
+
+    function renderIndexesTab(t) {
+        return `
+    <div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px">Índices</div>
+    ${(t.indexes || [])
+        .map(
+            (idx, i) => `
+      <div class="constraint-row">
+        <input class="col-input field-input" style="flex:1" value="${idx.name}" placeholder="nome do índice" onchange="updateIndex(${t.id},${i},'name',this.value)"/>
+        <input class="col-input field-input" style="flex:1" value="${idx.cols}" placeholder="colunas (col1,col2)" onchange="updateIndex(${t.id},${i},'cols',this.value)"/>
+        <select class="col-select" style="width:70px" onchange="updateIndex(${t.id},${i},'unique',this.value==='true')">
+          <option value="false"${!idx.unique ? " selected" : ""}>Idx</option>
+          <option value="true"${idx.unique ? " selected" : ""}>Unique</option>
+        </select>
+        <span class="badge danger" onclick="removeIndex(${t.id},${i})">✕</span>
+      </div>
+    `,
+        )
+        .join("")}
+    <button class="btn sm" onclick="addIndex(${t.id})" style="margin-top:6px">+ Índice</button>
+  `;
+    }
+
+    function renameTable(v) {
+        const t = getTable(selectedTableId);
+        if (t) {
+            t.name = v;
+            save();
+            renderAll();
+        }
+    }
+    function updateCol(tid, cid, field, val) {
+        const t = getTable(tid);
+        const c = t.columns.find((c) => c.id === cid);
+        if (c) {
+            c[field] = val;
+            save();
+            renderCanvas();
+        }
+    }
+    function toggleCol(tid, cid, field) {
+        const t = getTable(tid);
+        const c = t.columns.find((c) => c.id === cid);
+        if (c) {
+            c[field] = !c[field];
+            if (field === "pk" && c[field]) c.notNull = true;
+            save();
+            renderEditor();
+            renderCanvas();
+        }
+    }
+    function removeCol(tid, cid) {
+        const t = getTable(tid);
+        t.columns = t.columns.filter((c) => c.id !== cid);
+        save();
+        renderEditor();
+        renderCanvas();
+    }
+    function addColumn(tid) {
+        const t = getTable(tid);
+        const id = t.nextColId++;
+        t.columns.push({
+            id,
+            name: "coluna_" + id,
+            type: getTypes()[2],
+            pk: false,
+            notNull: false,
+            unique: false,
+            default: "",
+            length: "",
+            fk: null,
+        });
+        save();
+        renderEditor();
+        renderCanvas();
+    }
+    function updateFk(tid, cid, val) {
+        const t = getTable(tid);
+        const c = t.columns.find((c) => c.id === cid);
+        if (c) {
+            if (!val) {
+                c.fk = null;
+            } else {
+                const [tableId, columnId] = val.split(":");
+                c.fk = {
+                    tableId: parseInt(tableId),
+                    columnId: parseInt(columnId),
+                };
+            }
+            save();
+            renderCanvas();
+        }
+    }
+    function addConstraint(tid) {
+        const t = getTable(tid);
+        if (!t.constraints) t.constraints = [];
+        t.constraints.push({ type: "CHECK", expr: "" });
+        save();
+        renderEditor();
+    }
+    function updateConstraint(tid, i, field, val) {
+        const t = getTable(tid);
+        t.constraints[i][field] = val;
+        save();
+    }
+    function removeConstraint(tid, i) {
+        const t = getTable(tid);
+        t.constraints.splice(i, 1);
+        save();
+        renderEditor();
+    }
+    function addIndex(tid) {
+        const t = getTable(tid);
+        if (!t.indexes) t.indexes = [];
+        t.indexes.push({
+            name: "idx_" + t.name + "_" + (t.indexes.length + 1),
+            cols: "",
+            unique: false,
+        });
+        save();
+        renderEditor();
+    }
+    function updateIndex(tid, i, field, val) {
+        const t = getTable(tid);
+        t.indexes[i][field] = val;
+        save();
+    }
+    function removeIndex(tid, i) {
+        const t = getTable(tid);
+        t.indexes.splice(i, 1);
+        save();
+        renderEditor();
+    }
+
+    // SQL Generation
+    function generateSQL(db) {
+        return schema.tables.map((t) => generateTableSQL(t, db)).join("\n\n");
+    }
+
+    function generateTableSQL(t, db) {
+        const lines = [];
+        t.columns.forEach((c) => {
+            let typeDef = c.type + (c.length ? `(${c.length})` : "");
+            if (db === "oracle" && c.type === "SERIAL")
+                typeDef = "NUMBER GENERATED ALWAYS AS IDENTITY";
+            if (db === "sqlserver" && c.type === "SERIAL")
+                typeDef = "INT IDENTITY(1,1)";
+            if (db === "mysql" && c.type === "SERIAL")
+                typeDef = "INT AUTO_INCREMENT";
+            let col = `  ${c.name} ${typeDef}`;
+            if ((c.pk && db !== "oracle") || (c.pk && c.type !== "NUMBER"))
+                col += " PRIMARY KEY";
+            if (c.notNull && !c.pk) col += " NOT NULL";
+            if (c.unique && !c.pk) col += " UNIQUE";
+            if (c.default) col += ` DEFAULT ${c.default}`;
+            lines.push(col);
+        });
+        // FKs as constraints
+        t.columns
+            .filter((c) => c.fk)
+            .forEach((c) => {
+                const rt = getTable(c.fk.tableId);
+                if (!rt) return;
+                const rc = rt.columns.find((col) => col.id === c.fk.columnId);
+                if (!rc) return;
+                lines.push(
+                    `  CONSTRAINT fk_${t.name}_${c.name} FOREIGN KEY (${c.name}) REFERENCES ${rt.name}(${rc.name})`,
+                );
+            });
+        // extra constraints
+        (t.constraints || []).forEach((ct) => {
+            lines.push(
+                `  CONSTRAINT ${ct.type.toLowerCase()}_${t.name}_${Date.now() % 10000} ${ct.type} (${ct.expr})`,
+            );
+        });
+        let sql = `CREATE TABLE ${t.name} (\n${lines.join(",\n")}\n);`;
+        // indexes
+        (t.indexes || []).forEach((idx) => {
+            const u = idx.unique ? "UNIQUE " : "";
+            sql += `\nCREATE ${u}INDEX ${idx.name} ON ${t.name}(${idx.cols});`;
+        });
+        return sql;
+    }
+
+    let exportDb = "postgresql";
+    let exportModalTab = "postgresql";
+    function openExport() {
+        exportModalTab = activeDb;
+        const dbs = ["postgresql", "mysql", "oracle", "sqlserver"];
+        const tabs = document.getElementById("sqlModalTabs");
+        tabs.innerHTML = dbs
+            .map(
+                (db) =>
+                    `<span class="db-tab${exportModalTab === db ? " active" : ""}" onclick="switchExportTab('${db}',this)">${db.charAt(0).toUpperCase() + db.slice(1)}</span>`,
+            )
+            .join("");
+        document.getElementById("sqlModalTitle").textContent =
+            "SQL gerado — " + exportModalTab;
+        document.getElementById("sqlModalCode").textContent =
+            generateSQL(exportModalTab) || "-- Nenhuma tabela criada ainda.";
+        document.getElementById("sqlModal").style.display = "flex";
+    }
+    function switchExportTab(db, el) {
+        exportModalTab = db;
+        document
+            .querySelectorAll("#sqlModalTabs .db-tab")
+            .forEach((e) => e.classList.remove("active"));
+        el.classList.add("active");
+        document.getElementById("sqlModalTitle").textContent =
+            "SQL gerado — " + db;
+        document.getElementById("sqlModalCode").textContent =
+            generateSQL(db) || "-- Nenhuma tabela criada ainda.";
+    }
+    function closeSqlModal() {
+        document.getElementById("sqlModal").style.display = "none";
+    }
+    function copySql() {
+        try {
+            navigator.clipboard.writeText(
+                document.getElementById("sqlModalCode").textContent,
+            );
+        } catch (e) {}
+    }
+    function downloadSql() {
+        const sql = document.getElementById("sqlModalCode").textContent;
+        const a = document.createElement("a");
+        a.href = "data:text/plain," + encodeURIComponent(sql);
+        a.download = "schema_" + exportModalTab + ".sql";
+        a.click();
+    }
+
+    function openImport() {
+        document.getElementById("importModal").style.display = "flex";
+        document.getElementById("importMsg").textContent = "";
+    }
+    function closeImport() {
+        document.getElementById("importModal").style.display = "none";
+    }
+
+    function runImport() {
+        const sql = document.getElementById("importText").value.trim();
+        if (!sql) {
+            document.getElementById("importMsg").textContent =
+                "Cole um script SQL primeiro.";
+            return;
+        }
+        const result = parseSQLScript(sql);
+        if (result.tables.length === 0) {
+            document.getElementById("importMsg").textContent =
+                "Nenhuma tabela encontrada. Verifique o script.";
+            return;
+        }
+        result.tables.forEach((t) => {
+            const existing = schema.tables.find((et) => et.name === t.name);
+            if (existing) {
+                Object.assign(existing, {
+                    columns: t.columns,
+                    constraints: t.constraints || [],
+                    indexes: t.indexes || [],
+                });
+            } else {
+                t.id = schema.nextId++;
+                t.x = nextCardPos().x;
+                t.y = nextCardPos().y;
+                schema.tables.push(t);
+            }
+        });
+        save();
+        renderAll();
+        closeImport();
+        document.getElementById("importMsg").textContent = "";
+    }
+
+    function parseSQLScript(sql) {
+        const tables = [];
+        const tableRegex =
+            /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?["'`\[]?(\w+)["'`\]]?\s*\(([^;]+)\)/gi;
+        let m;
+        while ((m = tableRegex.exec(sql)) !== null) {
+            const tname = m[1];
+            const body = m[2];
+            const cols = [];
+            const constraints = [];
+            const nextColId = { v: 1 };
+            const lines = body
+                .split(",")
+                .map((l) => l.trim())
+                .filter(Boolean);
+            lines.forEach((line) => {
+                const upper = line.toUpperCase().trim();
+                if (
+                    upper.startsWith("CONSTRAINT") ||
+                    upper.startsWith("PRIMARY KEY") ||
+                    upper.startsWith("UNIQUE") ||
+                    upper.startsWith("CHECK") ||
+                    upper.startsWith("FOREIGN KEY")
+                ) {
+                    if (upper.startsWith("CHECK"))
+                        constraints.push({
+                            type: "CHECK",
+                            expr: line.match(/CHECK\s*\((.+)\)/i)?.[1] || line,
+                        });
+                    if (upper.startsWith("UNIQUE") && !upper.includes("KEY "))
+                        constraints.push({
+                            type: "UNIQUE",
+                            expr: line.match(/UNIQUE\s*\((.+)\)/i)?.[1] || line,
+                        });
+                    return;
+                }
+                const parts = line.trim().split(/\s+/);
+                if (parts.length < 2) return;
+                const cname = parts[0].replace(/["'`\[\]]/g, "");
+                const typeRaw = parts[1].toUpperCase().replace(/\(.*\)/, "");
+                const lengthM = parts[1].match(/\((\d+)\)/);
+                const length = lengthM ? lengthM[1] : "";
+                const pk = upper.includes("PRIMARY KEY");
+                const notNull = upper.includes("NOT NULL") || pk;
+                const unique = upper.includes("UNIQUE") && !pk;
+                const defM = line.match(/DEFAULT\s+(\S+)/i);
+                const defVal = defM ? defM[1] : "";
+                cols.push({
+                    id: nextColId.v++,
+                    name: cname,
+                    type: typeRaw,
+                    pk,
+                    notNull,
+                    unique,
+                    default: defVal,
+                    length,
+                    fk: null,
+                });
+            });
+            // detect SERIAL / AUTO_INCREMENT / IDENTITY
+            const indexRegex =
+                /CREATE\s+(?:UNIQUE\s+)?INDEX\s+(\w+)\s+ON\s+(\w+)\s*\(([^)]+)\)/gi;
+            const indexes = [];
+            tables.push({
+                name: tname,
+                columns: cols,
+                constraints,
+                indexes,
+                nextColId: nextColId.v,
+            });
+        }
+        // second pass: resolve FKs from REFERENCES
+        const fkRegex =
+            /CONSTRAINT\s+\w+\s+FOREIGN\s+KEY\s*\((\w+)\)\s+REFERENCES\s+(\w+)\s*\((\w+)\)/gi;
+        let fm;
+        while ((fm = fkRegex.exec(sql)) !== null) {
+            const [, colName, refTable, refCol] = fm;
+            tables.forEach((t) => {
+                const col = t.columns.find((c) => c.name === colName);
+                if (col) {
+                    const rt = tables.find((tt) => tt.name === refTable);
+                    if (rt) {
+                        const rc = rt.columns.find((c) => c.name === refCol);
+                        if (rc)
+                            col.fk = {
+                                tableId: rt.id || rt.name,
+                                columnId: rc.id,
+                            };
+                    }
+                }
+            });
+        }
+        return { tables };
+    }
+
+    // init
+    load();
+    if (schema.tables.length === 0) {
+        schema.nextId = 1;
+        addTable("clientes", 40, 40);
+        addTable("pedidos", 320, 40);
+        const pedidos = schema.tables[1];
+        pedidos.columns.push({
+            id: pedidos.nextColId++,
+            name: "cliente_id",
+            type: "INTEGER",
+            pk: false,
+            notNull: true,
+            unique: false,
+            default: "",
+            length: "",
+            fk: { tableId: schema.tables[0].id, columnId: 1 },
+        });
+        pedidos.columns.push({
+            id: pedidos.nextColId++,
+            name: "data_pedido",
+            type: "DATE",
+            pk: false,
+            notNull: true,
+            unique: false,
+            default: "",
+            length: "",
+            fk: null,
+        });
+        pedidos.columns.push({
+            id: pedidos.nextColId++,
+            name: "total",
+            type: "DECIMAL",
+            pk: false,
+            notNull: false,
+            unique: false,
+            default: "0",
+            length: "10,2",
+            fk: null,
+        });
+        save();
+    }
+    renderAll();
+</script>

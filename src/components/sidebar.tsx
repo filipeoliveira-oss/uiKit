@@ -1,5 +1,5 @@
 'use client'
-import { componentsList, hooksList } from "@/lib/uiKitElements";
+import { componentsList, hooksList, utilitiesList } from "@/lib/uiKitElements";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -42,11 +42,24 @@ export default function Sidebar() {
             </div>
 
             <div className="w-full h-fit flex flex-col gap-2 ">
+                <span className="font-semibold">Utilities</span>
+                <div className="w-full ml-4">
+                    <ul className="w-[80%] h-fit list-disc pl-4 ">
+                        {utilitiesList
+                            .sort((a, b) => a.title.localeCompare(b.title))
+                            .map((component) => (
+                                <SidebarElement key={component.url} url={component.url} title={component.title} />
+                            ))}
+                    </ul>
+                </div>
+            </div>
+
+            <div className="w-full h-fit flex flex-col gap-2 ">
                 <span className="font-semibold">Loaders</span>
                 <div className="w-full ml-4">
                     <ul className="w-[80%] h-fit list-disc pl-4 ">
                         <SidebarElement url="/loaders" title="Loaders preview" />
-                        <SidebarElement url="/loaders/pageloader" title="Page loader" />
+                        {/* <SidebarElement url="/loaders/pageloader" title="Page loader" /> */}
                     </ul>
                 </div>
             </div>

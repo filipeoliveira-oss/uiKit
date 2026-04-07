@@ -17,6 +17,7 @@ export default function Header() {
                     <li className="w-fit h-full flex items-center justify-center"><Link href={hooksList.sort((a,b) => a.title.localeCompare(b.title))[0].url} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/hooks') ? 'border-reactblue': 'border-transparent'}`}>Hooks</Link></li>
                     <li className="w-fit h-full flex items-center justify-center"><Link href={componentsList.sort((a,b) => a.title.localeCompare(b.title))[0].url} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/components') ? 'border-reactblue': 'border-transparent'}`}>Components</Link></li>
                     <li className="w-fit h-full flex items-center justify-center"><Link href={'/loaders'} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/loaders') ? 'border-reactblue': 'border-transparent'}`}>Loaders</Link></li>
+                    <li className="w-fit h-full flex items-center justify-center"><Link href={'/utilities'} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/utilities') ? 'border-reactblue': 'border-transparent'}`}>Utilities</Link></li>
                 </ul>
 
                 {/* <div className="w-40 h-8 rounded-full flex flex-row items-center border border-zinc-100 px-2">

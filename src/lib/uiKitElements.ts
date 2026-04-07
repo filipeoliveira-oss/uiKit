@@ -38,3 +38,8 @@ export const hooksList: Array<IUikitElements> = [
     { url: "/hooks/useMousePosition", title: "useMousePosition" },
     { url: "/hooks/useOnClickOutside", title: "useOnClickOutside" },
 ];
+
+export const utilitiesList: Array<IUikitElements> = [
+    {url:'/utilities/dbSchemaGenerator', title:"Database Schema Generator"},
+    {url:'/utilities/mindForge', title:"Mind Forge"},
+]
