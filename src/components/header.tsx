@@ -1,30 +1,41 @@
 'use client'
-import { componentsList, hooksList } from "@/lib/uiKitElements";
-import { Search } from "lucide-react";
+import { Github, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+
 
 export default function Header() {
+    const { resolvedTheme, setTheme } = useTheme()
 
-    const pathname = usePathname()
     return (
-        <div className="border-b border-zinc-100/50 w-full h-20 text-white bg-transparent flex items-center justify-center fixed z-50 backdrop-blur-lg">
-            <div className="w-defaultWidth h-full flex items-center justify-between">
-                <Link href={'/'} className="text-4xl">FOUIKIT</Link>
+        <div className="w-full h-16 flex items-center justify-center border-b border-border/40 sticky top-0 z-50 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+            <div className="w-[80%] h-full flex flex-row justify-between ">
+                <div className=" w-fit h-full flex flex-row items-center gap-8">
+                    <div className="flex flex-row gap-2 items-center w-fit h-fit">
+                        <Image src={'/icon.webp'} alt="Logo" height={51} width={60} />
+                        <h1 className="text-2xl font-bold">FOUIKIT</h1>
+                    </div>
 
-                <ul className="flex flex-row w-fit h-full items-center justify-center gap-8">
-                    <li className="w-fit h-full flex items-center justify-center"><Link href={'/docs/introduction'} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/docs') ? 'border-reactblue': 'border-transparent'}`}>Docs</Link></li>
-                    <li className="w-fit h-full flex items-center justify-center"><Link href={hooksList.sort((a,b) => a.title.localeCompare(b.title))[0].url} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/hooks') ? 'border-reactblue': 'border-transparent'}`}>Hooks</Link></li>
-                    <li className="w-fit h-full flex items-center justify-center"><Link href={componentsList.sort((a,b) => a.title.localeCompare(b.title))[0].url} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/components') ? 'border-reactblue': 'border-transparent'}`}>Components</Link></li>
-                    <li className="w-fit h-full flex items-center justify-center"><Link href={'/loaders'} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/loaders') ? 'border-reactblue': 'border-transparent'}`}>Loaders</Link></li>
-                    <li className="w-fit h-full flex items-center justify-center"><Link href={'/utilities'} className={`text-lg w-fit h-full flex items-center border-b-3 ${pathname.startsWith('/utilities') ? 'border-reactblue': 'border-transparent'}`}>Utilities</Link></li>
-                </ul>
+                    <div className="flex flex-row gap-4">
+                        <Link href={'/docs'}>Docs</Link>
+                        <Link href={'/hooks'}>Hooks</Link>
+                        <Link href={'/components'}>Components</Link>
+                        <Link href={'/loaders'}>Loaders</Link>
+                        <Link href={'/utilities'}>Utilities</Link>
+                    </div>
+                </div>
 
-                {/* <div className="w-40 h-8 rounded-full flex flex-row items-center border border-zinc-100 px-2">
-                    <input  className="w-full h-[90%] outline-none border-none" placeholder="Search"/>
-                    <Search color="#fff"/>
-                </div> */}
-                <div></div>
+                <div className="w-fit h-full flex flex-row gap-2  items-center">
+                    <Link href={'https://github.com/filipeoliveira-oss/uiKit'} target="_blank" rel="noopener noreferrer">
+                        <Github size={18} strokeWidth={2} className="cursor-pointer" />
+                    </Link>
+                    {resolvedTheme === 'light' ?
+                        <Moon size={18} strokeWidth={2} className="cursor-pointer" onClick={() => setTheme("dark")} />
+                        :
+                        <Sun size={18} strokeWidth={2} className="cursor-pointer" onClick={() => setTheme("light")} />
+                    }
+                </div>
             </div>
         </div>
     )

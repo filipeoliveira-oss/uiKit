@@ -1,13 +1,15 @@
+
 import Header from "@/components/header";
 import "./globals.css";
 import { ToastContainer } from 'react-toastify';
+import { ThemeProvider } from "@/components/themeProvider";
 export default function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="ptBR">
 			<title>FOUIKIT</title>
 			<meta charSet="UTF-8"/>
 			<meta httpEquiv="X-UA-Compatible" content="IE-edge"/>
@@ -17,10 +19,16 @@ export default function RootLayout({
 			<meta property="og:title" content="FOUIKIT" />
 			<meta property="og:description" content="ccelerate development with ready-to-use React UI code snippets" />
 			<meta property="og:image" content="IMAGE" />
-			<body className={`min-h-dvh w-dvw antialiased bg-lpbackground flex flex-col overflow-x-hidden text-white items-center`}>
-				<ToastContainer autoClose={false}/>
-				<Header/>
-				{children}
+			<body className={`min-h-dvh w-dvw antialiased flex flex-col overflow-x-hidden items-center`}>
+				<ThemeProvider
+					attribute={'class'}
+					defaultTheme="dark"
+					themes={['light', 'dark']}
+				>
+					<ToastContainer autoClose={false}/>
+					<Header/>
+					{children}
+				</ThemeProvider>
 			</body>
 		</html>
 	);

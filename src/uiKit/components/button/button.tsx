@@ -2,31 +2,36 @@ import { forwardRef, type ComponentProps } from 'react'
 import { tv, type VariantProps } from 'tailwind-variants'
 
 
-const button =  tv({
-  base: 'flex items-center justify-center gap-2 rounded-lg text-sm font-medium tracking-tight outline-none ring-offset-2 ring-offset-black focus-visible:ring-2',
+const button = tv({
+  base: ' flex items-center justify-center gap-2 rounded-lg text-sm font-medium tracking-tight outline-none ring-offset-2 ring-offset-black focus-visible:ring-2',
 
   variants: {
     variant: {
       primary:
-        ' text-white hover:opacity-95 min-w-28 bg-purple-500 hover:bg-purple-400',
+        ' text-white hover:opacity-95 min-w-28 bg-primary hover:bg-primary/90',
       secondary: 'bg-zinc-400 hover:bg-zinc-300 text-mauve11  min-w-28',
+      ghost:
+        'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
+      outline:
+        'border bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
     },
 
     size: {
       default: 'px-4 py-2.5 text-base h-[44px]',
       sm: 'px-3 h-8',
+      icon: 'size-9',
     },
 
-    active:{
-      disabled:'opacity-60 pointer-events-none cursor-auto',
-      enabled:'cursor-pointer'
+    active: {
+      disabled: 'opacity-60 pointer-events-none cursor-auto',
+      enabled: 'cursor-pointer'
     }
   },
 
   defaultVariants: {
     variant: 'primary',
     size: 'default',
-    active:'enabled'
+    active: 'enabled'
   },
 })
 
@@ -39,8 +44,8 @@ type OKLCH = `oklch(${number} ${number} ${number})`;
 type OKLAB = `oklab(${number} ${number} ${number})`;
 type CMYK = `cmyk(${number}%, ${number}%, ${number}%, ${number}%)`;
 
-interface props{
-  backgroundColor?: RGB | RGBA | HEX | HSL | HSLA | OKLCH | OKLAB | CMYK ;
+interface props {
+  backgroundColor?: RGB | RGBA | HEX | HSL | HSLA | OKLCH | OKLAB | CMYK;
 }
 
 type ButtonProps = ComponentProps<'button'> & VariantProps<typeof button> & props
@@ -67,7 +72,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         hslaPattern.test(color) ||
         oklchPattern.test(color) ||
         oklabPattern.test(color) ||
-        cmykPattern.test(color) 
+        cmykPattern.test(color)
       );
     };
 
