@@ -1,6 +1,7 @@
 import Link from "next/link"
-import { Github, Twitter } from "lucide-react"
+import { Github, Linkedin, Twitter } from "lucide-react"
 import Image from "next/image"
+import DiscordSvg from "@/assets/discordSvg"
 
 const footerLinks = {
     Recursos: [
@@ -36,7 +37,7 @@ export default function Footer() {
                             Componentes React que você copia, não instala.
                             Código limpo, sem dependências.
                         </p>
-                        <div className="flex gap-4">
+                        <div className="flex gap-4 flex-row">
                             <Link
                                 href="https://github.com/filipeoliveira-oss/uiKit"
                                 className="text-muted-foreground transition-colors hover:text-foreground"
@@ -46,7 +47,24 @@ export default function Footer() {
                                 <Github className="h-5 w-5" />
                                 <span className="sr-only">GitHub</span>
                             </Link>
-
+                            <Link
+                                href="https://www.linkedin.com/in/filipeoliveirasilva"
+                                className="text-muted-foreground transition-colors hover:text-foreground"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Linkedin className="h-5 w-5" />
+                                <span className="sr-only">GitHub</span>
+                            </Link>
+                            <Link
+                                href="https://discord.com/users/350428533585346561"
+                                className="text-muted-foreground transition-colors hover:text-foreground"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <DiscordSvg className='h-5 w-5'/>
+                                <span className="sr-only">GitHub</span>
+                            </Link>
                         </div>
                     </div>
 

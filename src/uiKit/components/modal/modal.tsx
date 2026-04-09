@@ -35,7 +35,7 @@ const modal = tv({
 type ModalProps = ComponentProps<'div'> & VariantProps<typeof modal> & props
 
 const Modal = forwardRef<HTMLDivElement, ModalProps>(
-    ({ className, isOpen, onClose, children, disableAnimation = false, animationDuration = .150, overlayClassName,title, openHeight='66%', openWidth='50%', ...props }, ref) => {
+    ({ className, isOpen, onClose, children, disableAnimation = false, animationDuration = .150, overlayClassName,title, openHeight='fit-content', openWidth='50%', ...props }, ref) => {
 
         const modalAnimation = {
             closed: { width: '0px', height: '0px' },
