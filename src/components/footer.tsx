@@ -13,7 +13,7 @@ const footerLinks = {
     Documentação: [
         { label: "Introdução", href: "/docs" },
         { label: "CLI", href: "/docs/cli" },
-        { label: "Contribuindo", href: "/docs/contributing" },
+        // { label: "Contribuindo", href: "/docs/contributing" },
     ],
     Comunidade: [
         { label: "GitHub", href: "https://github.com/filipeoliveira-oss/uiKit" },

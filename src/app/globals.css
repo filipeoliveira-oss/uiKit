@@ -133,13 +133,13 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background:  oklch(44.2% 0.017 285.786);
+  background:  var(--sidebar-accent);
  
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: oklch(87.1% 0.006 286.286);
+  background: var(--sidebar-foreground);
   border-radius: 20px;
 }
 

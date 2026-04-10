@@ -29,7 +29,7 @@ export default function Header() {
         setCurrentLoaders(returnFilteredList(loadersList, 'loaders'))
         setCurrentHooks(returnFilteredList(hooksList, 'hooks'))
         setCurrentUtilities(returnFilteredList(utilitiesList, 'utilitários'))
-    }, 350, [search])
+    }, 250, [search])
 
     useEffect(() => {
         if (searchModal) {
@@ -99,7 +99,7 @@ export default function Header() {
 
                             <div className="w-full h-full flex flex-col overflow-x-hidden overflow-y-auto">
                                 {currentComponents.map((component) => (
-                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/40 cursor-pointer">
+                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/10 cursor-pointer">
                                         <div className="w-fit h-fit p-2 rounded-md">
                                             <Component strokeWidth={1.5} />
                                         </div>
@@ -111,7 +111,7 @@ export default function Header() {
                                 ))}
 
                                 {currentHooks.map((component) => (
-                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/40 cursor-pointer">
+                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/10 cursor-pointer">
                                         <div className="w-fit h-fit p-2  rounded-md">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -136,7 +136,7 @@ export default function Header() {
                                 ))}
 
                                 {currentLoaders.map((component) => (
-                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/40 cursor-pointer">
+                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/10 cursor-pointer">
                                         <div className="w-fit h-fit p-2  rounded-md">
                                             <Hourglass strokeWidth={1.5} />
                                         </div>
@@ -148,7 +148,7 @@ export default function Header() {
                                 ))}
 
                                 {currentUtilities.map((component) => (
-                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/40 cursor-pointer">
+                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/10 cursor-pointer">
                                         <div className="w-fit h-fit p-2  rounded-md">
                                             <Hammer strokeWidth={1.5} />
                                         </div>
