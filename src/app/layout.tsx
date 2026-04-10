@@ -3,6 +3,7 @@ import Header from "@/components/header";
 import "./globals.css";
 import { ToastContainer } from 'react-toastify';
 import { ThemeProvider } from "@/components/themeProvider";
+import ContainerTost from "@/components/CointanerToast";
 export default function RootLayout({
 	children,
 }: Readonly<{
@@ -25,7 +26,7 @@ export default function RootLayout({
 					defaultTheme="dark"
 					themes={['light', 'dark']}
 				>
-					<ToastContainer autoClose={false}/>
+					<ContainerTost/>
 					<Header/>
 					{children}
 				</ThemeProvider>

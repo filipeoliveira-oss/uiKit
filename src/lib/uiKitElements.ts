@@ -3,7 +3,7 @@ export interface IUikitElements {
     url: string;
 }
 
-export const componentsList: Array<IUikitElements> = [
+export const componentsList = [
     { url: "/components/actionMenu", title: "Action Menu" },
     { url: "/components/autoComplete", title: "Auto complete" },
     { url: "/components/button", title: "Button" },
@@ -27,9 +27,9 @@ export const componentsList: Array<IUikitElements> = [
     { url: "/components/radioGroup", title: "Radio Group" },
     { url: "/components/rating", title: "Rating" },
     { url: "/components/tooltip", title: "Tooltip" },
-];
+] as const satisfies IUikitElements[];
 
-export const hooksList: Array<IUikitElements> = [
+export const hooksList = [
     { url: "/hooks/useDebounce", title: "useDebounce" },
     { url: "/hooks/useDebounceCallback", title: "useDebounceCallback" },
     { url: "/hooks/useDocumentTitle", title: "useDocumentTitle" },
@@ -37,14 +37,14 @@ export const hooksList: Array<IUikitElements> = [
     { url: "/hooks/useIsMobile", title: "useIsMobile" },
     { url: "/hooks/useMousePosition", title: "useMousePosition" },
     { url: "/hooks/useOnClickOutside", title: "useOnClickOutside" },
-];
+] as const satisfies IUikitElements[];
 
-export const utilitiesList: Array<IUikitElements> = [
+export const utilitiesList = [
     {url:'/utilities/dbSchemaGenerator', title:"Database Schema Generator"},
     {url:'/utilities/mindForge', title:"Mind Forge"},
-]
+] as const satisfies IUikitElements[];
 
-export const loadersList: Array<IUikitElements> = [
+export const loadersList = [
     {url:'/loaders', title:"Bar Loader"},
     {url:'/loaders', title:"Beat Loader"},
     {url:'/loaders', title:"Clip Loader"},
@@ -55,4 +55,4 @@ export const loadersList: Array<IUikitElements> = [
     {url:'/loaders', title:"Puff Loader"},
     {url:'/loaders', title:"Pulse Loader"},
     {url:'/loaders', title:"Scale Loader"}
-]
+] as const satisfies IUikitElements[];

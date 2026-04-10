@@ -1,66 +1,40 @@
-'use client'
-import CodeBlock from '@/components/codeBlock';
-import ColorText from '@/components/colorText';
-import PageWrapper from '@/components/pageWrapper';
+import PageComponent from "@/components/componentsPage"
 
-export default function useDebouncePage() {
+export default function useDebounceCallbackPage() {
 
-    const a =
-        `npx fouikit
-hooks
-useDebounceCallback`
+    const codePreview = 
+`const [search, setSearch] = useState('');
 
+useDebounceCallback(() =>{
+    fetchData(search)
+}, 300, [search])`
 
-    const deps = [
-        { name: "react", url: "https://www.npmjs.com/package/react" }
-    ]
+    const code = 
+`import { useEffect } from "react";
 
-    const b = `const [value, setValue] = useState(defaultValue);
+export function useDebounceCallback(callback: () => void, delay: number, deps: any[] = []) {
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            callback();
+        }, delay);
 
-const debounced = useDebouncedCallback(
-    // function
-    (value) => {
-      setValue(value);
-    },
-    // delay in ms
-    1000
-);
-
-return (
-    <div>
-      <input
-        defaultValue={defaultValue}
-        onChange={(e) => debounced(e.target.value)}
-      />
-      <p>Debounced value: {value}</p>
-    </div>
-  );
-`
-
-    const c = `const [search, setSearch] = useState('');
-
-useDebounceCallback(() => {
-    console.log("User stopped typing!");
-}, 300, [search]);
-`
+        return () => clearTimeout(handler);
+    }, [delay, ...deps]);
+}`
 
     return (
-        <PageWrapper requirements={deps} title="useDebounceCallback">
-            <ColorText text='useDebounceCallback' />
-            <span>The useDebounce hook delays executing a callback until a certain amount of time has passed without changes.</span>
-
-            <CodeBlock code={a} />
-
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-            <CodeBlock code={`useDebounceCallback(callback: () => void, delay: number, deps: any[] = []) `} language='js' />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-            <CodeBlock code={b} language='js' />
-
-            <span>The useDebounce hook accepts an array of dependencies. So it can be used as the following</span>
-            <CodeBlock code={c} language='js' />
-
-        </PageWrapper>
+        <PageComponent
+            ComponentType="Hooks"
+            code={code}
+            componentCodeName="useDebounceCallback"
+            componentName="useDebounceCallback"
+            description="Um hook que atrasa a execução de uma função (callback) até que as dependências parem de mudar por um determinado tempo."
+            props={[
+                {propName:'Callback', type:'function', default:'-', description:'Função a ser executada após as dependências pararem de mudar após o delay', required:true},
+                {propName:'Delay', type:'number', default:'300', description:'Delay, em ms, para observar as dependências', required:true},
+                {propName:'deps', type:'Array<any>', default:'-', description:'Dependências a serem observadas', required:true},
+            ]}
+            previewCode={codePreview}
+        />        
     )
 }

@@ -2,7 +2,6 @@ import { RefObject, useEffect, useLayoutEffect, useRef } from "react";
 
 const isomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
-
 type EventType =
     | 'mousedown'
     | 'mouseup'
@@ -13,12 +12,13 @@ type EventType =
 
 
 export default function useOnClickOutside<T extends HTMLElement = HTMLElement>(
-    ref: RefObject<T> | RefObject<T>[] ,
+    ref: RefObject<T | null> | RefObject<T | null>[] | null ,
     handler: (event: MouseEvent | TouchEvent | FocusEvent) => void,
     eventType: EventType = 'mousedown',
     eventListenerOptions: AddEventListenerOptions = {},
 ): void {
-
+    if(ref === null) return;
+    
     useEventListener(
         eventType,
         event => {

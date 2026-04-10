@@ -1,39 +1,53 @@
-'use client'
-import CodeBlock from '@/components/codeBlock';
-import ColorText from '@/components/colorText';
-import PageWrapper from '@/components/pageWrapper';
-import useDocumentTitle from '@/uiKit/hooks/useDocumentTitle/useDocumentTitle';
-import { useState } from 'react';
+import PageComponent from "@/components/componentsPage"
 
 export default function useDocumentTitlePage() {
 
-    const [title, setTitle] = useState(`FOUIKIT | UseDocumentTitle`)
-    useDocumentTitle(title)
+    const codePreview = 
+`useDocumentTitle('FOUIKIT | Hooks | useDocumentTitle');`
 
-    const a = 
-    `npx fouikit
-hooks
-useDocumentTitle`
+    const code = 
+`import { useEffect, useLayoutEffect, useRef } from 'react'
 
-    const code = `useDocumentTitle('${title}')`
+const isomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
-    const deps = [
-        { name: "react", url: "https://www.npmjs.com/package/react" }
-    ]
+type UseDocumentTitleOptions = {
+  preserveTitleOnUnmount?: boolean
+}
+
+export default function useDocumentTitle(title:string, options:UseDocumentTitleOptions = {}) : void{
+
+    const { preserveTitleOnUnmount = true } = options
+    const defaultTitle = useRef<string | null>(null)
+
+    isomorphicLayoutEffect(() =>{
+        defaultTitle.current = window.document.title
+    },[])
+
+    isomorphicLayoutEffect(() =>{
+        window.document.title = title
+    },[title])
+
+    useEffect(() =>{
+        return () => {
+            if(!preserveTitleOnUnmount && defaultTitle.current){
+                window.document.title = defaultTitle.current
+            }
+        }
+    },[])
+}`
 
     return (
-        <PageWrapper requirements={deps} title="UseDocumentTitle">
-            <ColorText text='useDocumentTitle'/>
-            <span>useDocumentTitle is a hook that will change the window document title</span>
-
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-            <CodeBlock code={code} language='js'/>
-
-            <span>Change the document title bellow:</span>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} className='w-full bg-zinc-50 text-black h-8 pl-2 rounded-lg outline-none' placeholder='Change the document title' />
-
-        </PageWrapper>
+        <PageComponent
+            ComponentType="Hooks"
+            code={code}
+            componentCodeName="useDocumentTitle"
+            componentName="useDocumentTitle"
+            description="Um hook que altera o título da página."
+            props={[
+                {propName:'title', type:'string', default:'-', description:'Título a ser dado à página', required:true},
+                {propName:'options', type:'{preserveTitleOnUnmount}', default:'true', description:'Preserva o título da página caso ela seja desmontada', required:false},
+            ]}
+            previewCode={codePreview}
+        />        
     )
 }

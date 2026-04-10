@@ -19,7 +19,7 @@ export default function UiKitLayout({
         <div className="w-full flex flex-row " style={{height:'calc(100dvh - 64px)'}}>
             <Sidebar />
             <div className="w-full h-full  overflow-x-hidden overflow-y-auto">
-
+                {children}
             </div>
         </div>
     );

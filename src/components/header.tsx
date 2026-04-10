@@ -1,27 +1,33 @@
 'use client'
 import { componentsList, hooksList, IUikitElements, loadersList, utilitiesList } from "@/lib/uiKitElements";
-import Modal from "@/uiKit/components/modal/modal";
-import { useDebounce } from "@/uiKit/hooks/useDebounce/useDebounce";
 import { useDebounceCallback } from "@/uiKit/hooks/useDebounceCallback/useDebounceCallback";
 import { Component, Github, Hammer, Hourglass, Moon, Puzzle, Search, Sun, X, } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 
 export default function Header() {
-    const { resolvedTheme, setTheme } = useTheme()
+    const { theme, setTheme } = useTheme()
     const [search, setSearch] = useState('')
     const [searchModal, setSearchModal] = useState(false)
-    const [currentComponents, setCurrentComponents] = useState(componentsList)
-    const [currentLoaders, setCurrentLoaders] = useState(loadersList)
-    const [currentHooks, setCurrentHooks] = useState(hooksList)
-    const [currentUtilities, setCurrentUtilities] = useState(utilitiesList)
+    const [currentComponents, setCurrentComponents] = useState<IUikitElements[]>(componentsList)
+    const [currentLoaders, setCurrentLoaders] = useState<IUikitElements[]>(loadersList)
+    const [currentHooks, setCurrentHooks] = useState<IUikitElements[]>(hooksList)
+    const [currentUtilities, setCurrentUtilities] = useState<IUikitElements[]>(utilitiesList)
+    const pathname = usePathname()
+    const router = useRouter();
 
     const handleScrollIntoView = (element: HTMLElement) => {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' })
+        if(pathname !== '/'){
+            router.push('/')
+        }else{
+            element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' })
+        }
     }
 
     useDebounceCallback(() => {
@@ -73,7 +79,7 @@ export default function Header() {
                         <Link href={'https://github.com/filipeoliveira-oss/uiKit'} target="_blank" rel="noopener noreferrer">
                             <Github size={18} strokeWidth={2} className="cursor-pointer" />
                         </Link>
-                        {resolvedTheme === 'light' ?
+                        {theme === 'light' ?
                             <Moon size={18} strokeWidth={2} className="cursor-pointer" onClick={() => setTheme("dark")} />
                             :
                             <Sun size={18} strokeWidth={2} className="cursor-pointer" onClick={() => setTheme("light")} />

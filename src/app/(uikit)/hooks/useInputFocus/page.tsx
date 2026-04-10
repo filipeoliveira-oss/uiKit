@@ -1,44 +1,55 @@
-'use client'
-import CodeBlock from '@/components/codeBlock';
-import ColorText from '@/components/colorText';
-import PageWrapper from '@/components/pageWrapper';
-import useInputFocus from '@/uiKit/hooks/useInputFocus/useInputFocus';
-import { useRef } from 'react';
+import PageComponent from "@/components/componentsPage"
 
-export default function UseInputFocus() {
+export default function useDocumentTitlePage() {
 
-    const inputRef = useRef<HTMLInputElement>(null)
-    const isFocused = useInputFocus(inputRef)
+    const codePreview = 
+`const inputRef = useRef<HTMLInputElement>(null);
+const isFocused = useInputFocus(inputRef);
 
-    const a = 
-    `npx fouikit
-hooks
-useInputFocus`
+//...
+<input ref={inputRef}/>
+`
 
     const code = 
-    `const inputRef = useRef<HTMLInputElement>(null)
-const isFocused = useInputFocus(inputRef)
+`import { useState, useEffect } from "react";
 
-<input ref={inputRef} className='w-full bg-zinc-600 text-white h-8 pl-2 rounded-lg outline-none' placeholder='Click me' />`
+const useInputFocus = (inputRef: React.RefObject<HTMLInputElement | null>) => {
+  const [isFocused, setIsFocused] = useState(false);
 
+  useEffect(() => {
+    const handleFocus = () => setIsFocused(true);
+    const handleBlur = () => setIsFocused(false);
 
-    const deps = [
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-        { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" }
-    ]
+    const inputElement = inputRef.current;
+    if (inputElement) {
+      inputElement.addEventListener("focus", handleFocus);
+      inputElement.addEventListener("blur", handleBlur);
+    }
+
+    return () => {
+      if (inputElement) {
+        inputElement.removeEventListener("focus", handleFocus);
+        inputElement.removeEventListener("blur", handleBlur);
+      }
+    };
+  }, [inputRef]);
+
+  return isFocused;
+};
+
+export default useInputFocus;`
 
     return (
-        <PageWrapper requirements={deps} title="UseInputFocus">
-            <ColorText text='useInputFocus'/>
-            <span>useInputFocus is a hook that will display whether the input is focused or not</span>
-
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-            <CodeBlock code={code} language='javascript'/>
-
-            <input ref={inputRef} className='w-full bg-zinc-50 text-black h-8 pl-2 rounded-lg outline-none' placeholder='Click me' />
-            <span>Input Focus: <span className='capitalize '>{String(isFocused)}</span></span>
-        </PageWrapper>
+        <PageComponent
+            ComponentType="Hooks"
+            code={code}
+            componentCodeName="useInputFocus"
+            componentName="useInputFocus"
+            description="Um hook que alerta caso o input esteja focado."
+            props={[
+                {propName:'inputRef', type:'HTMLInputElement', default:'-', description:'Input a ser observado', required:true},
+            ]}
+            previewCode={codePreview}
+        />        
     )
 }

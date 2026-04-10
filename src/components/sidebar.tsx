@@ -7,10 +7,10 @@ import { useState } from "react";
 export default function Sidebar() {
     const [search, setSearch] = useState('')
 
-    const [currentComponents, setCurrentComponents] = useState(componentsList)
-    const [currentLoaders, setCurrentLoaders] = useState(loadersList)
-    const [currentHooks, setCurrentHooks] = useState(hooksList)
-    const [currentUtilities, setCurrentUtilities] = useState(utilitiesList)
+    const [currentComponents, setCurrentComponents] = useState<IUikitElements[]>(componentsList)
+    const [currentLoaders, setCurrentLoaders] = useState<IUikitElements[]>(loadersList)
+    const [currentHooks, setCurrentHooks] = useState<IUikitElements[]>(hooksList)
+    const [currentUtilities, setCurrentUtilities] = useState<IUikitElements[]>(utilitiesList)
 
     useDebounceCallback(() => {
         setCurrentComponents(returnFilteredList(componentsList, 'componentes'))
@@ -24,10 +24,13 @@ export default function Sidebar() {
     }
 
     return (
-        <div className="h-full shrink-0 py-4 px-2 overflow-y-auto overflow-x-hidden flex flex-col gap-4" style={{ width: 220 }}>
-            <div className="w-48 h-10 shrink-0 border mr-4 rounded-md  outline-none flex flex-row px-4 gap-2 items-center cursor-pointer" >
-                <Search size={20} strokeWidth={1.5} className="shrink-0" />
-                <input className="border-none outline-none" placeholder="pesquisar" value={search} onChange={(e) => setSearch(e.target.value)}/>
+        <div className="h-full shrink-0 pb-4 px-2 overflow-y-auto overflow-x-hidden flex flex-col gap-4" style={{ width: 220 }}>
+            <div className="w-48 h-10 shrink-0 outline-none flex flex-col px-4 gap-2 items-center cursor-pointer sticky top-0 bg-background">
+                <div className="h-4 w-full"></div>
+                <div className="w-48 h-10 shrink-0 border rounded-md outline-none flex flex-row px-4 gap-2 items-center cursor-pointer bg-background">
+                    <Search size={20} strokeWidth={1.5} className="shrink-0" />
+                    <input className="border-none outline-none" placeholder="pesquisar" value={search} onChange={(e) => setSearch(e.target.value)} />
+                </div>
             </div>
 
             <div className="w-full h-fit flex flex-col">
