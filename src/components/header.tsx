@@ -1,5 +1,6 @@
 'use client'
 import { componentsList, hooksList, IUikitElements, loadersList, utilitiesList } from "@/lib/uiKitElements";
+import Modal from "@/uiKit/components/modal/modal";
 import { useDebounce } from "@/uiKit/hooks/useDebounce/useDebounce";
 import { useDebounceCallback } from "@/uiKit/hooks/useDebounceCallback/useDebounceCallback";
 import { Component, Github, Hammer, Hourglass, Moon, Puzzle, Search, Sun, X, } from "lucide-react";
@@ -65,7 +66,7 @@ export default function Header() {
                     </div>
 
                     <div className="w-fit h-full flex flex-row gap-2 items-center">
-                        <button className="w-48 h-1/2 border mr-4 rounded-md bg-zinc-100 outline-none flex flex-row px-4 gap-2 items-center cursor-pointer" onClick={() => setSearchModal(true)}>
+                        <button className="w-48 h-1/2 border mr-4 rounded-md  outline-none flex flex-row px-4 gap-2 items-center cursor-pointer" onClick={() => setSearchModal(true)}>
                             <Search size={20} strokeWidth={1.5} />
                             <span className="text-sm">Pesquisar...</span>
                         </button>
@@ -83,7 +84,7 @@ export default function Header() {
 
             {searchModal && (
                 createPortal(
-                    <div className="h-dvh w-dvw absolute top-0 left-0 bg-black/40 z-50 flex items-center justify-center">
+                    <div className="h-dvh w-dvw fixed top-0 left-0 bg-black/40 z-50 flex items-center justify-center">
                         <div className="w-1/2 h-1/2 bg-card rounded-2xl border flex flex-col">
                             <label htmlFor="searchInput" className="w-full h-12 flex flex-row relative px-4 border-b items-center gap-4 shrink-0">
                                 <X className="absolute top-3 right-4 cursor-pointer" onClick={(e) => { setSearchModal(false); e.stopPropagation() }} />
@@ -98,19 +99,19 @@ export default function Header() {
 
                             <div className="w-full h-full flex flex-col overflow-x-hidden overflow-y-auto">
                                 {currentComponents.map((component) => (
-                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-zinc-100 cursor-pointer">
+                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/40 cursor-pointer">
                                         <div className="w-fit h-fit p-2 rounded-md">
                                             <Component strokeWidth={1.5} />
                                         </div>
                                         <div className="w-fit h-fit flex flex-col">
                                             <span className="text-sm">{component.title}</span>
-                                            <span className="text-sm text-zinc-600">Componentes</span>
+                                            <span className="text-sm">Componentes</span>
                                         </div>
                                     </Link>
                                 ))}
 
                                 {currentHooks.map((component) => (
-                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-zinc-100 cursor-pointer">
+                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/40 cursor-pointer">
                                         <div className="w-fit h-fit p-2  rounded-md">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -129,31 +130,31 @@ export default function Header() {
                                         </div>
                                         <div className="w-fit h-fit flex flex-col">
                                             <span className="text-sm">{component.title}</span>
-                                            <span className="text-sm text-zinc-600">Hooks</span>
+                                            <span className="text-sm">Hooks</span>
                                         </div>
                                     </Link>
                                 ))}
 
                                 {currentLoaders.map((component) => (
-                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-zinc-100 cursor-pointer">
+                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/40 cursor-pointer">
                                         <div className="w-fit h-fit p-2  rounded-md">
                                             <Hourglass strokeWidth={1.5} />
                                         </div>
                                         <div className="w-fit h-fit flex flex-col">
                                             <span className="text-sm">{component.title}</span>
-                                            <span className="text-sm text-zinc-600">Loaders</span>
+                                            <span className="text-sm">Loaders</span>
                                         </div>
                                     </Link>
                                 ))}
 
                                 {currentUtilities.map((component) => (
-                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-zinc-100 cursor-pointer">
+                                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/40 cursor-pointer">
                                         <div className="w-fit h-fit p-2  rounded-md">
                                             <Hammer strokeWidth={1.5} />
                                         </div>
                                         <div className="w-fit h-fit flex flex-col">
                                             <span className="text-sm">{component.title}</span>
-                                            <span className="text-sm text-zinc-600">Utilitários</span>
+                                            <span className="text-sm">Utilitários</span>
                                         </div>
                                     </Link>
                                 ))}
