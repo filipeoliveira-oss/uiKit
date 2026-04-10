@@ -2,6 +2,7 @@
 
 import { Button } from "@/uiKit/components/button/button"
 import { ArrowRight, Copy, Check } from "lucide-react"
+import Link from "next/link"
 import { useState } from "react"
 
 const floatingComponents = [
@@ -20,8 +21,12 @@ export default function Hero() {
         setTimeout(() => setCopiedIndex(null), 2000)
     }
 
+    const handleScrollIntoView = (element: HTMLElement) => {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+    }
+
     return (
-        <section className="relative overflow-hidden py-20 md:py-32">
+        <section className="relative overflow-hidden py-20 md:py-32" id="hero">
             {/* Background gradient */}
             <div className="pointer-events-none absolute inset-0 -z-10">
                 <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-[120px]" />
@@ -52,11 +57,13 @@ export default function Hero() {
                         </p>
 
                         <div className="flex flex-col gap-4 sm:flex-row">
-                            <Button size="default" className="gap-2 ">
-                                Explorar Componentes
-                                <ArrowRight className="h-4 w-4" />
-                            </Button>
-                            <Button size="default" variant="outline" className="gap-2">
+                            <Link href={'/components'}>
+                                <Button size="default" className="gap-2 ">
+                                    Explorar Componentes
+                                    <ArrowRight className="h-4 w-4" />
+                                </Button>
+                            </Link>
+                            <Button size="default" variant="outline" className="gap-2" onClick={() => handleScrollIntoView(document.getElementById('cli')!)}>
                                 Ver uso do CLI
                             </Button>
                         </div>

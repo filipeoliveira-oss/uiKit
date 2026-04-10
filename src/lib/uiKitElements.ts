@@ -1,4 +1,4 @@
-interface IUikitElements {
+export interface IUikitElements {
     title: string;
     url: string;
 }
@@ -42,4 +42,17 @@ export const hooksList: Array<IUikitElements> = [
 export const utilitiesList: Array<IUikitElements> = [
     {url:'/utilities/dbSchemaGenerator', title:"Database Schema Generator"},
     {url:'/utilities/mindForge', title:"Mind Forge"},
+]
+
+export const loadersList: Array<IUikitElements> = [
+    {url:'/loaders', title:"Bar Loader"},
+    {url:'/loaders', title:"Beat Loader"},
+    {url:'/loaders', title:"Clip Loader"},
+    {url:'/loaders', title:"Dot Loader"},
+    {url:'/loaders', title:"Fade Loader"},
+    {url:'/loaders', title:"Grid Loader"},
+    {url:'/loaders', title:"Propagate Loader"},
+    {url:'/loaders', title:"Puff Loader"},
+    {url:'/loaders', title:"Pulse Loader"},
+    {url:'/loaders', title:"Scale Loader"}
 ]
