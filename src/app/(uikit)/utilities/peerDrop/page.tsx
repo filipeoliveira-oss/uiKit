@@ -74,7 +74,7 @@ export default function Page() {
     }, [disconnect])
 
     const renderHome = () => (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="h-full flex flex-col items-center justify-center p-4">
             <div className="text-center mb-12">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-6">
                     <Share2 className="w-8 h-8 text-primary" />
@@ -133,7 +133,7 @@ export default function Page() {
     )
 
     const renderHost = () => (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="h-full flex flex-col items-center justify-center p-4">
             <Card className="w-full max-w-lg">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -170,7 +170,7 @@ export default function Page() {
     )
 
     const renderJoin = () => (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="h-full flex flex-col items-center justify-center p-4">
             <Card className="w-full max-w-lg">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -229,7 +229,7 @@ export default function Page() {
     )
 
     const renderConnected = () => (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="h-full flex flex-col items-center justify-center p-4">
             <Card className="w-full max-w-lg">
                 <CardHeader>
                     <div className="flex items-center justify-between mb-4">

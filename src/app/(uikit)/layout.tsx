@@ -9,7 +9,7 @@ export default function UiKitLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="w-full flex flex-row " style={{height:'calc(100dvh - 64px)'}}>
+        <div className="flex flex-row w-full" style={{height:'calc(100dvh - 64px)'}}>
             <Suspense>
                 <Sidebar />
                 <div className="w-full h-full  overflow-x-hidden overflow-y-auto">

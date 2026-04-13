@@ -64,8 +64,8 @@ export default function Header() {
 
                         <div className="flex flex-row gap-4">
                             <Link href={'/docs'}>Docs</Link>
-                            <Link href={'/hooks'}>Hooks</Link>
                             <Link href={'/components'}>Componentes</Link>
+                            <Link href={'/hooks'}>Hooks</Link>
                             <Link href={'/loaders'}>Loaders</Link>
                             <Link href={'/utilities'}>Utilitários</Link>
                         </div>

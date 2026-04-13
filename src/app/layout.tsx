@@ -1,7 +1,6 @@
 
 import Header from "@/components/header";
 import "./globals.css";
-import { ToastContainer } from 'react-toastify';
 import { ThemeProvider } from "@/components/themeProvider";
 import ContainerTost from "@/components/CointanerToast";
 export default function RootLayout({
@@ -25,6 +24,7 @@ export default function RootLayout({
 					attribute={'class'}
 					defaultTheme="dark"
 					themes={['light', 'dark']}
+					disableTransitionOnChange
 				>
 					<ContainerTost/>
 					<Header/>

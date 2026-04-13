@@ -31,7 +31,7 @@ export default function dbSchemaDesigner() {
 
     return (
         <>
-            <div className="w-full h-full px-4">
+            <div className="w-full h-[93%] px-4">
                 <div className="w-full h-4 flex flex-row gap-2 justify-end">
                     <button
                         className="flex flex-row gap-2 h-fit w-fit p-2 items-center justify-center bg-background rounded-md cursor-pointer"
@@ -81,7 +81,7 @@ export default function dbSchemaDesigner() {
                                 </button>
                             </div>
 
-                            <div className="w-full h-full">
+                            <div className="w-full h-[90%]">
                                 {iframeContent}
                             </div>
                         </div>,

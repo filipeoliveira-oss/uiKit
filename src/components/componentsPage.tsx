@@ -1,5 +1,4 @@
 'use client'
-import { componentsList, hooksList, loadersList, utilitiesList } from "@/lib/uiKitElements"
 import { Check, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -7,6 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneLight, oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { useTheme } from "next-themes";
 import useDocumentTitle from "@/uiKit/hooks/useDocumentTitle/useDocumentTitle";
+import { componentsList, hooksList, loadersList, utilitiesList } from "@/lib/uiKitElements";
 
 type UtilityTitle = typeof utilitiesList[number]['title'];
 type ComponentTitle = typeof componentsList[number]['title'];

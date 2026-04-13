@@ -13,7 +13,7 @@ export default function dbSchemaDesigner() {
     };
 
     return (
-        <div className="w-full h-full flex flex-col">
+        <div className="w-full h-[98%] flex flex-col">
             <div className="w-full h-12 px-4">
                 <div className="w-full h-4 flex flex-row gap-2 justify-end">
                     <button
