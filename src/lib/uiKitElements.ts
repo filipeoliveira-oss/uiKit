@@ -46,14 +46,14 @@ export const utilitiesList = [
 ] as const satisfies IUikitElements[];
 
 export const loadersList = [
-    {url:'/loaders', title:"Bar Loader"},
-    {url:'/loaders', title:"Beat Loader"},
-    {url:'/loaders', title:"Clip Loader"},
-    {url:'/loaders', title:"Dot Loader"},
-    {url:'/loaders', title:"Fade Loader"},
-    {url:'/loaders', title:"Grid Loader"},
-    {url:'/loaders', title:"Propagate Loader"},
-    {url:'/loaders', title:"Puff Loader"},
-    {url:'/loaders', title:"Pulse Loader"},
-    {url:'/loaders', title:"Scale Loader"}
+    {url:'/loaders/barLoader', title:"Bar Loader"},
+    {url:'/loaders/beatLoader', title:"Beat Loader"},
+    {url:'/loaders/clipLoader', title:"Clip Loader"},
+    {url:'/loaders/dotLoader', title:"Dot Loader"},
+    {url:'/loaders/fadeLoader', title:"Fade Loader"},
+    {url:'/loaders/gridLoader', title:"Grid Loader"},
+    {url:'/loaders/propagateLoader', title:"Propagate Loader"},
+    {url:'/loaders/puffLoader', title:"Puff Loader"},
+    {url:'/loaders/pulseLoader', title:"Pulse Loader"},
+    {url:'/loaders/scaleLoader', title:"Scale Loader"}
 ] as const satisfies IUikitElements[];
