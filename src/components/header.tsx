@@ -23,9 +23,9 @@ export default function Header() {
     const router = useRouter();
 
     const handleScrollIntoView = (element: HTMLElement) => {
-        if(pathname !== '/'){
+        if (pathname !== '/') {
             router.push('/')
-        }else{
+        } else {
             element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' })
         }
     }
@@ -51,6 +51,20 @@ export default function Header() {
             componentType.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").includes(search))
     }
 
+
+    useEffect(() => {
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === "Escape" && searchModal) {
+                setSearchModal(false)
+            }
+        }
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [searchModal]);
 
     return (
         <>
