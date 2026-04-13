@@ -1,5 +1,5 @@
 
-import { componentsList, hooksList, IUikitElements, loadersList, utilitiesList } from "@/lib/uiKitElements";
+import { componentsList, docsList, hooksList, IUikitElements, loadersList, utilitiesList } from "@/lib/uiKitElements";
 import { useDebounceCallback } from "@/uiKit/hooks/useDebounceCallback/useDebounceCallback";
 import { Search } from "lucide-react";
 import Link from "next/link";
@@ -12,16 +12,18 @@ export default function Sidebar() {
     const [currentLoaders, setCurrentLoaders] = useState<IUikitElements[]>(loadersList)
     const [currentHooks, setCurrentHooks] = useState<IUikitElements[]>(hooksList)
     const [currentUtilities, setCurrentUtilities] = useState<IUikitElements[]>(utilitiesList)
+    const [currentDocs, setCurrentDocs] = useState<IUikitElements[]>(docsList)
 
     useDebounceCallback(() => {
         setCurrentComponents(returnFilteredList(componentsList, 'componentes'))
         setCurrentLoaders(returnFilteredList(loadersList, 'loaders'))
         setCurrentHooks(returnFilteredList(hooksList, 'hooks'))
         setCurrentUtilities(returnFilteredList(utilitiesList, 'utilitários'))
+        setCurrentDocs(returnFilteredList(docsList, 'docs'))
     }, 250, [search])
 
     function returnFilteredList(originalList: Array<IUikitElements>, componentType: string): Array<IUikitElements> {
-        return originalList.filter((item) => item.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").includes(search))
+        return originalList.filter((item) => item.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").includes(search.toLowerCase()))
     }
 
     return (
@@ -32,6 +34,15 @@ export default function Sidebar() {
                     <Search size={20} strokeWidth={1.5} className="shrink-0" />
                     <input className="border-none outline-none" placeholder="pesquisar" value={search} onChange={(e) => setSearch(e.target.value)} />
                 </div>
+            </div>
+
+            <div className="w-full h-fit flex flex-col">
+                {currentDocs.length > 0 && <span className="font-semibold text-sm text-foreground/70">DOCUMENTAÇÃO</span>}
+                {currentDocs.map((component) => (
+                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/10 cursor-pointer">
+                        <span className="text-sm">{component.title}</span>
+                    </Link>
+                ))}
             </div>
 
             <div className="w-full h-fit flex flex-col">

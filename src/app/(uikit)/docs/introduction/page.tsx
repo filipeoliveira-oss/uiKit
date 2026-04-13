@@ -1,54 +1,73 @@
-import ColorText from "@/components/colorText";
-import PageWrapper from "@/components/pageWrapper";
 import Link from "next/link";
+import React from "react";
 
-export default function Introduction() {
-    return (
-        <PageWrapper showRequirements={false} requirements={[]} title="Introduction">
-            <ColorText text="Introduction"/>
-            <span>Welcome to the FOUIKIT documentation!</span>
+export default function IntroPage() {
+  return (
+    <div className="h-full flex items-center justify-center px-6">
+      <div className="max-w-4xl w-full">
+        {/* Hero */}
+        <div className="mb-12">
+          <h1 className="text-3xl font-semibold tracking-tight mb-6">
+            Componentes React prontos, sem dor de cabeça
+          </h1>
+          <p className="text-lg leading-relaxed max-w-2xl">
+            Uma coleção de componentes modernos feitos com React e Tailwind, prontos para copiar e colar. Sem dependências externas, sem configuração complicada, só código direto ao ponto.
+          </p>
+        </div>
 
-            <div className="w-full flex flex-col gap-2">
-                <h2 className="text-2xl font-semibold">What is FOUIKIT?</h2>
-                <span className="text-pretty">
-                    FOUIKIT is a collection of UI components and hooks for React that helps you build beautiful and interactive interfaces.
-                    It is built on top of&nbsp;
-                    <Link className="font-semibold underline" href="https://tailwindcss.com/" target="_blank">Tailwind CSS</Link> and&nbsp;
-                    <Link className="font-semibold underline" href="https://motion.dev/" target="_blank">Framer Motion</Link>
-                </span>
-            </div>
+        {/* Features */}
+        <div className="grid md:grid-cols-3 gap-6 mb-16">
+          <div className="p-6 rounded-2xl border border-border">
+            <h3 className="text-xl font-semibold mb-3">Zero dependências</h3>
+            <p className="">
+              Nada de bibliotecas pesadas. Tudo funciona apenas com React e Tailwind.
+            </p>
+          </div>
 
-            <div className="w-full h-[1px] bg-zinc-100 shrink-0"></div>
+          <div className="p-6 rounded-2xl border border-border">
+            <h3 className="text-xl font-semibold mb-3">Copiar e usar</h3>
+            <p className="">
+              Pegue o componente, cole no seu projeto e pronto. Sem instalação, sem setup.
+            </p>
+          </div>
 
-            <div className="w-full flex flex-col gap-2">
-                <h2 className="text-3xl font-semibold">FAQ</h2>
+          <div className="p-6 rounded-2xl border border-border">
+            <h3 className="text-xl font-semibold mb-3">Design moderno</h3>
+            <p className="">
+              Interfaces pensadas para produtos reais, com foco em UX e performance.
+            </p>
+          </div>
+        </div>
 
-                <h3 className="text-2xl font-semibold">How does FOUIKIT work?</h3>
-                <span className="text-pretty">
-                    FOUIKIT is a collection of components. Instead of installing prebuilt components, it generates and inserts the component code directly into your codebase.
-                </span>
-                <span className="text-pretty">
-                    Each component is a boilerplate version of commonly used elements. These components often rely on external libraries, which are installed automatically when you choose a component.
-                </span>
+        {/* How it works */}
+        <div className="mb-16">
+          <h2 className="text-2xl md:text-3xl font-semibold mb-6">
+            Como funciona
+          </h2>
+          <ol className="list-decimal pl-6 space-y-3">
+            <li>Escolha um componente na lista</li>
+            <li>Copie o código diretamente ou utilize o código npx</li>
+            <li>Tenha o código no seu projeto React</li>
+            <li>Customize como quiser</li>
+          </ol>
+        </div>
 
-                <h3 className="text-2xl font-semibold mt-6">Does FOUIKIT use runtime CSS?</h3>
-                <span className="text-pretty">
-                    No. Since FOUIKIT uses Tailwind CSS as its styling engine, all CSS is generated at build time, eliminating the need for runtime CSS. This makes FOUIKIT fully compatible with the latest versions of React and Next.js.
-                </span>
+        {/* CTA */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 rounded-2xl border border-border">
+          <div>
+            <h3 className="text-xl font-semibold mb-2">
+              Comece agora
+            </h3>
+            <p className="">
+              Explore os componentes disponíveis e acelere seu desenvolvimento.
+            </p>
+          </div>
 
-                <h3 className="text-2xl font-semibold mt-6">Does FOUIKIT support TypeScript?</h3>
-                <span className="text-pretty">
-                    Yes, FOUIKIT is written in TypeScript and offers full TypeScript support.
-                </span>
-
-                {/* <h3 className="text-2xl font-semibold mt-6">Why does FOUIKIT use Framer Motion and GSAP?</h3>
-                <span className="text-pretty">
-                    We use Framer Motion to animate components with complex, physics-based behavior. It provides a clean, performant, and well-tested solution that's ready for production.
-                </span>
-                <span className="text-pretty">
-                    On the other hand, GSAP excels at timeline-based animations, giving us greater flexibility for non-physics-based transitions and sequences.
-                </span> */}
-            </div>
-        </PageWrapper>
-    );
+          <Link href={'/components'} className="px-6 py-3 rounded-xl font-medium hover:opacity-90 transition">
+            Ver componentes
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 }

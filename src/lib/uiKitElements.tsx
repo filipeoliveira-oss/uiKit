@@ -38,6 +38,11 @@ function Hook() {
     )
 }
 
+export const docsList = [
+    {component:() => <></>, description:'docs', title:'Introdução', url:'/docs/introduction'},
+    {component:() => <></>, description:'docs', title:'Instalação', url:'/docs/installation'},
+]as const satisfies IUikitElements[];
+
 export const componentsList = [
     { url: "/components/actionMenu", title: "Action Menu", description: "Menu contextual com ações rápidas para itens.", component: () =><Component strokeWidth={1.5} />  },
     { url: "/components/autoComplete", title: "Auto complete", description: "Campo de busca com sugestões dinâmicas.", component: () => <Component strokeWidth={1.5} /> },
