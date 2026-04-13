@@ -1,13 +1,14 @@
-
+'use client'
 import { componentsList, docsList, hooksList, IUikitElements, loadersList, utilitiesList } from "@/lib/uiKitElements";
 import { useDebounceCallback } from "@/uiKit/hooks/useDebounceCallback/useDebounceCallback";
 import { Search } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 export default function Sidebar() {
     const [search, setSearch] = useState('')
-
+    const pathname = usePathname()
     const [currentComponents, setCurrentComponents] = useState<IUikitElements[]>(componentsList)
     const [currentLoaders, setCurrentLoaders] = useState<IUikitElements[]>(loadersList)
     const [currentHooks, setCurrentHooks] = useState<IUikitElements[]>(hooksList)
@@ -39,7 +40,7 @@ export default function Sidebar() {
             <div className="w-full h-fit flex flex-col">
                 {currentDocs.length > 0 && <span className="font-semibold text-sm text-foreground/70">DOCUMENTAÇÃO</span>}
                 {currentDocs.map((component) => (
-                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/10 cursor-pointer">
+                    <Link href={component.url} key={`${component.url}-${component.title}`} className={`w-full h-fit px-4 py-2 flex flex-row gap-2 cursor-pointer ${pathname.toLowerCase() === component.url.toLowerCase() ? 'bg-accent/40 hover:bg-accent/40 text-accent-foreground' : 'hover:bg-foreground/10'}`}>
                         <span className="text-sm">{component.title}</span>
                     </Link>
                 ))}
@@ -48,7 +49,7 @@ export default function Sidebar() {
             <div className="w-full h-fit flex flex-col">
                 {currentComponents.length > 0 && <span className="font-semibold text-sm text-foreground/70">COMPONENTES</span>}
                 {currentComponents.map((component) => (
-                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/10 cursor-pointer">
+                    <Link href={component.url} key={`${component.url}-${component.title}`} className={`w-full h-fit px-4 py-2 flex flex-row gap-2 cursor-pointer ${pathname.toLowerCase() === component.url.toLowerCase() ? 'bg-accent/40 hover:bg-accent/40 text-accent-foreground' : 'hover:bg-foreground/10'}`}>
                         <span className="text-sm">{component.title}</span>
                     </Link>
                 ))}
@@ -57,7 +58,7 @@ export default function Sidebar() {
             <div className="w-full h-fit flex flex-col">
                 {currentHooks.length > 0 && <span className="font-semibold text-sm text-foreground/70">HOOKS</span>}
                 {currentHooks.map((component) => (
-                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/10 cursor-pointer">
+                    <Link href={component.url} key={`${component.url}-${component.title}`} className={`w-full h-fit px-4 py-2 flex flex-row gap-2 cursor-pointer ${pathname.toLowerCase() === component.url.toLowerCase() ? 'bg-accent/40 hover:bg-accent/40 text-accent-foreground' : 'hover:bg-foreground/10'}`}>
                         <span className="text-sm">{component.title}</span>
                     </Link>
                 ))}
@@ -65,7 +66,7 @@ export default function Sidebar() {
             <div className="w-full h-fit flex flex-col">
                 {currentLoaders.length > 0 && <span className="font-semibold text-sm text-foreground/70">LOADERS</span>}
                 {currentLoaders.map((component) => (
-                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/10 cursor-pointer">
+                    <Link href={component.url} key={`${component.url}-${component.title}`} className={`w-full h-fit px-4 py-2 flex flex-row gap-2 cursor-pointer ${pathname.toLowerCase() === component.url.toLowerCase() ? 'bg-accent/40 hover:bg-accent/40 text-accent-foreground' : 'hover:bg-foreground/10'}`}>
                         <span className="text-sm">{component.title}</span>
                     </Link>
                 ))}
@@ -73,7 +74,7 @@ export default function Sidebar() {
             <div className="w-full h-fit flex flex-col">
                 {currentUtilities.length > 0 && <span className="font-semibold text-sm text-foreground/70">UTILITÁRIOS</span>}
                 {currentUtilities.map((component) => (
-                    <Link href={component.url} key={`${component.url}-${component.title}`} className="w-full h-fit px-4 py-2 flex flex-row gap-2 hover:bg-foreground/10 cursor-pointer">
+                    <Link href={component.url} key={`${component.url}-${component.title}`} className={`w-full h-fit px-4 py-2 flex flex-row gap-2 cursor-pointer ${pathname.toLowerCase() === component.url.toLowerCase() ? 'bg-accent/40 hover:bg-accent/40 text-accent-foreground' : 'hover:bg-foreground/10'}`}>
                         <span className="text-sm">{component.title}</span>
                     </Link>
                 ))}
