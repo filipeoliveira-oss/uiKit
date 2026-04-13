@@ -40,8 +40,9 @@ export const hooksList = [
 ] as const satisfies IUikitElements[];
 
 export const utilitiesList = [
-    {url:'/utilities/dbSchemaGenerator', title:"Database Schema Generator"},
+    {url:'/utilities/dbSchemaDesigner', title:"Database Schema Designer"},
     {url:'/utilities/mindForge', title:"Mind Forge"},
+    {url:'/utilities/peerDrop', title:"Peer Drop"},
 ] as const satisfies IUikitElements[];
 
 export const loadersList = [

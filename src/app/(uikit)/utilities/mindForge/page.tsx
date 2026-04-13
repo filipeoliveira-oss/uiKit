@@ -2,7 +2,7 @@
 import { Download, Fullscreen } from "lucide-react";
 import React, { useState } from "react";
 
-export default function DbSchemaGenerator() {
+export default function dbSchemaDesigner() {
     const [isFullscreen, setIsFullscreen] = useState(false);
 
     const handleDownload = () => {
@@ -17,7 +17,7 @@ export default function DbSchemaGenerator() {
             <div className="w-full h-12 px-4">
                 <div className="w-full h-4 flex flex-row gap-2 justify-end">
                     <button
-                        className="flex flex-row gap-2 p-2 bg-zinc-800 rounded-md cursor-pointer h-fit w-fit"
+                        className="flex flex-row gap-2 p-2 bg-background rounded-md cursor-pointer h-fit w-fit"
                         onClick={() => setIsFullscreen(true)}
                     >
                         <Fullscreen />
@@ -25,7 +25,7 @@ export default function DbSchemaGenerator() {
                     </button>
 
                     <button
-                        className="flex flex-row gap-2 p-2 bg-zinc-800 rounded-md cursor-pointer h-fit w-fit"
+                        className="flex flex-row gap-2 p-2 bg-background rounded-md cursor-pointer h-fit w-fit"
                         onClick={handleDownload}
                     >
                         <Download />
@@ -47,7 +47,7 @@ export default function DbSchemaGenerator() {
                 {isFullscreen && (
                     <div className="absolute bottom-0 right-4 z-50">
                         <button
-                            className="bg-zinc-800 p-2 rounded-md cursor-pointer"
+                            className="bg-background p-2 rounded-md cursor-pointer"
                             onClick={() => setIsFullscreen(false)}
                         >
                             Sair da tela cheia
