@@ -1,130 +1,194 @@
 'use client'
-import CodeBlock from "@/components/codeBlock"
-import ColorText from "@/components/colorText"
-import ComponentDisplay from "@/components/componentDisplay"
-import PageWrapper from "@/components/pageWrapper"
+
+import PageComponent from "@/components/componentsPage"
 import DataView from "@/uiKit/components/dataView/dataView"
 import { ShoppingBag, Tag } from "lucide-react"
 import Image from "next/image"
-import React from "react"
 
 export default function DataViewPage() {
 
-    const elements = React.useMemo(() => {
-        const tags = ['tech', 'fashion', 'home', 'sports', 'books'];
-        const photos = [
-            'https://picsum.photos/seed/pic1/300',
-            'https://picsum.photos/seed/pic2/300',
-            'https://picsum.photos/seed/pic3/300',
-            'https://picsum.photos/seed/pic4/300',
-            'https://picsum.photos/seed/pic5/300',
-            'https://picsum.photos/seed/pic6/300',
-            'https://picsum.photos/seed/pic7/300',
-            'https://picsum.photos/seed/pic8/300',
-            'https://picsum.photos/seed/pic9/300',
-            'https://picsum.photos/seed/pic10/300'
-        ];
-
-        const items = [];
-
-        for (let i = 1; i <= 10; i++) {
-            items.push({
-                name: `Item ${i}`,
-                price: parseFloat((Math.random() * 100).toFixed(2)), // price between 0 and 100
-                photo: photos[i - 1],
-                tag: tags[Math.floor(Math.random() * tags.length)]
-            });
-        }
-
-        return items;
-    }, [])
-
-    const a =
-        `npx fouikit
-components
-Data view`
-
-
-    const deps = [
-        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-    ]
+    const elements = Array.from({ length: 10 }).map((_, i) => ({
+        name: `Item ${i + 1}`,
+        price: parseFloat((Math.random() * 100).toFixed(2)),
+        photo: `https://picsum.photos/seed/pic${i + 1}/300`,
+        tag: ["tech", "fashion", "home", "sports", "books"][Math.floor(Math.random() * 5)]
+    }))
 
     const Item = (item: any) => {
-        return (
-            <div className="w-fit h-fit flex flex-row items-center justify-between p-4">
-                <div className="w-fit h-fit shrink-0">
-                    <Image src={item.photo} alt="Photo" height={100} width={100} className="rounded-2xl shadow shrink-0"/>
-                </div>
-                <div className="w-40 h-full flex flex-col justify-between ml-8">
-                    <span className="font-bold">{item.name}</span>
-                    <span className="flex flex-row gap-2 items-center justify-center w-fit h-fit"><Tag size={16}/> {item.tag}</span>
-                </div>
-
-                <div className="w-fit h-full flex flex-col justify-between  ml-8">
-                    <span className="font-bold">R${item.price}</span>
-                    <button className=" cursor-pointer w-12 h-12 rounded-full bg-sky-500 items-center justify-center flex"><ShoppingBag color="white"/></button>
-                </div>
+        return (<div className="w-fit h-fit flex flex-row items-center justify-between p-4">
+            <div className="w-fit h-fit shrink-0">
+                <Image src={item.photo} alt="Photo" height={100} width={100} className="rounded-2xl shadow shrink-0" />
             </div>
+            <div className="w-40 h-full flex flex-col justify-between ml-8">
+                <span className="font-bold">{item.name}</span>
+                <span className="flex flex-row gap-2 items-center justify-center w-fit h-fit">
+                    <Tag size={16} /> {item.tag}</span>
+            </div>
+            <div className="w-fit h-full flex flex-col justify-between ml-8">
+                <span className="font-bold">R${item.price}</span>
+                <button className=" cursor-pointer w-12 h-12 rounded-full bg-sky-500 items-center justify-center flex">
+                    <ShoppingBag color="white" />
+                </button>
+            </div>
+        </div>
         )
     }
 
+    const code =
+        `import React, { useEffect, useState } from "react"
+
+interface IDataView {
+    values: Array<any>
+    itemTemplate: (item: any) => React.ReactNode,
+    pagination?: boolean,
+    rows?: number,
+    header?: React.ReactNode,
+    maxVisiblePages?: number,
+    showItemBorder?: boolean
+}
+
+
+export default function DataView({ values, itemTemplate, header, pagination = false, rows = 10, maxVisiblePages = 6, showItemBorder = true }: IDataView) {
+    const [currentItems, setCurrentItems] = useState<Array<any>>([])
+    const [currentIndex, setCurrentIndex] = useState(0)
+    const [totalPagesLength, setTotalPagesLength] = useState(0)
+    const [startPage, setStartPage] = useState(0);
+
+    useEffect(() => {
+        if (pagination && rows && rows > 0) {
+            const totalPages = Math.ceil(values.length / rows);
+            setTotalPagesLength(totalPages);
+
+            const startIndex = currentIndex * rows;
+            const endIndex = startIndex + rows;
+
+            setCurrentItems(values.slice(startIndex, endIndex));
+        } else {
+            setCurrentItems(values);
+        }
+    }, [pagination, rows, values, currentIndex]);
+
     return (
-        <PageWrapper requirements={deps} title="Data view">
-            <ColorText text="Data View" />
-            <span>DataView displays data in grid or list layout with pagination and sorting features.</span>
-
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-
-                <DataView itemTemplate={Item} values={elements} />
-           
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">values*</span>
-                <CodeBlock code="Array<any>" language="ts" showLineNumbers={false} />
-                <span>Array of elements that will be displayed</span>
+        <div className="w-fit h-fit rounded-2xl bg-white border border-zinc-200 text-black px-2">
+            {header && header}
+            <div className="w-fit h-fit flex flex-col">
+                {values.length === 0 ? <span>No available items to show</span> : (
+                    currentItems.map((item, i) => (
+                        <div key={i} className={\`\${(showItemBorder && rows && i < rows - 1) ? 'border-b border-b-zinc-300' : ''}\`}>
+                            {itemTemplate(item)}
+                        </div>
+                    ))
+                )}
             </div>
 
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">itemTemplate*</span>
-                <CodeBlock code="(item: any) => React.ReactNode" language="ts" showLineNumbers={false} />
-                <span>Node that receives the object in the collection to return content</span>
-            </div>
+            {(pagination && rows && rows > 0 && values.length > 0) && (
+                <div className="w-full h-fit flex flex-row items-center justify-center py-2 gap-2 select-none">
+                    <div className={\`cursor-pointer hover:bg-zinc-200 flex items-center justify-center rounded-full w-fit h-fit \${currentIndex === 0 ? 'opacity-50 pointer-events-none' : ''}\`} onClick={() => { setCurrentIndex(0); setStartPage(0) }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m11 17-5-5 5-5" />
+                            <path d="m18 17-5-5 5-5" />
+                        </svg>
+                    </div>
+                    <div className={\`cursor-pointer hover:bg-zinc-200 flex items-center justify-center rounded-full w-fit h-fit \${currentIndex === 0 ? 'opacity-50 pointer-events-none' : ''}\`} onClick={() => { setCurrentIndex(prev => prev - 1); if (currentIndex - 1 < startPage) setStartPage(prev => Math.max(prev - 3, 0)) }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m15 18-6-6 6-6" />
+                        </svg>
+                    </div>
 
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">pagination</span>
-                <CodeBlock code="bool" language="ts" showLineNumbers={false} />
-                <span>Pagination is enabled with the paginator and rows properties</span>
-            </div>
+                    {Array.from({ length: totalPagesLength }, (_, i) => i).slice(startPage, startPage + maxVisiblePages).map(i => (
+                        <div
+                            key={i}
+                            className={\`text-sm flex w-8 h-8 px-2 py-2 cursor-pointer rounded-full items-center justify-center hover:bg-zinc-200 \${currentIndex === i ? 'bg-sky-100' : ''}\`}
+                            onClick={() => {
+                                setCurrentIndex(i);
+                                // Move window forward if user clicks on last page
+                                if (i === startPage + maxVisiblePages - 1 && i < totalPagesLength - 1) {
+                                    setStartPage(prev => prev + 2);
+                                }
+                                // Move window backward if clicking early pages
+                                if (i === startPage && i > 0) {
+                                    setStartPage(prev => Math.max(prev - 2, 0));
+                                }
+                            }}
+                        >
+                            <span className="block">{i + 1}</span>
+                        </div>))}
 
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">rows</span>
-                <CodeBlock code="number" language="ts" showLineNumbers={false} />
-                <span>Number of rows that will be displayed per page. Default to 10 </span>
-            </div>
+                    <div className={\`cursor-pointer hover:bg-zinc-200 flex items-center justify-center rounded-full w-fit h-fit \${currentIndex === totalPagesLength - 1 ? 'opacity-50 pointer-events-none' : ''}\`} onClick={() => { setCurrentIndex(prev => prev + 1); if (currentIndex + 1 >= startPage + maxVisiblePages) setStartPage(prev => Math.min(prev + 3, totalPagesLength - maxVisiblePages)) }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m9 18 6-6-6-6" /></svg>
+                    </div>
+                    <div className={\`cursor-pointer hover:bg-zinc-200 flex items-center justify-center rounded-full w-fit h-fit \${currentIndex === totalPagesLength - 1 ? 'opacity-50 pointer-events-none' : ''}\`} onClick={() => { setCurrentIndex(totalPagesLength - 1); setStartPage(Math.max(totalPagesLength - maxVisiblePages, 0)) }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m6 17 5-5-5-5" />
+                            <path d="m13 17 5-5-5-5" />
+                        </svg>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}`
 
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">header</span>
-                <CodeBlock code="React.ReactNode" language="ts" showLineNumbers={false} />
-                <span>Header element that will be shown</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">maxVisiblePages</span>
-                <CodeBlock code="number" language="ts" showLineNumbers={false} />
-                <span>Number of pages that will be displayed before shifting</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">showItemBorder</span>
-                <CodeBlock code="bool" language="ts" showLineNumbers={false} />
-                <span>If there will be a border between the items. Default to true</span>
-            </div>
-
-        </PageWrapper>
+    return (
+        <PageComponent
+            ComponentType="Componentes"
+            componentName="Data View"
+            componentCodeName="DataView"
+            description="Componente para exibição de listas de dados em formato de grid ou lista com suporte a paginação e customização de layout."
+            code={code}
+            preview={<DataView pagination rows={2} itemTemplate={Item} values={elements} />}
+            props={[
+                {
+                    propName: "values",
+                    type: "Array<any>",
+                    default: "-",
+                    description: "Lista de itens que serão exibidos",
+                    required: true
+                },
+                {
+                    propName: "itemTemplate",
+                    type: "(item: any) => React.ReactNode",
+                    default: "-",
+                    description: "Função responsável por renderizar cada item da lista",
+                    required: true
+                },
+                {
+                    propName: "pagination",
+                    type: "boolean",
+                    default: "false",
+                    description: "Ativa paginação dos itens",
+                    required: false
+                },
+                {
+                    propName: "rows",
+                    type: "number",
+                    default: "10",
+                    description: "Quantidade de itens por página",
+                    required: false
+                },
+                {
+                    propName: "header",
+                    type: "React.ReactNode",
+                    default: "-",
+                    description: "Elemento de cabeçalho exibido acima da lista",
+                    required: false
+                },
+                {
+                    propName: "maxVisiblePages",
+                    type: "number",
+                    default: "-",
+                    description: "Número máximo de páginas visíveis na paginação",
+                    required: false
+                },
+                {
+                    propName: "showItemBorder",
+                    type: "boolean",
+                    default: "true",
+                    description: "Define se os itens terão borda separadora",
+                    required: false
+                }
+            ]}
+        />
     )
 }

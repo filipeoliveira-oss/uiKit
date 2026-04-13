@@ -1,77 +1,122 @@
 'use client'
-import CodeBlock from "@/components/codeBlock";
-import ColorText from "@/components/colorText";
-import ComponentDisplay from "@/components/componentDisplay";
-import PageWrapper from "@/components/pageWrapper";
-import CurrencyInput from "@/uiKit/components/currencyInput/currencyInput";
-import { useState } from "react";
 
-export default function Currency() {
+import { useState } from "react"
+import PageComponent from "@/components/componentsPage"
+import CurrencyInput from "@/uiKit/components/currencyInput/currencyInput"
+
+export default function CurrencyInputPage() {
+
     const [value, setValue] = useState('')
+    const code =
+`import React from "react";
+import { NumberFormatValues, NumericFormat, NumericFormatProps } from "react-number-format";
 
-    const a = 
-    `npx fouikit
-components
-Currency Input`
 
-const deps = [
-        { name: "react-number-format", url: "https://www.npmjs.com/package/react-number-format" },
-        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
-        { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-        { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" }
-    ]
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs))
+}
+
+interface CurrencyInputProps extends NumericFormatProps {
+    placeholder?: string;
+    inputClassName?: string;
+    className?: string;
+    value: string | number | null | undefined;
+    onChangeValue: (e: NumberFormatValues) => void,
+    label?:string
+}
+
+const CurrencyInput: React.FC<CurrencyInputProps> = ({
+    inputClassName,
+    placeholder = "",
+    value,
+    onChangeValue,
+    className,
+    label,
+    ...props
+}) => {
 
     return (
-        <PageWrapper requirements={deps} title="Currency Input">
-            <ColorText text="Currency input"/>
-
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-
-            <ComponentDisplay>
-                <CurrencyInput onChangeValue={(e) => setValue} value={value} label="Value"/>
-            </ComponentDisplay>
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">setValue*</span>
-                <CodeBlock code="(e:NumberFormatValues) => void" showLineNumbers={false} />
-                <span>Function to execute when value change</span>
+        <label htmlFor="currencyInput">
+            {label && <span className="text-zinc-500">{label}</span>}
+            <div style={{ display: "flex", alignItems: "center" }} className={cn("shrink-0 w-full h-10 rounded outline-none border border-[rgba(0,0,0,0.2)] pl-2 cursor-text text-base mt-2 text-black", className)}>
+                <span style={{ marginRight: 4 }}>R$</span>
+                <NumericFormat
+                    id="currencyInput"
+                    value={value}
+                    onValueChange={(values: any) => onChangeValue(values)}
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    decimalScale={2}
+                    fixedDecimalScale
+                    allowNegative={false}
+                    placeholder={placeholder}
+                    displayType="input"
+                    className={cn("w-full h-full outline-none border-none", inputClassName)}
+                    {...props} // Spread remaining props to NumericFormat
+                />
             </div>
+        </label>
+    )
+};
 
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">value*</span>
-                <CodeBlock code="Boolean" showLineNumbers={false} />
-                <span>The current value</span>
-            </div>
+export default CurrencyInput;
+`
 
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">Label</span>
-                <CodeBlock code="string" showLineNumbers={false} />
-                <span>Label that will be shown above the component</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">placeholder</span>
-                <CodeBlock code="string" showLineNumbers={false} />
-                <span>Placeholder that will shown in the input</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">inputClassName</span>
-                <CodeBlock code="string" showLineNumbers={false} />
-                <span>Classname that will be applied to the input itself</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">className</span>
-                <CodeBlock code="string" showLineNumbers={false} />
-                <span>Classname that will be applied to the input container</span>
-            </div>
-        </PageWrapper>
+    return (
+        <PageComponent
+            ComponentType="Componentes"
+            componentName="Currency Input"
+            componentCodeName="CurrencyInput"
+            description="Componente de input monetário com formatação automática de valores financeiros."
+            code={code}
+            preview={<CurrencyInput onChangeValue={(e) => setValue} value={value}/>}
+            props={[
+                {
+                    propName: "value",
+                    type: "string",
+                    default: "-",
+                    description: "Valor atual do input",
+                    required: true
+                },
+                {
+                    propName: "onChangeValue",
+                    type: "(value: NumberFormatValues) => void",
+                    default: "-",
+                    description: "Função chamada quando o valor muda",
+                    required: true
+                },
+                {
+                    propName: "label",
+                    type: "string",
+                    default: "-",
+                    description: "Label exibido acima do input",
+                    required: false
+                },
+                {
+                    propName: "placeholder",
+                    type: "string",
+                    default: "-",
+                    description: "Texto exibido quando o input está vazio",
+                    required: false
+                },
+                {
+                    propName: "inputClassName",
+                    type: "string",
+                    default: "-",
+                    description: "Classe CSS aplicada ao input",
+                    required: false
+                },
+                {
+                    propName: "className",
+                    type: "string",
+                    default: "-",
+                    description: "Classe CSS aplicada ao container",
+                    required: false
+                }
+            ]}
+        />
     )
 }

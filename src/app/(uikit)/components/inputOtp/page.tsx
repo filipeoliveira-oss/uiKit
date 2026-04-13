@@ -1,80 +1,163 @@
 'use client'
 
-import CodeBlock from "@/components/codeBlock"
-import ColorText from "@/components/colorText"
-import ComponentDisplay from "@/components/componentDisplay"
-import PageWrapper from "@/components/pageWrapper"
-import InputOtp from "@/uiKit/components/inputOtp/inputOtp"
 import { useState } from "react"
+import PageComponent from "@/components/componentsPage"
+import InputOtp from "@/uiKit/components/inputOtp/inputOtp"
 
 export default function InputOtpPage() {
 
-    const [s, st] = useState('')
+    const code =
+`import React, { useEffect, useRef, useState } from "react"
 
-    const a =
-        `npx fouikit
-components
-Input Otp`
+interface IInputOtp {
+    value: string,
+    changeOtp: (e: string) => void,
+    tokenLength: number,
+    separator?: string,
+    intergerOnly?: boolean,
+    disabled?: boolean
+}
 
+export default function InputOtp({ changeOtp, tokenLength, value, disabled, intergerOnly, separator }: IInputOtp) {
+    const [valueArray, setValueArray] = useState<Array<string>>(Array.from({ length: tokenLength }, (_, i) => ''))
+    const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-    const deps = [
-        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-    ]
+    useEffect(() => {
+        if (value) {
+            const aux = value.split('')
+            setValueArray(aux)
+        }
+    }, [])
 
+    function handleChange(value: string, index: number) {
+        if (intergerOnly && isNaN(Number(value))) return
+
+        const aux = [...valueArray]
+        aux[index] = value.toUpperCase()
+        setValueArray(aux)
+        changeOtp(aux.join(''))
+
+        if (value && index < tokenLength - 1) {
+            inputRefs.current[index + 1]?.focus();
+        }
+    }
+
+    function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>, index: number) {
+        if (e.key === "Backspace" && valueArray[index] === '' && index > 0) {
+            inputRefs.current[index - 1]?.focus();
+
+            return
+        }
+
+        if (e.key === 'ArrowLeft') {
+            inputRefs.current[index - 1]?.focus();
+            return
+        }
+
+        if (e.key === 'ArrowRight') {
+            inputRefs.current[index + 1]?.focus();
+            return
+        }
+    }
+
+    function handlePaste(e: React.ClipboardEvent<HTMLInputElement>, startIndex: number) {
+        e.preventDefault();
+        const paste = e.clipboardData.getData("text").replace(/\s/g, '');
+        if (!paste) return;
+
+        const chars = paste.split('').slice(0, tokenLength - startIndex);
+        const newArray = [...valueArray];
+
+        for (let i = 0; i < chars.length; i++) {
+            newArray[startIndex + i] = chars[i];
+        }
+
+        setValueArray(newArray);
+
+        const lastIndex = startIndex + chars.length - 1;
+        if (lastIndex < tokenLength) {
+            inputRefs.current[lastIndex]?.focus();
+            inputRefs.current[lastIndex]?.select();
+        }
+    }
 
     return (
-        <PageWrapper requirements={deps} title="Input Otp">
-            <ColorText text="Input Otp" />
-            <span>Input Otp groups a collection of contents in tabs</span>
+        <div className={\`w-fit h-12 flex flex-row gap-2 uppercase \${disabled ? 'pointer-events-none' : ''}\`}>
+            {Array.from({ length: tokenLength }, (_, i) => {
+                return (
+                    <React.Fragment key={i}>
+                        <input
+                            key={i}
+                            ref={(el) => { inputRefs.current[i] = el; }}
+                            onKeyDown={(e) => handleKeyDown(e, i)}
+                            onPaste={(e) => handlePaste(e, i)}
+                            className="uppercase text-sm w-8 border border-zinc-400 rounded-lg text-center text-black"
+                            value={valueArray[i] ?? ''}
+                            onChange={(e) => handleChange(e.target.value, i)}
+                            maxLength={1}
+                            disabled={disabled}
+                        />
+                        {((i !== tokenLength - 1) && separator) && (<span className="w-fit h-full flex items-center justify-center">{separator}</span>)}
+                    </React.Fragment>
+                )
+            }
+            )}
+        </div>
+    )
+}`
 
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-
-            <ComponentDisplay>
-                <InputOtp value={s} changeOtp={(e) => st(e)} tokenLength={6} />
-            </ComponentDisplay>
-           
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">value*</span>
-                <CodeBlock code="string" language="ts" showLineNumbers={false} />
-                <span>Current value</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">changeOtp*</span>
-                <CodeBlock code="(e: string) => void" language="ts" showLineNumbers={false} />
-                <span>Function to change the current value</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">tokenLength*</span>
-                <CodeBlock code="number" language="ts" showLineNumbers={false} />
-                <span>The token length to be displayed</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">intergerOnly</span>
-                <CodeBlock code="bool" language="ts" showLineNumbers={false} />
-                <span>If it should only accept integers</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">separator</span>
-                <CodeBlock code="string" language="ts" showLineNumbers={false} />
-                <span>String to separe the elements</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">disabled</span>
-                <CodeBlock code="React.ReactNode" language="ts" showLineNumbers={false} />
-                <span>When disabled, it cannot be focused or modified</span>
-            </div>
-
-        </PageWrapper>
+    return (
+        <PageComponent
+            ComponentType="Componentes"
+            componentName="Input Otp"
+            componentCodeName="InputOtp"
+            description="InputOtp agrupa uma sequência de inputs para capturar códigos OTP de forma estruturada e controlada."
+            code={code}
+            preview={<InputOtp changeOtp={() =>{}} tokenLength={6} value="" />}
+            props={[
+                {
+                    propName: "value",
+                    type: "string",
+                    default: "-",
+                    description: "Valor atual",
+                    required: true
+                },
+                {
+                    propName: "changeOtp",
+                    type: "(value: string) => void",
+                    default: "-",
+                    description: "Função para atualizar o valor",
+                    required: true
+                },
+                {
+                    propName: "tokenLength",
+                    type: "number",
+                    default: "-",
+                    description: "Número de OTP para mostrar",
+                    required: true
+                },
+                {
+                    propName: "intergerOnly",
+                    type: "boolean",
+                    default: "false",
+                    description: "Se deve ser somente integers",
+                    required: false
+                },
+                {
+                    propName: "separator",
+                    type: "string",
+                    default: '""',
+                    description: "String usada para separar o OTP",
+                    required: false
+                },
+                {
+                    propName: "disabled",
+                    type: "boolean",
+                    default: "false",
+                    description: "Quando true, previne de editar o OTP",
+                    required: false
+                }
+            ]}
+        />
     )
 }

@@ -1,97 +1,133 @@
 'use client'
 
-import CodeBlock from "@/components/codeBlock"
-import ColorText from "@/components/colorText"
-import ComponentDisplay from "@/components/componentDisplay"
-import PageWrapper from "@/components/pageWrapper"
-import InputSwitch from "@/uiKit/components/inputSwitch/inputSwitch"
 import { useState } from "react"
+import PageComponent from "@/components/componentsPage"
+import InputSwitch from "@/uiKit/components/inputSwitch/inputSwitch"
 
-export default function InputOtpPage() {
+export default function InputSwitchPage() {
 
-    const [s, st] = useState(false)
+    const [checked, setChecked] = useState(false)
 
-    const a =
-        `npx fouikit
-components
-Input Otp`
+    const codePreview =
+`const [checked, setChecked] = useState(false)
 
+<InputSwitch
+  checked={checked}
+  onChangeChecked={setChecked}
+/>`
 
-    const deps = [
-        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-    ]
+    const code =
+`import {motion} from 'framer-motion'
 
+interface iInputSwitch{
+    checked:boolean,
+    onChangeChecked: (e:boolean) => void,
+    disabled?:boolean,
+    showText?:boolean,
+    trueText?:string,
+    falseText?:string,
+    trueBackgroundColor?:string,
+    falseBackgroundColor?:string,
+    widthMultiplier?:number,
+    height?:string
+}
+
+export default function InputSwitch({checked=false,onChangeChecked,disabled=false, height='40px',showText=false,falseText='Off',trueText='On', falseBackgroundColor='#d4d4d8', trueBackgroundColor='#00bcff', widthMultiplier=2}:iInputSwitch){
+    
+    const inputSwitch = {
+            false: { x:0,transition: {
+                    duration: .300,
+                } },
+            true: {
+                x:'100%',
+                transition: {
+                    duration: .300,
+                }
+            }
+        }
+
+    return(
+        <div className={\`shrink-0 rounded-full relative cursor-pointer flex flex-row \${disabled ? 'pointer-events-none opacity-90' : ''}\`} style={{width:\`calc(\${height} * \${widthMultiplier})\`, height, backgroundColor: checked ? trueBackgroundColor : falseBackgroundColor}} onClick={() => onChangeChecked(!checked)}>
+            {showText && <span className='flex w-full h-full items-center justify-center capitalize' style={{fontSize:\`calc(\${height} / 3)\`}}>{trueText}</span>}
+            <motion.div className="bg-white rounded-full absolute top-0 left-0" style={{height:'100%', width:'50%'}}  variants={inputSwitch} initial={checked ? 'true' : 'false'} animate={checked ? 'true' : 'false'}></motion.div>
+            {showText && <span className='flex w-full h-full items-center justify-center capitalize' style={{fontSize:\`calc(\${height} / 3)\`}}>{falseText}</span>}
+        </div>
+    )
+}`
 
     return (
-        <PageWrapper requirements={deps} title="Input Switch">
-            <ColorText text="Input Switch" />
-            <span>Input Switch is used to select a boolean value.</span>
-
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-
-            <InputSwitch checked={s} onChangeChecked={(e) => st(e)}/>
-
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">checked*</span>
-                <CodeBlock code="bool" language="ts" showLineNumbers={false} />
-                <span>If the switch is off or on</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">onChangeChecked*</span>
-                <CodeBlock code="(e:boolean) => void" language="ts" showLineNumbers={false} />
-                <span>Function to change the current state</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">showText</span>
-                <CodeBlock code="bool" language="ts" showLineNumbers={false} />
-                <span>If a text should be shown on each state</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">trueText</span>
-                <CodeBlock code="string" language="ts" showLineNumbers={false} />
-                <span>Text to show on active state. Default to 'On'</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">falseText</span>
-                <CodeBlock code="string" language="ts" showLineNumbers={false} />
-                <span>Text to show on deactive state. Default to 'Off'</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">trueBackgroundColor</span>
-                <CodeBlock code="string" language="ts" showLineNumbers={false} />
-                <span>Color to set the background on active state</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">falseBackgroundColor</span>
-                <CodeBlock code="string" language="ts" showLineNumbers={false} />
-                <span>Color to set the background on deactive state</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">widthMultiplier</span>
-                <CodeBlock code="number" language="ts" showLineNumbers={false} />
-                <span>Multiplier to the width. Default to 2</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">height</span>
-                <CodeBlock code="string" language="ts" showLineNumbers={false} />
-                <span>Height of the element. An unit must be passed, default to 40px</span>
-            </div>
-
-
-        </PageWrapper>
+        <PageComponent
+            ComponentType="Componentes"
+            componentName="Input Switch"
+            componentCodeName="InputSwitch"
+            description="Componente de switch utilizado para alternar entre estados booleanos (ligado/desligado)."
+            code={code}
+            preview={<InputSwitch checked={checked} onChangeChecked={setChecked}/>}
+            props={[
+                {
+                    propName: "checked",
+                    type: "boolean",
+                    default: "-",
+                    description: "Estado atual do switch (ligado ou desligado)",
+                    required: true
+                },
+                {
+                    propName: "onChangeChecked",
+                    type: "(value: boolean) => void",
+                    default: "-",
+                    description: "Função chamada quando o estado muda",
+                    required: true
+                },
+                {
+                    propName: "showText",
+                    type: "boolean",
+                    default: "false",
+                    description: "Exibe texto indicando o estado atual",
+                    required: false
+                },
+                {
+                    propName: "trueText",
+                    type: "string",
+                    default: "On",
+                    description: "Texto exibido quando ativo",
+                    required: false
+                },
+                {
+                    propName: "falseText",
+                    type: "string",
+                    default: "Off",
+                    description: "Texto exibido quando inativo",
+                    required: false
+                },
+                {
+                    propName: "trueBackgroundColor",
+                    type: "string",
+                    default: "-",
+                    description: "Cor de fundo no estado ativo",
+                    required: false
+                },
+                {
+                    propName: "falseBackgroundColor",
+                    type: "string",
+                    default: "-",
+                    description: "Cor de fundo no estado inativo",
+                    required: false
+                },
+                {
+                    propName: "widthMultiplier",
+                    type: "number",
+                    default: "2",
+                    description: "Multiplicador de largura do switch",
+                    required: false
+                },
+                {
+                    propName: "height",
+                    type: "string",
+                    default: "40px",
+                    description: "Altura do componente (deve incluir unidade)",
+                    required: false
+                }
+            ]}
+        />
     )
 }

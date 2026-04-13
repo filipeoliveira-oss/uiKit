@@ -1,81 +1,136 @@
 'use client'
-import CodeBlock from "@/components/codeBlock"
-import ColorText from "@/components/colorText"
-import ComponentDisplay from "@/components/componentDisplay"
-import PageWrapper from "@/components/pageWrapper"
-import MaskInput from "@/uiKit/components/maskInput/maskInput"
+
 import { useState } from "react"
+import PageComponent from "@/components/componentsPage"
+import MaskInput from "@/uiKit/components/maskInput/maskInput"
 
 export default function MaskInputPage() {
-    const [v, sv] = useState('')
 
-    const a = 
-    `npx fouikit
-components
-Mask Input`
+    const [value, setValue] = useState('')
 
-    const deps = [
-        { name: "@react-input/mask", url: "https://www.npmjs.com/package/@react-input/mask" },
-        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
-        { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-        { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" }
-    ]
+    const code =
+`'use client'
+import { forwardRef, type ComponentProps } from 'react'
+import { InputMask, format } from "@react-input/mask";
+
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+import React from 'react';
+
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs))
+}
+
+interface inputInterface extends ComponentProps<'input'> {
+    placeholder?: string,
+    mask?: string,
+    value: string,
+    onChangeValue: (e: string) => void,
+    label?:string,
+    showMask?:boolean,
+    type?:'string' | 'number' | 'all'
+}
+export const MaskInput = forwardRef<HTMLInputElement, inputInterface>(
+    ({ className, placeholder, mask = "(__)_____-____", onChangeValue, value,label,showMask=false,type = 'all', ...props }, ref) => {
+
+        const replacement = React.useMemo(() => {
+            switch (type) {
+                case 'all':
+                    return /[a-zA-Z0-9]/
+                case 'number':
+                    return /[0-9]/
+                case 'string':
+                    return /[a-zA-Z]/
+                default:
+                    return /[a-zA-Z0-9]/
+            }
+        }, [type])
+
+        function formtValue(value: string) {
+            const formated = format(value, {
+                mask: mask, replacement: { _: replacement }
+            })
+
+            return formated
+        }
+
+        return (
+            <label htmlFor="maskInput">
+                {label && <span className="text-zinc-500">{label}</span>}
+                <InputMask mask={mask} replacement={{ _: replacement }} className={cn("w-full h-10 rounded outline-none border border-[rgba(0,0,0,0.2)] pl-2 cursor-text text-base mt-2 text-black appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-moz-appearance:textfield]", className)}
+                    value={formtValue(value)}
+                    onChange={(e) => onChangeValue(e.target.value)}
+                    placeholder={placeholder}
+                    showMask={showMask}
+                    id='maskInput'
+                    {...props}
+                />
+            </label>
+        );
+    }
+);
+
+export default MaskInput`
 
     return (
-        <PageWrapper requirements={deps} title="Mask Input">
-            <ColorText text="Mask Input"/>
-
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-
-            <ComponentDisplay>
-                <MaskInput onChangeValue={(e) => sv(e)} value={v} type="number" label="Phone"/>
-            </ComponentDisplay>
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">onChangeValue*</span>
-                <CodeBlock code="(e:string) => void" showLineNumbers={false} />
-                <span>Value to executes when it changes</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">value*</span>
-                <CodeBlock code="string" showLineNumbers={false} />
-                <span>The current value</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">Type</span>
-                <CodeBlock code="'string' | 'number' | 'all'" showLineNumbers={false} />
-                <span>Define which keys will be accepted. Default to all</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">Label</span>
-                <CodeBlock code="String" showLineNumbers={false} />
-                <span>Label that will be shown above the component</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">showMask</span>
-                <CodeBlock code="Boolean" showLineNumbers={false} />
-                <span>Show current mask or not</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">Mask</span>
-                <CodeBlock code="String" showLineNumbers={false} />
-                <span>The mask it will use. place _ as the replaceable element (__)_____-____</span>
-            </div>
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">placeholder</span>
-                <CodeBlock code="String" showLineNumbers={false} />
-                <span>The placeholder it will use.</span>
-            </div>
-        </PageWrapper>
+        <PageComponent
+            ComponentType="Componentes"
+            componentName="Mask Input"
+            componentCodeName="maskInput"
+            description="Input com suporte a máscara, permitindo controlar formatos de entrada como telefone, CPF, datas e outros padrões definidos."
+            code={code}
+            preview={<MaskInput onChangeValue={setValue} value={value}/>}
+            props={[
+                {
+                    propName: "value",
+                    type: "string",
+                    default: "-",
+                    description: "Valor atual do input",
+                    required: true
+                },
+                {
+                    propName: "onChangeValue",
+                    type: "(e: string) => void",
+                    default: "-",
+                    description: "Função chamada sempre que o valor muda",
+                    required: true
+                },
+                {
+                    propName: "type",
+                    type: "'string' | 'number' | 'all'",
+                    default: "all",
+                    description: "Define quais tipos de caracteres serão aceitos no input",
+                    required: false
+                },
+                {
+                    propName: "label",
+                    type: "string",
+                    default: "-",
+                    description: "Label exibida acima do componente",
+                    required: false
+                },
+                {
+                    propName: "showMask",
+                    type: "boolean",
+                    default: "false",
+                    description: "Define se a máscara deve ser exibida junto ao valor",
+                    required: false
+                },
+                {
+                    propName: "mask",
+                    type: "string",
+                    default: "-",
+                    description: "Máscara utilizada no input, use '_' como caractere substituível",
+                    required: false
+                },
+                {
+                    propName: "placeholder",
+                    type: "string",
+                    default: "-",
+                    description: "Placeholder exibido quando o input está vazio",
+                    required: false
+                }
+            ]}
+        />
     )
 }

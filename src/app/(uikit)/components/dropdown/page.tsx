@@ -1,100 +1,304 @@
 'use client'
-import CodeBlock from "@/components/codeBlock";
-import ColorText from "@/components/colorText";
-import ComponentDisplay from "@/components/componentDisplay";
-import PageWrapper from "@/components/pageWrapper";
-import Dropdown from "@/uiKit/components/dropdown/dropdown";
-import { useState } from "react";
+
+import { useState } from "react"
+import PageComponent from "@/components/componentsPage"
+import Dropdown from "@/uiKit/components/dropdown/dropdown"
 
 export default function DropdownPage() {
 
-    const [v, sv] = useState('')
+    const [value, setValue] = useState<any>()
 
-    const a =
-        `npx fouikit
-components
-Dropdown`
 
-    const deps = [
-        { name: "framer-motion", url: "https://www.npmjs.com/package/framer-motion" },
-        { name: "lucide-react", url: "https://www.npmjs.com/package/lucide-react" },
-        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
-        { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-        { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" },
-        { name: "usehooks-ts", url: "https://www.npmjs.com/package/usehooks-ts" }
-    ]
+    const code =
+`'use client'
+import { Check, ChevronDown, Search } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState } from "react"
+import { motion } from 'framer-motion'
 
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs))
+}
+
+interface IDropdown {
+    value: string | number | Record<string, any> | null;
+    onChangeValue: (e: any) => void;
+    options: Array<string> | Array<Record<string, any>>,
+
+    placeholder?: string,
+    disabled?: boolean,
+    filter?: boolean,
+    filterKey?: string,
+    className?: string,
+    itemTemplate?: (item: any) => React.ReactNode
+}
+
+
+export default function Dropdown({ onChangeValue, options, value, disabled, filter, placeholder, className, filterKey, itemTemplate }: IDropdown) {
+
+    const [isOpen, setIsOpen] = useState(false)
+    const dropdownRef = useRef<HTMLDivElement>(null)
+    const [search, setSearch] = useState<string>('')
+    const debouncedSearch = useDebounce(search, 250);
+
+    const filteredOptions = useMemo(() => {
+        return options.filter((item) => {
+            const text = typeof item === "object" ? item[filterKey ?? ''] : item;
+            return String(text)
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .includes(debouncedSearch.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase());
+        });
+    }, [options, filterKey, debouncedSearch]);
+
+    const selectedIndex = useMemo(() => {
+        return options.findIndex(opt => deepEqual(opt, value));
+    }, [options, value]);
+
+    useEffect(() => {
+        function handleClickOutside(event: any) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false)
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const icon = {
+        closed: { rotate: '0deg' },
+        open: {
+            rotate: '180deg',
+            transition: {
+                duration: .250,
+            }
+        }
+    }
+
+    const list = {
+        closed: { opacity: 0, display: 'none', zIndex: 99999, },
+        open: {
+            opacity: 1,
+            display: 'block',
+            zIndex: 99999,
+            transition: {
+                duration: .300,
+            }
+        }
+    }
+
+    function deepEqual(a: any, b: any, seen = new WeakMap()): boolean {
+        // Strict equality (covers primitives and reference equality)
+        if (a === b) return true;
+
+        // Handle null
+        if (a === null || b === null) return a === b;
+
+        // Handle Date
+        if (a instanceof Date && b instanceof Date)
+            return a.getTime() === b.getTime();
+
+        // Handle RegExp
+        if (a instanceof RegExp && b instanceof RegExp)
+            return a.source === b.source && a.flags === b.flags;
+
+        // Handle ArrayBuffer and TypedArrays
+        if (
+            ArrayBuffer.isView(a) && ArrayBuffer.isView(b) &&
+            Object.getPrototypeOf(a).constructor === Object.getPrototypeOf(b).constructor
+        ) {
+            return a.byteLength === b.byteLength && new Uint8Array(a.buffer).every((val, i) => val === new Uint8Array(b.buffer)[i]);
+        }
+
+        if (a instanceof ArrayBuffer && b instanceof ArrayBuffer) {
+            if (a.byteLength !== b.byteLength) return false;
+            const viewA = new Uint8Array(a);
+            const viewB = new Uint8Array(b);
+            return viewA.every((val, i) => val === viewB[i]);
+        }
+
+        // Handle Set
+        if (a instanceof Set && b instanceof Set) {
+            if (a.size !== b.size) return false;
+            return [...a].every(valA =>
+                [...b].some(valB => deepEqual(valA, valB, seen))
+            );
+        }
+
+        // Handle Map
+        if (a instanceof Map && b instanceof Map) {
+            if (a.size !== b.size) return false;
+            for (const [key, valA] of a.entries()) {
+                if (!b.has(key)) return false;
+                const valB = b.get(key);
+                if (!deepEqual(valA, valB, seen)) return false;
+            }
+            return true;
+        }
+
+        // If not both are objects, return false
+        if (typeof a !== 'object' || typeof b !== 'object') return false;
+
+        // Handle circular references
+        if (seen.has(a)) return seen.get(a) === b;
+        seen.set(a, b);
+
+        // Compare own property keys including symbols
+        const keysA = Reflect.ownKeys(a);
+        const keysB = Reflect.ownKeys(b);
+
+        if (keysA.length !== keysB.length) return false;
+        for (const key of keysA) {
+            if (!keysB.includes(key)) return false;
+            if (!deepEqual(a[key], b[key], seen)) return false;
+        }
+
+        return true;
+    }
+
+    function useDebounce<T>(value: T, delay: number = 300): T {
+        const [debounced, setDebounced] = useState(value);
+
+        useEffect(() => {
+            const handler = setTimeout(() => setDebounced(value), delay);
+
+            return () => clearTimeout(handler);
+        }, [value, delay]);
+
+        return debounced;
+    }
 
     return (
-        <PageWrapper requirements={deps} title="Dropdown">
-            <ColorText text="Dropdown" />
+        <div className={cn(\`shrink-0 w-full h-10 rounded outline-none border border-zinc-400 pl-2 text-base mt-2 text-black  bg-transparent flex items-center relative \${disabled ? 'cursor-auto opacity-85' : 'cursor-pointer'}\`, className)} onClick={() => !disabled && setIsOpen(!isOpen)} ref={dropdownRef}>
 
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-
-            <ComponentDisplay>
-                <Dropdown options={['option1', 'option2', 'option3']} onChangeValue={(e) => sv(e)} value={v} />
-            </ComponentDisplay>
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">options*</span>
-                <CodeBlock code="Array<string> | Array<Record<string, any>>" showLineNumbers={false} />
-                <span>The options to be shown</span>
+            {/* EXHIBITION */}
+            <div className={\`text-base \${!value ? 'text-[#757575]' : ''}\`}>
+                {value
+                    ? (React.isValidElement(value)
+                        ? value
+                        : typeof value === 'object'
+                            ? (itemTemplate
+                                ? itemTemplate(value)
+                                : <span>{JSON.stringify(value)}</span>)
+                            : <span>{value}</span>)
+                    : <span>{placeholder}</span>}
             </div>
 
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">onChangeValue*</span>
-                <CodeBlock code="(e: element) => void" showLineNumbers={false} />
-                <span>Function to execute on change</span>
-            </div>
+            <motion.div className={\`absolute right-[2%] \`} variants={icon} initial='closed' animate={isOpen ? 'open' : 'closed'}>
+                {!disabled && <ChevronDown />}
+            </motion.div>
 
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">value*</span>
-                <CodeBlock code="string | number | Record<string, any> | null" showLineNumbers={false} />
-                <span>Current Value</span>
-            </div>
+            <motion.div className="w-full h-fit bg-white absolute top-[100%]  left-0 overflow-hidden text-black border border-zinc-300 shadow-md" variants={list} initial='closed' animate={isOpen ? 'open' : 'closed'} >
 
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">placeholder</span>
-                <CodeBlock code="string" showLineNumbers={false} />
-                <span>Placeholder to show when value is null</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">disabled</span>
-                <CodeBlock code="Boolean" showLineNumbers={false} />
-                <span>When disabled, it cannot be focused or modified</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">filter</span>
-                <CodeBlock code="Boolean" showLineNumbers={false} />
-                <span>Search input to filter elements</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">filterKey</span>
-                <CodeBlock code="string" showLineNumbers={false} />
-                <span>Key to filter when options are objects. Mandatory to make object search.</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">itemTemplate</span>
-                <CodeBlock code="(item: any) => React.ReactNode" showLineNumbers={false} />
-                <span>Item template to show the item. Mandatory to work with objects</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">className</span>
-                <CodeBlock code="string" showLineNumbers={false} />
-                <span>Class to be applied to the dropdown</span>
-            </div>
+                {/* FILTER DISPLAY */}
+                {filter &&
+                    <div className="w-full h-fit relative flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                        <input
+                            type="text"
+                            className="w-full h-10 rounded outline-none border-l border-t border-r border-b-4 border-[rgba(0,0,0,0.2)] pl-2 cursor-text text-base mt-2 text-black capitalize"
+                            placeholder="Busque por um valor"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            autoFocus
+                        />
+                        <Search size={24} color="rgba(0,0,0,0.5)" className="absolute right-4 top-[50%] -translate-y-1/2" />
+                    </div>
+                }
 
 
-        </PageWrapper>
+                {/* CONTENT DISPLAY */}
+                <div className="w-full h-fit max-h-52 overflow-x-hidden overflow-y-auto relative">
+                    {
+                        filteredOptions.map((item: string | Record<string, any>, index: number) => (
+                            <div key={index} onClick={() => onChangeValue(item)} className={\`min-w-full w-fit h-fit py-1 px-2 hover:bg-zinc-200 flex flex-row \${selectedIndex === index ? 'bg-zinc-200 pointer-events-none' : 'bg-transparent cursor-pointer'}\`}>
+                                {typeof item === "object" ? (itemTemplate ? itemTemplate(item) : <span>{JSON.stringify(item)}</span>) : <span>{item}</span>}
+
+                                {selectedIndex === index && <Check className="absolute right-4" />}
+                            </div>
+                        ))
+                    }
+                </div>
+            </motion.div>
+        </div>
+    )
+}`
+
+    return (
+        <PageComponent
+            ComponentType="Componentes"
+            componentName="Dropdown"
+            componentCodeName="Dropdown"
+            description="Componente de dropdown com suporte a seleção de opções, filtro e renderização customizada de itens."
+            code={code}
+            preview={<Dropdown onChangeValue={setValue} value={value}  options={['option1', 'option2', 'option3']}/>}
+            props={[
+                {
+                    propName: "options",
+                    type: "Array<string | Record<string, any>>",
+                    default: "-",
+                    description: "Lista de opções exibidas no dropdown",
+                    required: true
+                },
+                {
+                    propName: "value",
+                    type: "string | number | object | null",
+                    default: "-",
+                    description: "Valor atualmente selecionado",
+                    required: true
+                },
+                {
+                    propName: "onChangeValue",
+                    type: "(value: any) => void",
+                    default: "-",
+                    description: "Função chamada quando o valor muda",
+                    required: true
+                },
+                {
+                    propName: "placeholder",
+                    type: "string",
+                    default: "-",
+                    description: "Texto exibido quando nenhum valor está selecionado",
+                    required: false
+                },
+                {
+                    propName: "disabled",
+                    type: "boolean",
+                    default: "false",
+                    description: "Desabilita interação com o dropdown",
+                    required: false
+                },
+                {
+                    propName: "filter",
+                    type: "boolean",
+                    default: "false",
+                    description: "Ativa campo de busca para filtrar opções",
+                    required: false
+                },
+                {
+                    propName: "filterKey",
+                    type: "string",
+                    default: "-",
+                    description: "Chave usada para filtrar objetos (obrigatório para arrays de objetos)",
+                    required: false
+                },
+                {
+                    propName: "itemTemplate",
+                    type: "(item: any) => React.ReactNode",
+                    default: "-",
+                    description: "Função para customizar a renderização de cada item",
+                    required: false
+                },
+                {
+                    propName: "className",
+                    type: "string",
+                    default: "-",
+                    description: "Classe CSS aplicada ao container do dropdown",
+                    required: false
+                }
+            ]}
+        />
     )
 }

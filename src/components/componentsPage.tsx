@@ -56,7 +56,7 @@ export default function PageComponent({ ComponentType, componentName, descriptio
                 <span className=" w-32 flex justify-center cursor-pointer font-semibold pb-2" onClick={() => setSelectedTab(1)}>Código</span>
                 <span className=" w-32 flex justify-center cursor-pointer font-semibold pb-2" onClick={() => setSelectedTab(2)}>Propriedades</span>
                 <div className="w-32 h-[1px] absolute bottom-0 transition-all duration-300" style={{ left: `${selectedTab * 136}px`, backgroundColor: 'oklch(0.55 0.2 255)' }}></div>
-            </div >
+            </div>
 
             {selectedTab === 0 && (
                 <div className="w-full h-fit flex items-center justify-center py-8 bg-muted/70 rounded-lg border ">
@@ -93,7 +93,7 @@ export default function PageComponent({ ComponentType, componentName, descriptio
             )}
 
             {selectedTab === 2 && (
-                <div className="w-full h-fit flex items-center justify-center overflow-auto">
+                <div className="w-full h-full  justify-center overflow-auto">
                     <table className="w-full ">
                         <thead className="font-sans!">
                             <tr className="border-b border-border font-semibold text-muted-foreground ">
