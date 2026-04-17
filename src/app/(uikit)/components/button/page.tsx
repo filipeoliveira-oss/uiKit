@@ -1,102 +1,150 @@
-import CodeBlock from "@/components/codeBlock";
-import ColorText from "@/components/colorText";
-import PageWrapper from "@/components/pageWrapper";
-import { Button as UiButton } from "@/uiKit/components/button/button";
-export default function Button() {
-    const a = 
-    `npx fouikit
-components
-Button`
+'use client'
 
-    const deps = [
-        { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },
-        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
-        { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-        { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" }
-    ]
+import PageComponent from "@/components/componentsPage"
+import { Button, Button as UiButton } from "@/uiKit/components/button/button"
+
+export default function ButtonPage() {
+
+
+    const code =
+`import { forwardRef, type ComponentProps } from 'react'
+import { tv, type VariantProps } from 'tailwind-variants'
+
+
+const button = tv({
+  base: ' flex items-center justify-center gap-2 rounded-lg text-sm font-medium tracking-tight outline-none ring-offset-2 ring-offset-black focus-visible:ring-2',
+
+  variants: {
+    variant: {
+      primary:
+        ' text-white hover:opacity-95 min-w-28 bg-primary hover:bg-primary/90',
+      secondary: 'bg-zinc-400 hover:bg-zinc-300 text-mauve11  min-w-28',
+      ghost:
+        'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
+      outline:
+        'border bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
+    },
+
+    size: {
+      default: 'px-4 py-2.5 text-base h-[44px]',
+      sm: 'px-3 h-8',
+      icon: 'size-9',
+    },
+
+    active: {
+      disabled: 'opacity-60 pointer-events-none cursor-auto',
+      enabled: 'cursor-pointer'
+    }
+  },
+
+  defaultVariants: {
+    variant: 'primary',
+    size: 'default',
+    active: 'enabled'
+  },
+})
+
+type RGB = \`rgb(\${number}, \${number}, \${number})\`;
+type RGBA = \`rgba(\${number}, \${number}, \${number}, \${number})\`;
+type HEX = \`#\${string}\`;
+type HSL = \`hsl(\${number}, \${number}%, \${number}%)\`;
+type HSLA = \`hsla(\${number}, \${number}%, \${number}%, \${number})\`;
+type OKLCH = \`oklch(\${number} \${number} \${number})\`;
+type OKLAB = \`oklab(\${number} \${number} \${number})\`;
+type CMYK = \`cmyk(\${number}%, \${number}%, \${number}%, \${number}%)\`;
+
+interface props {
+  backgroundColor?: RGB | RGBA | HEX | HSL | HSLA | OKLCH | OKLAB | CMYK;
+}
+
+type ButtonProps = ComponentProps<'button'> & VariantProps<typeof button> & props
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, active, type = 'button', ...props }, ref) => {
+
+    const isValidColor = (color: string): boolean => {
+      // Regex patterns for different color formats
+      const hexPattern = /^#([0-9A-Fa-f]{3,8})$/;
+      const rgbPattern = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/;
+      const rgbaPattern = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*(0(\.\d+)?|1(\.0+)?)\s*\)$/;
+      const hslPattern = /^hsl\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*\)$/;
+      const hslaPattern = /^hsla\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*,\s*(0(\.\d+)?|1(\.0+)?)\s*\)$/;
+      const oklchPattern = /^oklch\(\s*\d+(\.\d+)?\s+\d+(\.\d+)?\s+\d+(\.\d+)?\s*\)$/;
+      const oklabPattern = /^oklab\(\s*\d+(\.\d+)?\s+\d+(\.\d+)?\s+\d+(\.\d+)?\s*\)$/;
+      const cmykPattern = /^cmyk\(\s*\d+%?\s*,\s*\d+%?\s*,\s*\d+%?\s*,\s*\d+%?\s*\)$/;
+      // Validate color
+      return (
+        hexPattern.test(color) ||
+        rgbPattern.test(color) ||
+        rgbaPattern.test(color) ||
+        hslPattern.test(color) ||
+        hslaPattern.test(color) ||
+        oklchPattern.test(color) ||
+        oklabPattern.test(color) ||
+        cmykPattern.test(color)
+      );
+    };
 
 
     return (
-        <PageWrapper requirements={deps} title="Button">
-            <ColorText text="Button"/>
-            <span>A default button for the project</span>
+      <button
+        {...props}
+        type={type || 'button'}
+        ref={ref}
+        className={button({ variant, size, className, active })}
+      />
+    )
+  }
+)
 
-            <CodeBlock code={a} />
+Button.displayName = 'Button'
+`
 
-            <h2 className="text-3xl font-bold">Usage</h2>
-
-            <UiButton>
-                This is a default button
-            </UiButton>
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">Children*</span>
-                <CodeBlock code="React.ReactNode" showLineNumbers={false} />
-                <span>The text inside the button</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">Classname</span>
-                <CodeBlock code="className='bg-green-400'" showLineNumbers={false} />
-                <span>Classname will overwrite any configuration but active</span>
-
-                <div className="w-1/2 h-fit flex flex-row gap-2">
-                    <UiButton active="enabled" className="bg-green-400">
-                        Green
-                    </UiButton>
-                </div>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">Variant</span>
-                <CodeBlock code="primary | secondary" showLineNumbers={false} />
-                <span>The variant of the button. Primary by default</span>
-
-                <div className="w-1/2 h-fit flex flex-row gap-2">
-                    <UiButton>
-                        Primary
-                    </UiButton>
-
-                    <UiButton variant="secondary">
-                        secondary
-                    </UiButton>
-                </div>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">Size</span>
-                <CodeBlock code="default | sm" showLineNumbers={false} />
-                <span>The size of the button.</span>
-
-                <div className="w-1/2 h-fit flex flex-row gap-2">
-                    <UiButton size="default">
-                        default
-                    </UiButton>
-
-                    <UiButton size="sm" >
-                        sm
-                    </UiButton>
-                </div>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">Active</span>
-                <CodeBlock code="disabled | enabled" showLineNumbers={false} />
-                <span>Controls if the button is enabled.</span>
-
-                <div className="w-1/2 h-fit flex flex-row gap-2">
-                    <UiButton active="enabled">
-                        Enabled
-                    </UiButton>
-
-                    <UiButton active="disabled" >
-                        Disabled
-                    </UiButton>
-                </div>
-            </div>
-        </PageWrapper>
+    return (
+        <PageComponent
+            ComponentType="Componentes"
+            componentName="Button"
+            componentCodeName="Button"
+            description="Botão padrão do sistema, utilizado para ações principais e secundárias da interface."
+            code={code}
+            preview={<Button>Button</Button>}
+            props={[
+                {
+                    propName: "children",
+                    type: "React.ReactNode",
+                    default: "-",
+                    description: "Conteúdo exibido dentro do botão",
+                    required: true
+                },
+                {
+                    propName: "className",
+                    type: "string",
+                    default: "-",
+                    description: "Classes CSS adicionais para customização do botão",
+                    required: false
+                },
+                {
+                    propName: "variant",
+                    type: "'primary' | 'secondary'",
+                    default: "primary",
+                    description: "Define o estilo visual do botão",
+                    required: false
+                },
+                {
+                    propName: "size",
+                    type: "'default' | 'sm'",
+                    default: "default",
+                    description: "Define o tamanho do botão",
+                    required: false
+                },
+                {
+                    propName: "active",
+                    type: "'enabled' | 'disabled'",
+                    default: "enabled",
+                    description: "Controla se o botão está ativo ou desabilitado",
+                    required: false
+                }
+            ]}
+        />
     )
 }

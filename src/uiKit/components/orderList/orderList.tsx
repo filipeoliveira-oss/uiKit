@@ -6,11 +6,12 @@ interface IOrderList {
     itemTemplate: (item: any) => React.ReactNode,
     dragAndDrop?: boolean,
     maxHeight?: string,
-    header?: string
+    header?: string,
+    showArrows?: boolean
 }
 
 
-export default function OrderList({ itemTemplate, value, changeValue, dragAndDrop, maxHeight = '500px', header }: IOrderList) {
+export default function OrderList({ itemTemplate, value, changeValue, dragAndDrop, maxHeight = '500px', header, showArrows = true }: IOrderList) {
     const [selectedItemIndex, setSelectedItemIndex] = useState<null | number>(null)
     const [overIndex, setOverIndex] = useState<null | number>(null)
     const [draggedItemIndex, setDraggedItemIndex] = useState<null | number>(null)
@@ -80,34 +81,36 @@ export default function OrderList({ itemTemplate, value, changeValue, dragAndDro
     };
 
     return (
-        <div className="w-fit px-2 flex flex-row gap-2 text-black " style={{ maxHeight }}>
-            <div className="w-10 h-full shrink-0 flex flex-col gap-2 items-center justify-center select-none">
-                <div onClick={() => handleUpAll()} className="w-full h-fit flex items-center justify-center bg-sky-400 rounded-lg cursor-pointer py-2 hover:bg-sky-500" style={selectedItemIndex === null ? { opacity: .6, pointerEvents: 'none' } : { opacity: 1, pointerEvents: 'auto' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m17 11-5-5-5 5" />
-                        <path d="m17 18-5-5-5 5" />
-                    </svg>
-                </div>
+        <div className="w-full px-2 flex flex-row gap-2" style={{ maxHeight }}>
+            {showArrows && (
+                <div className="w-10 h-full shrink-0 flex flex-col gap-2 items-center justify-center select-none">
+                    <div onClick={() => handleUpAll()} className="w-full h-fit flex items-center justify-center bg-sky-400 rounded-lg cursor-pointer py-2 hover:bg-sky-500" style={selectedItemIndex === null ? { opacity: .6, pointerEvents: 'none' } : { opacity: 1, pointerEvents: 'auto' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m17 11-5-5-5 5" />
+                            <path d="m17 18-5-5-5 5" />
+                        </svg>
+                    </div>
 
-                <div onClick={() => handleUpOne()} className="w-full h-fit flex items-center justify-center bg-sky-400 rounded-lg cursor-pointer py-2 hover:bg-sky-500" style={selectedItemIndex === null ? { opacity: .6, pointerEvents: 'none' } : { opacity: 1, pointerEvents: 'auto' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m18 15-6-6-6 6" />
-                    </svg>
-                </div>
+                    <div onClick={() => handleUpOne()} className="w-full h-fit flex items-center justify-center bg-sky-400 rounded-lg cursor-pointer py-2 hover:bg-sky-500" style={selectedItemIndex === null ? { opacity: .6, pointerEvents: 'none' } : { opacity: 1, pointerEvents: 'auto' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m18 15-6-6-6 6" />
+                        </svg>
+                    </div>
 
-                <div onClick={() => handleDownOne()} className="w-full h-fit flex items-center justify-center bg-sky-400 rounded-lg cursor-pointer py-2 hover:bg-sky-500" style={selectedItemIndex === null ? { opacity: .6, pointerEvents: 'none' } : { opacity: 1, pointerEvents: 'auto' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m6 9 6 6 6-6" />
-                    </svg>
-                </div>
+                    <div onClick={() => handleDownOne()} className="w-full h-fit flex items-center justify-center bg-sky-400 rounded-lg cursor-pointer py-2 hover:bg-sky-500" style={selectedItemIndex === null ? { opacity: .6, pointerEvents: 'none' } : { opacity: 1, pointerEvents: 'auto' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                        </svg>
+                    </div>
 
-                <div onClick={() => handleDownAll()} className="w-full h-fit flex items-center justify-center bg-sky-400 rounded-lg cursor-pointer py-2 hover:bg-sky-500" style={selectedItemIndex === null ? { opacity: .6, pointerEvents: 'none' } : { opacity: 1, pointerEvents: 'auto' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m7 6 5 5 5-5" />
-                        <path d="m7 13 5 5 5-5" />
-                    </svg>
+                    <div onClick={() => handleDownAll()} className="w-full h-fit flex items-center justify-center bg-sky-400 rounded-lg cursor-pointer py-2 hover:bg-sky-500" style={selectedItemIndex === null ? { opacity: .6, pointerEvents: 'none' } : { opacity: 1, pointerEvents: 'auto' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m7 6 5 5 5-5" />
+                            <path d="m7 13 5 5 5-5" />
+                        </svg>
+                    </div>
                 </div>
-            </div>
+            )}
 
             <div className="w-full h-full flex flex-col gap-0 ">
                 {header && (
@@ -115,7 +118,7 @@ export default function OrderList({ itemTemplate, value, changeValue, dragAndDro
                         <span className="font-semibold">{header}</span>
                     </div>
                 )}
-                <div className="flex flex-col w-full h-full overflow-y-auto overflow-x-hidden shrink-0 bg-white">
+                <div className="flex flex-col w-full h-full overflow-y-auto overflow-x-hidden shrink-0 ">
                     {value.map((item, i) => (
                         <React.Fragment key={i}>
                             {dragAndDrop && (

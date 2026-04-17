@@ -1,68 +1,127 @@
-'use client'
-import CodeBlock from '@/components/codeBlock';
-import ColorText from '@/components/colorText';
-import PageWrapper from '@/components/pageWrapper';
 
-export default function useDocumentTitlePage() {
+import PageComponent from "@/components/componentsPage"
+
+export default function useOnClickOutsidePage() {
+
+    const codePreview = 
+`const ref = useRef<HTMLElement>(null)
+
+useOnClickOutside(ref, () =>{
+        setProperty(true)
+})`
+
+    const code = 
+`import { RefObject, useEffect, useLayoutEffect, useRef } from "react";
+
+const isomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
+
+type EventType =
+    | 'mousedown'
+    | 'mouseup'
+    | 'touchstart'
+    | 'touchend'
+    | 'focusin'
+    | 'focusout'
 
 
-    const a =
-        `    npx fouikit
-    hooks
-    useOnClickOutside`
+export default function useOnClickOutside<T extends HTMLElement = HTMLElement>(
+    ref: RefObject<T | null> | RefObject<T | null>[] | null ,
+    handler: (event: MouseEvent | TouchEvent | FocusEvent) => void,
+    eventType: EventType = 'mousedown',
+    eventListenerOptions: AddEventListenerOptions = {},
+): void {
+    if(ref === null) return;
 
-    const code =
-        `    const ref = useRef(null)
-    const handleClickOutside = () => {
-        console.log('clicked outside!')
-    }
+    useEventListener(
+        eventType,
+        event => {
+            const target = event.target as Node
 
-    useOnClickOutside(ref, handleClickOutside)
-    
-    <div ref={ref}></div>`
+            if (!target || !target.isConnected) {
+                return
+            }
 
-    const deps = [
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-        { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" }
-    ]
+            const isOutside = Array.isArray(ref)
+                ? ref
+                    .filter(r => Boolean(r.current))
+                    .every(r => r.current && !r.current.contains(target))
+                : ref.current && !ref.current.contains(target)
+
+            if (isOutside) {
+                if (
+                    event instanceof MouseEvent ||
+                    event instanceof TouchEvent ||
+                    event instanceof FocusEvent
+                ) {
+                    handler(event)
+                }
+            }
+        },
+        undefined,
+        eventListenerOptions,
+    )
+
+}
+
+function useEventListener<
+    KW extends keyof WindowEventMap,
+    KH extends keyof HTMLElementEventMap & keyof SVGElementEventMap,
+    KM extends keyof MediaQueryListEventMap,
+    T extends HTMLElement | SVGAElement | MediaQueryList = HTMLElement,
+>(
+    eventName: KW | KH | KM,
+    handler: (
+        event:
+            | WindowEventMap[KW]
+            | HTMLElementEventMap[KH]
+            | SVGElementEventMap[KH]
+            | MediaQueryListEventMap[KM]
+            | Event,
+    ) => void,
+    element?: RefObject<T>,
+    options?: boolean | AddEventListenerOptions,
+) {
+    // Create a ref that stores handler
+    const savedHandler = useRef(handler)
+
+    isomorphicLayoutEffect(() => {
+        savedHandler.current = handler
+    }, [handler])
+
+    useEffect(() => {
+        // Define the listening target
+        const targetElement: T | Window = element?.current ?? window
+
+        if (!(targetElement && targetElement.addEventListener)) return
+
+        // Create event listener that calls handler function stored in ref
+        const listener: typeof handler = event => {
+            savedHandler.current(event)
+        }
+
+        targetElement.addEventListener(eventName, listener, options)
+
+        // Remove event listener on cleanup
+        return () => {
+            targetElement.removeEventListener(eventName, listener, options)
+        }
+    }, [eventName, element, options])
+}`
 
     return (
-        <PageWrapper requirements={deps} title="useOnClickOutside">
-            <ColorText text='useOnClickOutside'/>
-            <span>useOnClickOutside is a hook that will trigger a function when the element is blurred.</span>
-
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-            <CodeBlock code={code} language='javascript' />
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-            <CodeBlock code='useOnClickOutside(ref, handler, eventType, eventListenerOptions)' language='javascript' />
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">Ref*</span>
-                <CodeBlock code="RefObject<T> | RefObject<T>[]" showLineNumbers={false} />
-                <span>The ref of the element watched</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">Handler*</span>
-                <CodeBlock code="() => void" showLineNumbers={false} />
-                <span>Function to be executed when the event happens outside the element</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">EventType</span>
-                <CodeBlock code={`"mousedown" | "mouseup" | "touchstart" | "touchend" | "focusin" | "focusout"`} showLineNumbers={false} />
-                <span>The Event Type to be watched. mousedown by default</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">eventListenerOptions</span>
-                <CodeBlock code={`AddEventListenerOptions extends EventListenerOptions`} showLineNumbers={false} />
-                <span>The options object to be passed to the addEventListener method</span>
-            </div>
-
-        </PageWrapper>
+        <PageComponent
+            ComponentType="Hooks"
+            code={code}
+            componentCodeName="useOnClickOutside"
+            componentName="useOnClickOutside"
+            description="Um hook que executa uma função caso você clique fora de uma ref."
+            props={[
+                {propName:'ref ', type:'RefObject<T | null> | RefObject<T | null>[] | null', default:'-', description:'Referência a ser observada', required:true},
+                {propName:'handler ', type:'(event: MouseEvent | TouchEvent | FocusEvent) => void', default:'-', description:'Função a ser executada quando clicado fora da referência (Recebe o evento de clique)', required:true},
+                {propName:'eventType ', type:'mousedown | mouseup | touchstart | touchend | focusin | focusout', default:'mousedown', description:'Evento a ser observado', required:false},
+                {propName:'eventListenerOptions ', type:'AddEventListenerOptions', default:'-', description:'Parâmetros adicionais do evento', required:false},
+            ]}
+            previewCode={codePreview}
+        />        
     )
 }

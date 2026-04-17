@@ -1,46 +1,51 @@
-'use client'
-import CodeBlock from "@/components/codeBlock";
-import ColorText from "@/components/colorText";
-import PageWrapper from "@/components/pageWrapper";
-import { useIsMobile } from "@/uiKit/hooks/useIsMobile/useIsMobile";
+import PageComponent from "@/components/componentsPage"
 
-export default function UseIsMobile() {
+export default function useIsMobilePage() {
 
-    const isMobile = useIsMobile()
+    const codePreview = 
+`const isMobile = useIsMobile();`
 
-    const install = 
-    `npx fouikit
-hooks
-useIsMobile`
+    const code = 
+`import { useEffect, useState } from "react";
 
+export function useIsMobile(query = 768) {
+  const maxWidth = '(max-width:' + String(query) +'px)'
 
-    const example = 
-    `//default max-width (768px)
-const isMobile = useIsMobile()
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia(maxWidth).matches;
+  });
 
-//custom max-width (500px)
-const isMobile = useIsMobile(500)`
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
-     const deps = [
-  { name: "react", url: "https://www.npmjs.com/package/react" },
-  { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" }
-]
+    const mediaQueryList = window.matchMedia(maxWidth);
+
+    const updateIsMobile = (event: MediaQueryListEvent) => {
+      setIsMobile(event.matches);
+    };
+
+    // Initial check in case it changed before the effect ran
+    setIsMobile(mediaQueryList.matches);
+
+    mediaQueryList.addEventListener("change", updateIsMobile);
+    return () => mediaQueryList.removeEventListener("change", updateIsMobile);
+  }, [maxWidth]);
+
+  return isMobile;
+}`
 
     return (
-        <PageWrapper requirements={deps} title="useIsMobile">
-            <ColorText text='useIsMobile'/>
-            <span>useIsMobile accepts a max-width to define if the screen is on a mobile width or not.</span>
-            <span>By default the max-width is 768px (screen MD from tailwind)</span>
-
-            <CodeBlock code={install} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-
-            <span>open the browser console and reduce the width screen</span>
-            <span>Width lesser than 768px: {String(isMobile)}</span>
-
-
-            <CodeBlock language="javascript" code={example} />
-        </PageWrapper>
+        <PageComponent
+            ComponentType="Hooks"
+            code={code}
+            componentCodeName="useIsMobile"
+            componentName="useIsMobile"
+            description="Um hook que verifica se a página é mobile (pode ser usado várias vezes para diferentes tamanhos de tela)."
+            props={[
+                {propName:'query ', type:'number', default:'768', description:'Tamanho de tela a ser observado', required:false},
+            ]}
+            previewCode={codePreview}
+        />        
     )
 }

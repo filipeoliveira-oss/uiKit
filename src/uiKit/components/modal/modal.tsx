@@ -35,7 +35,7 @@ const modal = tv({
 type ModalProps = ComponentProps<'div'> & VariantProps<typeof modal> & props
 
 const Modal = forwardRef<HTMLDivElement, ModalProps>(
-    ({ className, isOpen, onClose, children, disableAnimation = false, animationDuration = .150, overlayClassName,title, openHeight='66%', openWidth='50%', ...props }, ref) => {
+    ({ className, isOpen, onClose, children, disableAnimation = false, animationDuration = .150, overlayClassName,title, openHeight='fit-content', openWidth='50%', ...props }, ref) => {
 
         const modalAnimation = {
             closed: { width: '0px', height: '0px' },
@@ -78,7 +78,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                 createPortal(
                     <div className={cn("w-dvw h-dvh fixed top-0 left-0 bg-[rgba(0,0,0,0.2)] flex items-center justify-center z-[999999]", overlayClassName)} ref={ref} {...props}>
                         <motion.div className={modal({ className })} variants={disableAnimation === false ? modalAnimation : {}} initial='closed' animate={isOpen ? 'open' : 'closed'}>
-                            <div className="w-full h-12  flex items-center">
+                            <div className="w-full h-12 flex items-center">
                                 <span className="text-lg font-semibold w-fit h-fit">{title}</span>
                             </div>
                             <div className="w-full flex-1 overflow-hidden">

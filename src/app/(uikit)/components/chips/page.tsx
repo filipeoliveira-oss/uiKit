@@ -1,120 +1,197 @@
 'use client'
-import CodeBlock from "@/components/codeBlock";
-import ColorText from "@/components/colorText";
-import ComponentDisplay from "@/components/componentDisplay";
-import PageWrapper from "@/components/pageWrapper";
-import { Chips } from "@/uiKit/components/chips/chips";
-import { useState } from "react";
+
+import { useState } from "react"
+import PageComponent from "@/components/componentsPage"
+import { Chips } from "@/uiKit/components/chips/chips"
 
 export default function ChipsPage() {
 
     const [value, setValue] = useState<Array<string>>([])
 
-    const deps = [
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
-        { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
-    ]
-    const a =
-        `npx fouikit
-components
-Chips`
-
-
-
     const code =
-        `const [values, setValues] = useState<Array<string>>([]);
+`'use client'
+import React from 'react'
+import { forwardRef, SetStateAction, useState, type ComponentProps } from "react";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-{...}
-
-<Chips value={value} changeValue={setValue}/>`
-
-    const template =
-        `const customChip = (item:string) => {
-    return (
-        <div>
-            <span>{item} - (active)</span>
-        </div>
-    );
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs))
 };
-        `
+
+
+
+interface props {
+    label?: string,
+    value: Array<string>,
+    changeValue: (e:Array<string>) => void,
+    separator?: string,
+    disabled?: boolean,
+    template?: (chip: string) => React.ReactNode,
+    keyFilter?: 'number' | 'letter' | 'any',
+    inputClassName?:ClassValue,
+}
+
+type chipsProps = ComponentProps<'input'> &  props;
+
+export const Chips = forwardRef<HTMLInputElement, chipsProps>(
+    ({ className, changeValue, value, separator = ';', label, disabled = false, template, keyFilter = 'any',inputClassName, ...props }, ref) => {
+
+        const [currentItem, setCurrentItem] = useState('');
+
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const item = e.target.value;
+            const lastChar = item[item.length - 1];
+
+            
+            if (lastChar === separator) {
+                const aux = value
+                aux.push(currentItem.replace(separator, ''))
+                changeValue(aux);
+                setCurrentItem('');
+                return;
+            }
+
+            
+            if (lastChar === undefined) {
+                setCurrentItem(item); 
+                return;
+            }
+
+            
+            if (keyFilter === 'any') {
+                setCurrentItem(item);
+            }else{
+                if(charType(lastChar) === keyFilter){
+                    setCurrentItem(item)
+                }
+            }
+        }
+
+        const handleRemoveItem = (removeIndex: number) => {
+            const aux = value.filter((each, index) => {
+                return index !== removeIndex
+            })
+
+            changeValue(aux)
+        }
+
+        function X() {
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" width='12' height='12' viewBox="0 0 24 24" stroke='#000' fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                </svg>
+            )
+        }
+
+        function charType(char: string) {
+            if (/^\d$/.test(char)) return 'number';
+            if (/^[a-zA-Z]$/.test(char)) return 'letter';
+            return 'any';
+        }
+
+        return (
+            <label className={\`w-full h-fit \${disabled ? 'pointer-events-none ' : ''}\`}>
+                {label && <span className="text-zinc-500">{label}</span>}
+                <div className={cn(\`w-full flex flex-wrap items-start gap-2 h-fit p-1 rounded-sm border border-[rgba(0,0,0,0.2)] \${disabled ? 'bg-zinc-50' : ''}\`, className)}>
+                    {/* Chips container */}
+                    <div className="flex flex-wrap w-fit min-h-0 shrink-0 gap-2 " >
+                        {value.map((chip, index) => (
+                            <div key={index} className="bg-zinc-200 text-black px-2 py-1 rounded-full flex flex-row items-center gap-2">
+                                {/* <span>{chip}</span> */}
+                                {template ? template(chip) : <span>{chip}</span>}
+                                <div className='border rounded-full p-[1px] cursor-pointer' onClick={() => handleRemoveItem(index)}>
+                                    <X />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Element container */}
+                    <div className="min-w-[100px] h-8 flex-1 rounded">
+                        <input className={cn('w-full h-full outline-none rounded-sm px-1 text-black', inputClassName)} value={currentItem} onChange={(e) => handleChange(e)} {...props} />
+                    </div>
+                </div>
+            </label>
+        )
+    }
+)`
+
 
     return (
-        <PageWrapper requirements={deps} title="Chips">
-            <ColorText text="Chips"/>
-            <div className="flex flex-col gap-2">
-                <span>Chips is used to enter multiple values on an input field.</span>
-                <span>Chips is a HTMLInputElement replica, that means that every Input property works on the element</span>
-            </div>
-
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-
-            <CodeBlock code={code} showLineNumbers={false} language="js" />
-
-            <ComponentDisplay>
-                <Chips value={value} changeValue={setValue} label="Label"/>
-            </ComponentDisplay>
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">value*</span>
-                <CodeBlock code="Array<string>" showLineNumbers={false} language="js" />
-                <span>Controlled value for the chips</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">changeValue*</span>
-                <CodeBlock code="(e:string) => void" language="js" showLineNumbers={false} />
-                <span>Function to be executed when value changes</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">label</span>
-                <CodeBlock code="string" showLineNumbers={false} language="js" />
-                <span>A label that appears on top of the input field</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">separator</span>
-                <CodeBlock code="string" showLineNumbers={false} language="js" />
-                <span>A new chip is added when ; key is pressed, separator property allows definining an additional key.</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">template</span>
-                <CodeBlock code="(chip: string) => React.ReactNode" showLineNumbers={false} language="js" />
-                <CodeBlock code={template} showLineNumbers={false} language="js" />
-
-                <span>Chip content is customized using itemTemplate function that receives a single chip value as a parameter. Can use function components or const</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">disabled</span>
-                <CodeBlock code="bool" showLineNumbers={false} language="js" />
-                <span>When disabled is present, the element cannot be edited and focused.</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">keyFilter</span>
-                <CodeBlock code="'number' | 'letter' | 'any'" showLineNumbers={false} language="js" />
-                <span>Chips has built-in key filtering support to block certain keys. Accepts every key by default</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">inputClassName</span>
-                <CodeBlock code="string" showLineNumbers={false} language="js" />
-                <span>ClassName to be applied to the input</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">className</span>
-                <CodeBlock code="string" showLineNumbers={false} language="js" />
-                <span>ClassName to be applied to the container</span>
-            </div>
-
-        </PageWrapper>
+        <PageComponent
+            ComponentType="Componentes"
+            componentName="Chips"
+            componentCodeName="Chips"
+            description="Componente de chips usado para entrada de múltiplos valores em um campo de input."
+            code={code}
+            preview={<Chips changeValue={setValue} value={value}/>}
+            props={[
+                {
+                    propName: "value",
+                    type: "string[]",
+                    default: "-",
+                    description: "Valores controlados dos chips",
+                    required: true
+                },
+                {
+                    propName: "changeValue",
+                    type: "(value: string[]) => void",
+                    default: "-",
+                    description: "Função chamada quando os valores mudam",
+                    required: true
+                },
+                {
+                    propName: "label",
+                    type: "string",
+                    default: "-",
+                    description: "Label exibida acima do input",
+                    required: false
+                },
+                {
+                    propName: "separator",
+                    type: "string",
+                    default: "-",
+                    description: "Define tecla separadora adicional para criação de chips",
+                    required: false
+                },
+                {
+                    propName: "disabled",
+                    type: "boolean",
+                    default: "false",
+                    description: "Desabilita a interação com o componente",
+                    required: false
+                },
+                {
+                    propName: "keyFilter",
+                    type: "'number' | 'letter' | 'any'",
+                    default: "any",
+                    description: "Filtra os tipos de tecla permitidos no input",
+                    required: false
+                },
+                {
+                    propName: "inputClassName",
+                    type: "string",
+                    default: "-",
+                    description: "Classe aplicada ao input",
+                    required: false
+                },
+                {
+                    propName: "className",
+                    type: "string",
+                    default: "-",
+                    description: "Classe aplicada ao container",
+                    required: false
+                },
+                {
+                    propName: "template",
+                    type: "(chip: string) => React.ReactNode",
+                    default: "-",
+                    description: "Função para customizar o render de cada chip",
+                    required: false
+                }
+            ]}
+        />
     )
 }

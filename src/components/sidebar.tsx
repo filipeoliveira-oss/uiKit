@@ -1,80 +1,83 @@
 'use client'
-import { componentsList, hooksList, utilitiesList } from "@/lib/uiKitElements";
+import { componentsList, docsList, hooksList, IUikitElements, loadersList, utilitiesList } from "@/lib/uiKitElements";
+import { useDebounceCallback } from "@/uiKit/hooks/useDebounceCallback/useDebounceCallback";
+import { Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function Sidebar() {
-
+    const [search, setSearch] = useState('')
     const pathname = usePathname()
+    const [currentComponents, setCurrentComponents] = useState<IUikitElements[]>(componentsList)
+    const [currentLoaders, setCurrentLoaders] = useState<IUikitElements[]>(loadersList)
+    const [currentHooks, setCurrentHooks] = useState<IUikitElements[]>(hooksList)
+    const [currentUtilities, setCurrentUtilities] = useState<IUikitElements[]>(utilitiesList)
+    const [currentDocs, setCurrentDocs] = useState<IUikitElements[]>(docsList)
 
-    function SidebarElement({ url, title }: { url: string, title: string }) {
-        return (
-            <li className={`${pathname === url ? 'text-zinc-50' : 'text-zinc-400'} mt-1`}>
-                <Link href={url} >{title}</Link>
-            </li>
-        )
+    useDebounceCallback(() => {
+        setCurrentComponents(returnFilteredList(componentsList, 'componentes'))
+        setCurrentLoaders(returnFilteredList(loadersList, 'loaders'))
+        setCurrentHooks(returnFilteredList(hooksList, 'hooks'))
+        setCurrentUtilities(returnFilteredList(utilitiesList, 'utilitários'))
+        setCurrentDocs(returnFilteredList(docsList, 'docs'))
+    }, 250, [search])
+
+    function returnFilteredList(originalList: Array<IUikitElements>, componentType: string): Array<IUikitElements> {
+        return originalList.filter((item) => item.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").includes(search.toLowerCase()))
     }
 
     return (
-        <div className="w-[15%] h-full  overflow-y-auto overflow-x-hidden shrink-0 gap-4 flex flex-col">
-            <div className="w-full h-fit flex flex-col gap-2 ">
-                <span className="font-semibold">Getting Started</span>
-                <div className="w-full ml-4">
-                    <ul className="w-[80%] h-fit list-disc pl-4 ">
-                        <SidebarElement url="/docs/introduction" title="Introduction" />
-                        <SidebarElement url='/docs/installation' title="Installation" />
-                        <SidebarElement url='/docs/extension' title="Extension" />
-                    </ul>
+        <div className="h-full shrink-0 pb-4 px-2 overflow-y-auto overflow-x-hidden flex flex-col gap-4" style={{ width: 220 }}>
+            <div className="w-48 h-10 shrink-0 outline-none flex flex-col px-4 gap-2 items-center cursor-pointer sticky top-0 bg-background">
+                <div className="h-4 w-full"></div>
+                <div className="w-48 h-10 shrink-0 border rounded-md outline-none flex flex-row px-4 gap-2 items-center cursor-pointer bg-background">
+                    <Search size={20} strokeWidth={1.5} className="shrink-0" />
+                    <input className="border-none outline-none" placeholder="pesquisar" value={search} onChange={(e) => setSearch(e.target.value)} />
                 </div>
             </div>
 
-            <div className="w-full h-fit flex flex-col gap-2 ">
-                <span className="font-semibold">Hooks</span>
-                <div className="w-full ml-4">
-                    <ul className="w-[80%] h-fit list-disc pl-4 ">
-                        {hooksList
-                            .sort((a, b) => a.title.localeCompare(b.title))
-                            .map((hook) => (
-                                <SidebarElement key={hook.url} url={hook.url} title={hook.title} />
-                            ))}
-                    </ul>
-                </div>
+            <div className="w-full h-fit flex flex-col">
+                {currentDocs.length > 0 && <span className="font-semibold text-sm text-foreground/70">DOCUMENTAÇÃO</span>}
+                {currentDocs.map((component) => (
+                    <Link href={component.url} key={`${component.url}-${component.title}`} className={`w-full h-fit px-4 py-2 flex flex-row gap-2 cursor-pointer ${pathname.toLowerCase() === component.url.toLowerCase() ? 'bg-accent/40 hover:bg-accent/40 text-accent-foreground' : 'hover:bg-foreground/10'}`}>
+                        <span className="text-sm">{component.title}</span>
+                    </Link>
+                ))}
             </div>
 
-            <div className="w-full h-fit flex flex-col gap-2 ">
-                <span className="font-semibold">Utilities</span>
-                <div className="w-full ml-4">
-                    <ul className="w-[80%] h-fit list-disc pl-4 ">
-                        {utilitiesList
-                            .sort((a, b) => a.title.localeCompare(b.title))
-                            .map((component) => (
-                                <SidebarElement key={component.url} url={component.url} title={component.title} />
-                            ))}
-                    </ul>
-                </div>
+            <div className="w-full h-fit flex flex-col">
+                {currentComponents.length > 0 && <span className="font-semibold text-sm text-foreground/70">COMPONENTES</span>}
+                {currentComponents.map((component) => (
+                    <Link href={component.url} key={`${component.url}-${component.title}`} className={`w-full h-fit px-4 py-2 flex flex-row gap-2 cursor-pointer ${pathname.toLowerCase() === component.url.toLowerCase() ? 'bg-accent/40 hover:bg-accent/40 text-accent-foreground' : 'hover:bg-foreground/10'}`}>
+                        <span className="text-sm">{component.title}</span>
+                    </Link>
+                ))}
             </div>
 
-            <div className="w-full h-fit flex flex-col gap-2 ">
-                <span className="font-semibold">Loaders</span>
-                <div className="w-full ml-4">
-                    <ul className="w-[80%] h-fit list-disc pl-4 ">
-                        <SidebarElement url="/loaders" title="Loaders preview" />
-                        {/* <SidebarElement url="/loaders/pageloader" title="Page loader" /> */}
-                    </ul>
-                </div>
+            <div className="w-full h-fit flex flex-col">
+                {currentHooks.length > 0 && <span className="font-semibold text-sm text-foreground/70">HOOKS</span>}
+                {currentHooks.map((component) => (
+                    <Link href={component.url} key={`${component.url}-${component.title}`} className={`w-full h-fit px-4 py-2 flex flex-row gap-2 cursor-pointer ${pathname.toLowerCase() === component.url.toLowerCase() ? 'bg-accent/40 hover:bg-accent/40 text-accent-foreground' : 'hover:bg-foreground/10'}`}>
+                        <span className="text-sm">{component.title}</span>
+                    </Link>
+                ))}
             </div>
-
-            <div className="w-full h-fit flex flex-col gap-2 ">
-                <span className="font-semibold">Components</span>
-                <div className="w-full ml-4">
-                    <ul className="w-[80%] h-fit list-disc pl-4 ">
-                        {componentsList
-                            .sort((a, b) => a.title.localeCompare(b.title))
-                            .map((component) => (
-                                <SidebarElement key={component.url} url={component.url} title={component.title} />
-                            ))}
-                    </ul>
-                </div>
+            <div className="w-full h-fit flex flex-col">
+                {currentLoaders.length > 0 && <span className="font-semibold text-sm text-foreground/70">LOADERS</span>}
+                {currentLoaders.map((component) => (
+                    <Link href={component.url} key={`${component.url}-${component.title}`} className={`w-full h-fit px-4 py-2 flex flex-row gap-2 cursor-pointer ${pathname.toLowerCase() === component.url.toLowerCase() ? 'bg-accent/40 hover:bg-accent/40 text-accent-foreground' : 'hover:bg-foreground/10'}`}>
+                        <span className="text-sm">{component.title}</span>
+                    </Link>
+                ))}
+            </div>
+            <div className="w-full h-fit flex flex-col">
+                {currentUtilities.length > 0 && <span className="font-semibold text-sm text-foreground/70">UTILITÁRIOS</span>}
+                {currentUtilities.map((component) => (
+                    <Link href={component.url} key={`${component.url}-${component.title}`} className={`w-full h-fit px-4 py-2 flex flex-row gap-2 cursor-pointer ${pathname.toLowerCase() === component.url.toLowerCase() ? 'bg-accent/40 hover:bg-accent/40 text-accent-foreground' : 'hover:bg-foreground/10'}`}>
+                        <span className="text-sm">{component.title}</span>
+                    </Link>
+                ))}
             </div>
         </div>
     )

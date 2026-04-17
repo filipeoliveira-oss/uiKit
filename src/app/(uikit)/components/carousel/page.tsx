@@ -1,161 +1,143 @@
 'use client'
-import CodeBlock from "@/components/codeBlock"
-import PageWrapper from "@/components/pageWrapper"
-import c4 from '/public/card4.png'
-import c2 from '/public/card2.jpg'
-import c3 from '/public/card3.png'
-import { Slide, Carousel } from "@/uiKit/components/carousel/carousel"
+
 import { useState } from "react"
-import ColorText from "@/components/colorText"
-import  Dropdown  from "@/uiKit/components/dropdown/dropdown"
+import { Carousel, Slide } from "@/uiKit/components/carousel/carousel"
+import PageComponent from "@/components/componentsPage"
+import Image from "next/image"
+import card1 from '../../../../../public/card1.jpg'
+import card2 from '../../../../../public/card2.jpg'
+import card3 from '../../../../../public/card3.png'
+import card4 from '../../../../../public/card4.png'
+
 
 export default function CarouselPage() {
-    const [currentType, setCurrentType] = useState('slide')
 
-    const a = 
-    `npx fouikit
-components
-carousel`
+    const [animationType, setAnimationType] = useState('slide')
 
-    const deps = [
-        { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },
-        { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
-        { name: "react", url: "https://www.npmjs.com/package/react" },
-        { name: "framer-motion", url: "https://www.npmjs.com/package/framer-motion" },
-        { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
-        { name: "lucide-react", url: "https://www.npmjs.com/package/lucide-react" },
-    ]
-
-    const code = 
-    `<Carousel>
-    <Slide alt="image1" slideSrc={c4} />
-    <Slide alt="image2" slideSrc={c2} />
-    <Slide alt="image3" slideSrc={c3} />
+    const codePreview =
+`<Carousel animationType="slide" showDots>
+  <Slide slideSrc="/card1.jpg" alt="image1" />
+  <Slide slideSrc="/card2.jpg" alt="image2" />
+  <Slide slideSrc="/card3.jpg" alt="image3" />
 </Carousel>`
 
+    const code =
+`import { Carousel, Slide } from "@/uiKit/components/carousel/carousel"
+
+type CarouselProps = {
+  children: React.ReactNode
+  showDots?: boolean
+  showArrows?: boolean
+  animationDuration?: number
+  animationType?: "none" | "slide" | "fade" | "globe"
+  arrowBackground?: string
+  arrowColor?: string
+  activeDotColor?: string
+  dotsColor?: string
+}
+
+type SlideProps = {
+  slideSrc: StaticImageData | string
+  width?: number
+  height?: number
+  alt: string
+  label?: string
+}
+
+export default function Carousel(props: CarouselProps) {
+  // component implementation
+}
+
+export function Slide(props: SlideProps) {
+  // component implementation
+}`
+
     return (
-        <PageWrapper requirements={deps} title="Checkbox">
-            <ColorText text="Carousel"/>
-            <span>A custom Carousel and slide component</span>
-
-            <CodeBlock code={a} />
-
-            <h2 className=" text-lg">This component <span className="font-bold">MUST</span> be used in on the client side</h2>
-
-            <span>This component exports two elements (Carousel and Slide) </span>
-
-            <CodeBlock code={code} showLineNumbers={false} language="js" />
-
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-
-            <div className="w-full h-96 shrink-0">
-                <Carousel showDots={true} animationType={currentType as any}>
-                    <Slide   label="This is the label" >
-                        <img src={'/public/card2.jpg'}/>
-                    </Slide>
-                    <Slide   label="This is the label" >
-                        <img src={'/public/card4.jpg'}/>
-                    </Slide>
-                    <Slide   label="This is the label" >
-                        <img src={'/public/card3.jpg'}/>
-                    </Slide>
-                </Carousel>
-            </div>
-
-            <div className="flex flex-col gap-2 w-full h-fit">
-                <span>Select the animation type</span>
-                <Dropdown options={['slide', 'globe', 'fade','none']} onChangeValue={(e) => setCurrentType(e)} value={currentType} className="bg-zinc-300 " />
-            </div>
-
-            <h2 className="text-3xl font-bold">Carousel parameters</h2>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">children*</span>
-                <CodeBlock code="Slide" showLineNumbers={false} language="js" />
-                <span>The Slide element</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">showDots</span>
-                <CodeBlock code="Boolean" showLineNumbers={false} language="js" />
-                <span>If it shows dots. False by default</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">showArrows</span>
-                <CodeBlock code="Boolean" showLineNumbers={false} language="js" />
-                <span>If it shows arrows. True by default</span>
-            </div>
-
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">animationDuration</span>
-                <CodeBlock code="Seconds" showLineNumbers={false} language="js" />
-                <span>The duration for each animation. 0.5s by default</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">animationType</span>
-                <CodeBlock code="none | slide | fade | globe" showLineNumbers={false} />
-                <span>Animation to execute. Slide by default</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">arrowBackground</span>
-                <CodeBlock code="RGB | RGBA | HEX | HSL | HSLA | OKLCH | OKLAB | CMYK" showLineNumbers={false} language="js" />
-                <span>Arrow background color. #9F9FA9 by default</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">arrowColor</span>
-                <CodeBlock code="RGB | RGBA | HEX | HSL | HSLA | OKLCH | OKLAB | CMYK" showLineNumbers={false} language="js" />
-                <span>Arrow color. #FFFFFF by default</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">activeDotColor</span>
-                <CodeBlock code="RGB | RGBA | HEX | HSL | HSLA | OKLCH | OKLAB | CMYK" showLineNumbers={false} language="js" />
-                <span>Active dot color. #00bcff by default</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">dotsColor</span>
-                <CodeBlock code="RGB | RGBA | HEX | HSL | HSLA | OKLCH | OKLAB | CMYK" showLineNumbers={false} language="js" />
-                <span>Inactive dots color. #d4d4d8 by default</span>
-            </div>
-
-            <h2 className="text-3xl font-bold">Slide parameters</h2>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">slideSrc*</span>
-                <CodeBlock code="StaticImageData | String" showLineNumbers={false} language="js" />
-                <span>The image to be displayed</span>
-            </div>
-
-             <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">width</span>
-                <CodeBlock code="Number" showLineNumbers={false} language="js" />
-                <span>The width to be set. REQUIRED if slideSrc is relative path</span>
-            </div>
-
-             <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">height</span>
-                <CodeBlock code="Number" showLineNumbers={false} language="js" />
-                <span>The height to be set. REQUIRED if slideSrc is relative path</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">alt*</span>
-                <CodeBlock code="String" showLineNumbers={false} language="js" />
-                <span>The image alternative text</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">label</span>
-                <CodeBlock code="String" showLineNumbers={false} language="js" />
-                <span>The label to be shown</span>
-            </div>
-        </PageWrapper>
+        <PageComponent
+            ComponentType="Componentes"
+            componentName="Carousel"
+            componentCodeName="Carousel"
+            description="Componente de carrossel de imagens com suporte a múltiplas animações e slides customizáveis."
+            code={code}
+            preview={<Carousel>
+                <Slide>
+                    <Image src={card1} alt="image 1"/>
+                </Slide>
+                <Slide>
+                    <Image src={card2} alt="image 2"/>
+                </Slide>
+                <Slide>
+                    <Image src={card3} alt="image 3"/>
+                </Slide>
+                <Slide>
+                    <Image src={card4} alt="image 4"/>
+                </Slide>
+            </Carousel>}
+            props={[
+                {
+                    propName: "children",
+                    type: "Slide",
+                    default: "-",
+                    description: "Elementos Slide que compõem o carrossel",
+                    required: true
+                },
+                {
+                    propName: "showDots",
+                    type: "boolean",
+                    default: "false",
+                    description: "Exibe indicadores (dots) de navegação",
+                    required: false
+                },
+                {
+                    propName: "showArrows",
+                    type: "boolean",
+                    default: "true",
+                    description: "Exibe setas de navegação",
+                    required: false
+                },
+                {
+                    propName: "animationDuration",
+                    type: "number",
+                    default: "0.5",
+                    description: "Duração da animação em segundos",
+                    required: false
+                },
+                {
+                    propName: "animationType",
+                    type: "'none' | 'slide' | 'fade' | 'globe'",
+                    default: "slide",
+                    description: "Tipo de animação do carrossel",
+                    required: false
+                },
+                {
+                    propName: "arrowBackground",
+                    type: "string",
+                    default: "#9F9FA9",
+                    description: "Cor de fundo das setas",
+                    required: false
+                },
+                {
+                    propName: "arrowColor",
+                    type: "string",
+                    default: "#FFFFFF",
+                    description: "Cor das setas",
+                    required: false
+                },
+                {
+                    propName: "activeDotColor",
+                    type: "string",
+                    default: "#00bcff",
+                    description: "Cor do dot ativo",
+                    required: false
+                },
+                {
+                    propName: "dotsColor",
+                    type: "string",
+                    default: "#d4d4d8",
+                    description: "Cor dos dots inativos",
+                    required: false
+                }
+            ]}
+        />
     )
 }

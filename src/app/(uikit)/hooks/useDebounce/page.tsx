@@ -1,34 +1,43 @@
 'use client'
-import CodeBlock from '@/components/codeBlock';
-import ColorText from '@/components/colorText';
-import PageWrapper from '@/components/pageWrapper';
+import PageComponent from "@/components/componentsPage"
 
 export default function useDebouncePage() {
 
-    const a =
-        `npx fouikit
-hooks
-useDebounce`
+    const codePreview = 
+`const [search, setSearch] = useState('');
+const debouncedSearch = useDebounce(search, 300);
 
+useEffect(() => {
+  fetchData(debouncedSearch);
+}, [debouncedSearch]);`
 
-    const deps = [
-        { name: "react", url: "https://www.npmjs.com/package/react" }
-    ]
+    const code = 
+`import { useEffect, useState } from "react";
+
+export function useDebounce<T>(value: T, delay: number = 300): T {
+    const [debounced, setDebounced] = useState(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => setDebounced(value), delay);
+
+        return () => clearTimeout(handler);
+    }, [value, delay]);
+
+    return debounced;
+}`
 
     return (
-        <PageWrapper requirements={deps} title="useDebounce">
-            <ColorText text='useDebounce' />
-            <span>The useDebounce hook delays updating a value until a certain amount of time has passed without changes.</span>
-
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-            <CodeBlock code={`const [search, setSearch] = useState('')
-const debounceSearch = useDebounce(search, 250)`} language='js' />
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-            <CodeBlock code={`useDebounce<T>(value: T, delay: number = 300)`} language='js' />
-
-        </PageWrapper>
+        <PageComponent
+            ComponentType="Hooks"
+            code={code}
+            componentCodeName="useDebounce"
+            componentName="useDebounce"
+            description="Um hook que retarda a atualização de um valor até que ele pare de mudar por um determinado tempo."
+            props={[
+                {propName:'Value', type:'any', default:'-', description:'Valor que o hook vai observar', required:true},
+                {propName:'Delay', type:'number', default:'300', description:'Atraso, em ms, antes de atualizar o valor', required:true},
+            ]}
+            previewCode={codePreview}
+        />        
     )
 }

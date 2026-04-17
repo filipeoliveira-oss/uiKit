@@ -1,5 +1,7 @@
 'use client'
+
 import Sidebar from "@/components/sidebar";
+import { Suspense } from "react";
 
 export default function UiKitLayout({
     children,
@@ -7,11 +9,13 @@ export default function UiKitLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="w-full mt-20 flex items-center justify-center" style={{ height: 'calc(100vh - 80px)',backgroundImage: 'url(/landingPage/pattern.webp)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} >
-            <div className="w-defaultWidth h-full overflow-x-hidden overflow-y-auto flex flex-row py-4">
+        <div className="flex flex-row w-full" style={{height:'calc(100dvh - 64px)'}}>
+            <Suspense>
                 <Sidebar />
-                {children}
-            </div>
+                <div className="w-full h-full  overflow-x-hidden overflow-y-auto">
+                    {children}
+                </div>
+            </Suspense>
         </div>
     );
 }

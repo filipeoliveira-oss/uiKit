@@ -1,95 +1,114 @@
 'use client'
-import CodeBlock from "@/components/codeBlock";
-import ColorText from "@/components/colorText";
-import PageWrapper from "@/components/pageWrapper";
-import { Button } from "@/uiKit/components/button/button";
-import Drawer from "@/uiKit/components/drawer/drawer";
-import { useState } from "react";
+
+import { useState } from "react"
+import PageComponent from "@/components/componentsPage"
+import { Button } from "@/uiKit/components/button/button"
+import Drawer from "@/uiKit/components/drawer/drawer"
 
 export default function DrawerPage() {
+
     const [open, setOpen] = useState(false)
-    const a = 
-    `npx fouikit
-components
-Drawer`
 
-    const deps = [
-  { name: "tailwind-variants", url: "https://www.npmjs.com/package/tailwind-variants" },
-  { name: "framer-motion", url: "https://www.npmjs.com/package/framer-motion" },
-  { name: "lucide-react", url: "https://www.npmjs.com/package/lucide-react" },
-  { name: "tailwindcss", url: "https://www.npmjs.com/package/tailwindcss" },
-  { name: "clsx", url: "https://www.npmjs.com/package/clsx" },
-  { name: "react", url: "https://www.npmjs.com/package/react" },
-  { name: "react-dom", url: "https://www.npmjs.com/package/react-dom" }
-]
+    const codePreview =
+`const [open, setOpen] = useState(false)
 
+<Button onClick={() => setOpen(true)}>
+  Open drawer
+</Button>
+
+<Drawer isOpen={open} onClose={() => setOpen(false)}>
+  Content here
+</Drawer>`
+
+    const code =
+`import { ReactNode } from "react"
+
+type DrawerProps = {
+  isOpen: boolean
+  onClose?: () => void
+  children: ReactNode
+  disableAnimation?: boolean
+  animationDuration?: number
+  title?: string
+  openWidth?: string
+  overlayClassName?: string
+}
+
+export default function Drawer(props: DrawerProps) {
+  // component implementation
+}`
 
     return (
-        <PageWrapper requirements={deps} title="Drawer">
-            <Drawer isOpen={open} onClose={() => setOpen(false)}>
-                This is the drawer
-
-                <Button onClick={() => setOpen(false)}>Close drawer</Button>
-            </Drawer>
-
-            <ColorText text="Drawer"/>
-
-            <CodeBlock code={a} />
-
-            <h2 className="text-3xl font-bold">Usage</h2>
-
-            <Button onClick={() => setOpen(true)}>Open drawer</Button>
-
-
-            <h2 className="text-3xl font-bold">Parameters</h2>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">isOpen*</span>
-                <CodeBlock code="Boolean" showLineNumbers={false} />
-                <span>Controls if the Drawer is open or not</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">onClose</span>
-                <CodeBlock code="Function" showLineNumbers={false} />
-                <span>Function to be executed when the X icon is clicked. note that the X icon will only be displayed if this parameter is used</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">children</span>
-                <CodeBlock code="React.ReactNode" showLineNumbers={false} />
-                <span>Elements inside the drawer</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">disableAnimation</span>
-                <CodeBlock code="Boolean" showLineNumbers={false} />
-                <span>if the drawer should animate or not</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">animationDuration</span>
-                <CodeBlock code="Seconds" showLineNumbers={false} />
-                <span>The duration of the animate. 0.2 by default</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">title</span>
-                <CodeBlock code="string" showLineNumbers={false} />
-                <span>Title of the drawer</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">openWidth</span>
-                <CodeBlock code="string" showLineNumbers={false} />
-                <span>The width of the drawer. 40% of the screen by default</span>
-            </div>
-
-            <div className="w-full h-fit flex flex-col gap-2">
-                <span className="text-lg font-semibold">overlayClassName</span>
-                <CodeBlock code="string" showLineNumbers={false} />
-                <span>The classname that will be applied to the background</span>
-            </div>
-        </PageWrapper>
+        <PageComponent
+            ComponentType="Componentes"
+            componentName="Drawer"
+            componentCodeName="Drawer"
+            description="Componente de drawer (painel lateral) usado para exibir conteúdo sobreposto à interface principal."
+            code={code}
+            preview={<>
+                <Button onClick={() => setOpen(true)}>Abrir drawer</Button>
+                <Drawer isOpen={open} onClose={() => setOpen(false)}>
+                    <span>Isso é um drawer</span>
+                </Drawer>
+            </>}
+            props={[
+                {
+                    propName: "isOpen",
+                    type: "boolean",
+                    default: "-",
+                    description: "Controla se o drawer está aberto ou fechado",
+                    required: true
+                },
+                {
+                    propName: "onClose",
+                    type: "() => void",
+                    default: "-",
+                    description: "Função chamada ao fechar o drawer",
+                    required: false
+                },
+                {
+                    propName: "children",
+                    type: "React.ReactNode",
+                    default: "-",
+                    description: "Conteúdo exibido dentro do drawer",
+                    required: true
+                },
+                {
+                    propName: "disableAnimation",
+                    type: "boolean",
+                    default: "false",
+                    description: "Desativa animações do drawer",
+                    required: false
+                },
+                {
+                    propName: "animationDuration",
+                    type: "number",
+                    default: "0.2",
+                    description: "Duração da animação em segundos",
+                    required: false
+                },
+                {
+                    propName: "title",
+                    type: "string",
+                    default: "-",
+                    description: "Título exibido no drawer",
+                    required: false
+                },
+                {
+                    propName: "openWidth",
+                    type: "string",
+                    default: "40%",
+                    description: "Largura do drawer quando aberto",
+                    required: false
+                },
+                {
+                    propName: "overlayClassName",
+                    type: "string",
+                    default: "-",
+                    description: "Classe CSS aplicada ao overlay de fundo",
+                    required: false
+                }
+            ]}
+        />
     )
 }
