@@ -1,4 +1,13 @@
-import { useEffect, useRef, useState, useCallback } from "react"
+'use client'
+
+import PageComponent from "@/components/componentsPage"
+
+export default function UseTimerPage() {
+
+   
+
+    const code =
+`import { useEffect, useRef, useState, useCallback } from "react"
 
 type UseSimpleTimerProps = {
     initialSeconds: number
@@ -95,4 +104,42 @@ export function useTimer({
         resume,
         restart
     }
+}`
+
+const codePreview = 
+`const { isRunning, pause, totalSeconds, restart, resume } = useTimer({ initialSeconds: getExpiry(25), autoStart: false, onExpiry: () => handleExpiry() })`
+
+    return (
+        <PageComponent
+            ComponentType="Hooks"
+            componentName="useTimer"
+            componentCodeName="useTimer"
+            description="Hook para controle de temporizador regressivo, com suporte a iniciar automaticamente, pausar, retomar e executar uma ação ao finalizar."
+            code={code}
+            previewCode={codePreview}
+            props={[
+                {
+                    propName: "initialSeconds",
+                    type: "number",
+                    default: "-",
+                    description: "Tempo inicial do timer em segundos",
+                    required: true
+                },
+                {
+                    propName: "autoStart",
+                    type: "boolean",
+                    default: "false",
+                    description: "Define se o timer inicia automaticamente",
+                    required: false
+                },
+                {
+                    propName: "onExpiry",
+                    type: "() => void",
+                    default: "-",
+                    description: "Função executada quando o tempo chega a zero",
+                    required: false
+                }
+            ]}
+        />
+    )
 }

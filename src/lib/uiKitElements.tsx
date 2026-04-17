@@ -75,6 +75,7 @@ export const hooksList = [
     { url: "/hooks/useIsMobile", title: "useIsMobile", description: "Detecta se o dispositivo é mobile.", component: () => <Hook/>  },
     { url: "/hooks/useMousePosition", title: "useMousePosition", description: "Rastreia a posição do mouse.", component: () => <Hook/>  },
     { url: "/hooks/useOnClickOutside", title: "useOnClickOutside", description: "Detecta cliques fora de um elemento.", component: () => <Hook/>  },
+    { url: "/hooks/useTimer", title: "useTimer", description: "Um timer com funções.", component: () => <Hook/>  },
 ] as const satisfies IUikitElements[];
 
 export const utilitiesList = [

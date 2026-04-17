@@ -8,10 +8,9 @@ import Modal from "@/uiKit/components/modal/modal"
 import { useDebounceCallback } from "@/uiKit/hooks/useDebounceCallback/useDebounceCallback"
 import { useTimer } from "@/uiKit/hooks/useTimer/useTimer"
 import { ScaleLoader } from "@/uiKit/loaders/scaleLoader/scaleLoader"
-import { Check, ChevronDown, ChevronUp, CircleEllipsis, Clock, Cog, EllipsisVertical, HelpCircle, ListTodo, Plus, SkipForward, Trash2 } from "lucide-react"
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { Check, ChevronDown, ChevronUp,  Clock, Cog, EllipsisVertical, HelpCircle, ListTodo, Plus, SkipForward, Trash2 } from "lucide-react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-// import { useTimer } from "react-timer-hook"
 
 interface ITasks {
     title: string,
