@@ -18,8 +18,7 @@ interface ITasks {
     pomodoros: number,
     complete: boolean,
     uuid: string,
-    pomodorosComplete: number,
-    includedAt: number
+    pomodorosComplete: number
 }
 
 interface IConfig {
@@ -62,9 +61,10 @@ export default function PomodoroPage() {
     const [elapsed, setElapsed] = useState(0)
     const { isRunning, pause, totalSeconds, restart, resume } = useTimer({ initialSeconds: getExpiry(25), autoStart: false, onExpiry: () => handleExpiry() })
     const [activeTask, setActiveTask] = useState<ITasks | null>(null)
-    const [currentTasks, setCurrentTasks] = useState<Array<ITasks>>(Array.from({ length: 10 }, (_, i) => ({ complete: false, pomodoros: 1, title: String(i + 1), uuid: crypto.randomUUID(), pomodorosComplete: 0, includedAt: new Date().getTime() })))
+    const [currentTasks, setCurrentTasks] = useState<Array<ITasks>>([])
     const [isLoading, setIsLoading] = useState(false)
     const [editingTask, setEditingTask] = useState<ITasks | null>(null)
+
     useEffect(() => {
         let timeout: NodeJS.Timeout
 
@@ -87,7 +87,7 @@ export default function PomodoroPage() {
 
     useEffect(() => {
         const configs = localStorage.getItem('fouikit-pomodoro-configurations')
-
+        const tasks = localStorage.getItem('fouikit-pomodoro-tasks')
         if (Notification.permission !== "denied") {
             Notification.requestPermission()
         }
@@ -100,10 +100,31 @@ export default function PomodoroPage() {
             restart(getExpiry(parsed.pomodoroTime), false)
         }
 
+        if (tasks) {
+            const parsedTasks: ITasks[] = JSON.parse(tasks)
+
+            let shouldSort = false
+
+            if (configs) {
+                const parsedConfig: IConfig = JSON.parse(configs)
+                shouldSort = parsedConfig.moveCompleteToBottom
+            }
+
+            const finalTasks = shouldSort
+                ? [...parsedTasks].sort((a, b) => Number(a.complete) - Number(b.complete))
+                : parsedTasks
+
+            setCurrentTasks(finalTasks)
+        }
+
         setTimeout(() => {
             setIsLoading(false)
         }, 1000);
     }, [])
+
+    useEffect(() => {
+        localStorage.setItem('fouikit-pomodoro-tasks', JSON.stringify(currentTasks))
+    }, [currentTasks])
 
     useEffect(() => {
         if (!isRunning) return
@@ -136,11 +157,11 @@ export default function PomodoroPage() {
 
                 if (configMethods.getValues('moveCompleteToBottom')) {
                     return updated.sort(
-                        (a, b) => (Number(a.complete) - Number(b.complete)) || (a.includedAt - b.includedAt)
+                        (a, b) => (Number(a.complete) - Number(b.complete))
                     )
                 }
 
-                return updated.sort((a, b) => a.includedAt - b.includedAt)
+                return updated
             })
 
 
@@ -200,8 +221,7 @@ export default function PomodoroPage() {
 
     function getNextTask(tasks: ITasks[], excludeId?: string) {
         return tasks
-            .filter(t => !t.complete && t.uuid !== excludeId)
-            .sort((a, b) => a.includedAt - b.includedAt)[0] ?? null
+            .filter(t => !t.complete && t.uuid !== excludeId)[0] ?? null
     }
 
     function handleCompleteTask(id: string) {
@@ -251,7 +271,6 @@ export default function PomodoroPage() {
             title: task.title,
             uuid: crypto.randomUUID(),
             pomodorosComplete: 0,
-            includedAt: new Date().getTime()
         }])
 
         handleCloseModal()
@@ -349,13 +368,14 @@ export default function PomodoroPage() {
     }
 
     function handleClearCompletedTasks() {
-         const confirmed = window.confirm('Tem certeza que deseja apagar as tarefas completas?')
+        const confirmed = window.confirm('Tem certeza que deseja apagar as tarefas completas?')
 
         if (confirmed) {
             setCurrentTasks(prev => prev.filter((task) => !task.complete))
         }
 
     }
+
 
     return (
         <>
@@ -371,9 +391,9 @@ export default function PomodoroPage() {
                     </div>
                     <div className="xl:w-1/2 w-full h-[30vh] shrink-0 flex flex-col items-center justify-between py-4 bg-foreground/5 rounded-2xl ">
                         <div className="w-fit h-fit flex flex-row gap-4">
-                            <span className={`text-lg cursor-pointer ${currentState === 'pomodoro' ? 'font-semibold' : 'font-normal'}`} onClick={() => handleChangeState('pomodoro')}>Pomodoro</span>
-                            <span className={`text-lg cursor-pointer ${currentState === 'short' ? 'font-semibold' : 'font-normal'}`} onClick={() => handleChangeState('short')}>Intervalo curto</span>
-                            <span className={`text-lg cursor-pointer ${currentState === 'long' ? 'font-semibold' : 'font-normal'}`} onClick={() => handleChangeState('long')}>Intervalo longo</span>
+                            <span className={`text-lg cursor-pointer ${currentState === 'pomodoro' ? 'font-bold' : 'font-normal'}`} onClick={() => handleChangeState('pomodoro')}>Pomodoro</span>
+                            <span className={`text-lg cursor-pointer ${currentState === 'short' ? 'font-bold' : 'font-normal'}`} onClick={() => handleChangeState('short')}>Intervalo curto</span>
+                            <span className={`text-lg cursor-pointer ${currentState === 'long' ? 'font-bold' : 'font-normal'}`} onClick={() => handleChangeState('long')}>Intervalo longo</span>
                         </div>
 
                         <h1 className="text-7xl">{formatTime(totalSeconds)}</h1>
@@ -422,12 +442,14 @@ export default function PomodoroPage() {
                     </label>
 
                     <div className="flex flex-row gap-4">
-                        <label htmlFor="pomodoros" className="flex flex-col gap-4 justify-center select-none">
-                            <span className="opacity-80 text-lg font-medium">Pomodoros completos</span>
-                            <div className="flex flex-row gap-2 items-center">
-                                <input id="pomodoros" {...methods.register('pomodorosComplete')} type="number" min={1} step={1} className="inputNumber w-24 h-12 text-2xl px-1 outline-none bg-foreground/10 rounded-md" />
-                            </div>
-                        </label>
+                        {editingTask?.uuid && (
+                            <label htmlFor="pomodoros" className="flex flex-col gap-4 justify-center select-none">
+                                <span className="opacity-80 text-lg font-medium">Pomodoros completos</span>
+                                <div className="flex flex-row gap-2 items-center">
+                                    <input id="pomodoros" {...methods.register('pomodorosComplete')} type="number" min={0} step={1} className="inputNumber w-24 h-12 text-2xl px-1 outline-none bg-foreground/10 rounded-md" />
+                                </div>
+                            </label>
+                        )}
 
                         <label htmlFor="pomodoros" className="flex flex-col gap-4 justify-center select-none">
                             <span className="opacity-80 text-lg font-medium">Pomodoros estimados</span>
