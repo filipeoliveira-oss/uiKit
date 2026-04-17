@@ -17,7 +17,7 @@ interface props {
 }
 
 const actionsMenu = tv({
-    base: "w-fit h-fit flex flex-col bg-white absolute cursor-pointer overflow-auto text-black border border-zinc-300 px-2 py-2 rounded-md shadow-md text-wrap",
+    base: "w-fit h-fit flex flex-col bg-white absolute cursor-pointer overflow-auto border border-zinc-300 px-2 py-2 rounded-md shadow-md text-wrap",
     variants:{
         position:{
             topLeft:'bottom-0 right-full',
@@ -37,7 +37,7 @@ const actionsMenu = tv({
 type ActionsMenuProps = ComponentProps<'div'> & VariantProps<typeof actionsMenu> & props
 
 const ActionsMenu = forwardRef<HTMLDivElement, ActionsMenuProps>(
-    ({ buttonClassName, icon = <Ellipsis color="#000"/>,children,position,className, ...props}, ref) => {
+    ({ buttonClassName, icon = <Ellipsis />,children,position,className, ...props}, ref) => {
 
         const dropdownRef = useRef<HTMLButtonElement>(null)
         const [isOpen, setIsOpen] = useState(false)
