@@ -144,3 +144,16 @@
 ::-webkit-scrollbar-thumb:hover {
     background: oklch(70.5% 0.015 286.067);
 }
+
+
+/* Chrome, Edge, Safari */
+.inputNumber::-webkit-outer-spin-button,
+.inputNumber::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.inputNumber {
+  -moz-appearance: textfield;
+}

@@ -79,9 +79,10 @@ export const hooksList = [
 
 export const utilitiesList = [
     { url: '/utilities/dbSchemaDesigner', title: "Database Schema Designer", description: "Ferramenta para modelagem de banco de dados.", component: () => <Hammer strokeWidth={1.5}/> },
-    { url: '/utilities/imageConverter', title: "Conversor de imagem", description: "Ferramenta para modelagem de banco de dados.", component: () => <Hammer strokeWidth={1.5}/> },
+    { url: '/utilities/imageConverter', title: "Conversor de imagem", description: "Ferramenta para converter imagens.", component: () => <Hammer strokeWidth={1.5}/> },
     { url: '/utilities/mindForge', title: "Mind Forge", description: "Organizador visual de ideias e fluxos.", component: () => <Hammer strokeWidth={1.5}/> },
     { url: '/utilities/peerDrop', title: "Peer Drop", description: "Compartilhamento de arquivos entre dispositivos.", component: () => <Hammer strokeWidth={1.5}/> },
+    { url: '/utilities/pomodoro', title: "Pomodoro", description: "Timer de produtividade que alterna entre períodos de foco e pausas curtas.", component: () => <Hammer strokeWidth={1.5}/> },
 ] as const satisfies IUikitElements[];
 
 export const loadersList = [

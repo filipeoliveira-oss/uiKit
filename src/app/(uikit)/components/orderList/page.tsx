@@ -87,6 +87,13 @@ export default function Example() {
                     default: "-",
                     description: "Elemento exibido como cabeçalho da lista",
                     required: false
+                },
+                {
+                    propName: "showArrows",
+                    type: "Boolean",
+                    default: "true",
+                    description: "Se as setas devem ser mostradas",
+                    required: false
                 }
             ]}
         />

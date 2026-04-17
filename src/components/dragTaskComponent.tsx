@@ -11,7 +11,7 @@ interface IOrderList {
 }
 
 
-export default function OrderList({ itemTemplate, value, changeValue, dragAndDrop, maxHeight = '500px', header, showArrows = true }: IOrderList) {
+export default function DragTaskComponent({ itemTemplate, value, changeValue, dragAndDrop, maxHeight = '500px', header, showArrows = true }: IOrderList) {
     const [selectedItemIndex, setSelectedItemIndex] = useState<null | number>(null)
     const [overIndex, setOverIndex] = useState<null | number>(null)
     const [draggedItemIndex, setDraggedItemIndex] = useState<null | number>(null)
@@ -81,7 +81,7 @@ export default function OrderList({ itemTemplate, value, changeValue, dragAndDro
     };
 
     return (
-        <div className="w-full px-2 flex flex-row gap-2" style={{ maxHeight }}>
+        <div className="w-full px-2 flex flex-row gap-2 h-full min-h-0 flex-1" >
             {showArrows && (
                 <div className="w-10 h-full shrink-0 flex flex-col gap-2 items-center justify-center select-none">
                     <div onClick={() => handleUpAll()} className="w-full h-fit flex items-center justify-center bg-sky-400 rounded-lg cursor-pointer py-2 hover:bg-sky-500" style={selectedItemIndex === null ? { opacity: .6, pointerEvents: 'none' } : { opacity: 1, pointerEvents: 'auto' }}>
@@ -118,7 +118,7 @@ export default function OrderList({ itemTemplate, value, changeValue, dragAndDro
                         <span className="font-semibold">{header}</span>
                     </div>
                 )}
-                <div className="flex flex-col w-full h-full overflow-y-auto overflow-x-hidden shrink-0 ">
+                <div className="flex flex-col w-full h-full min-h-0 overflow-auto shrink-0">
                     {value.map((item, i) => (
                         <React.Fragment key={i}>
                             {dragAndDrop && (
@@ -140,8 +140,8 @@ export default function OrderList({ itemTemplate, value, changeValue, dragAndDro
                             <div
                                 draggable={!!dragAndDrop}
                                 onDragStart={dragAndDrop ? (e) => handleDragStart(e, i) : undefined}
-                                onClick={() => setSelectedItemIndex(prev => (prev === i ? null : i))}
-                                className={`cursor-pointer ${selectedItemIndex === i ? 'bg-sky-200 hover:bg-sky-300' : 'bg-transparent hover:bg-zinc-200'}`}>
+                                // onClick={() => setSelectedItemIndex(prev => (prev === i ? null : i))}
+                                className={`cursor-pointer`}>
                                 {itemTemplate(item)}
                             </div>
                         </React.Fragment>

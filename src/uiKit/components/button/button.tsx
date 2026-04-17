@@ -13,7 +13,7 @@ const button = tv({
       ghost:
         'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
       outline:
-        'border bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
+        'border bg-background hover:opacity-60 dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
     },
 
     size: {
