@@ -1,6 +1,10 @@
 'use client'
 
-import { Plus, Trash2 } from 'lucide-react'
+import { AlertTriangle, Plus, Trash2 } from 'lucide-react'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { useTheme } from 'next-themes'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 interface IParam {
     key: string
@@ -10,6 +14,15 @@ interface IParam {
 }
 
 type ActiveTab = 'params' | 'body' | 'auth' | 'headers'
+
+export type BodyType = 'none' | 'json' | 'xml' | 'yaml' | 'edn' | 'text' | 'formdata' | 'file'
+
+export interface IFormDataField {
+    key: string
+    value: string
+    active: boolean
+    uuid: string
+}
 
 export type IAuth =
     | { type: 'none'; active: boolean }
@@ -52,10 +65,144 @@ interface IHeader {
     uuid: string
 }
 
+const BODY_TYPE_OPTIONS: { value: BodyType; label: string }[] = [
+    { value: 'none', label: 'No Body' },
+    { value: 'json', label: 'JSON' },
+    { value: 'xml', label: 'XML' },
+    { value: 'yaml', label: 'YAML' },
+    { value: 'edn', label: 'EDN' },
+    { value: 'text', label: 'Text' },
+    { value: 'formdata', label: 'Form Data' },
+    { value: 'file', label: 'File' },
+]
+
+const SYNTAX_LANG: Partial<Record<BodyType, string>> = {
+    json: 'json',
+    xml: 'xml',
+    yaml: 'yaml',
+    edn: 'clojure',
+}
+
+const EDITOR_STYLE: React.CSSProperties = {
+    fontFamily: 'ui-monospace, SFMono-Regular, Consolas, monospace',
+    fontSize: '13px',
+    lineHeight: '20px',
+    padding: '12px',
+}
+
+function validateContent(type: BodyType, value: string): string | null {
+    if (!value.trim()) return null
+    if (type === 'json') {
+        try { JSON.parse(value); return null }
+        catch (e) { return (e as Error).message }
+    }
+    if (type === 'xml') {
+        const doc = new DOMParser().parseFromString(value, 'application/xml')
+        const err = doc.querySelector('parsererror')
+        return err ? (err.textContent?.split('\n')[0] ?? 'XML inválido') : null
+    }
+    return null
+}
+
+function CodeEditor({ value, onChange, language, validationError, onSave }: {
+    value: string
+    onChange: (v: string) => void
+    language: string
+    validationError: string | null
+    onSave: () => void
+}) {
+    const { resolvedTheme } = useTheme()
+    const textareaRef = useRef<HTMLTextAreaElement>(null)
+    const scrollRef = useRef<HTMLDivElement>(null)
+    const insertPosRef = useRef<number | null>(null)
+
+    const syncScroll = useCallback(() => {
+        if (textareaRef.current && scrollRef.current) {
+            scrollRef.current.scrollTop = textareaRef.current.scrollTop
+            scrollRef.current.scrollLeft = textareaRef.current.scrollLeft
+        }
+    }, [])
+
+    useEffect(() => {
+        if (insertPosRef.current !== null && textareaRef.current) {
+            const pos = insertPosRef.current
+            textareaRef.current.setSelectionRange(pos, pos)
+            insertPosRef.current = null
+        }
+    })
+
+    function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+        if (e.key === 'Tab') {
+            e.preventDefault()
+            const el = e.currentTarget
+            const start = el.selectionStart
+            const end = el.selectionEnd
+            const next = value.substring(0, start) + '  ' + value.substring(end)
+            insertPosRef.current = start + 2
+            onChange(next)
+        }
+    }
+
+    return (
+        <div className="w-full flex-1 min-h-0 flex flex-col overflow-hidden">
+            {validationError && (
+                <div className="flex flex-row gap-2 items-start px-3 py-2 bg-red-500/10 border-b border-red-500/30 text-xs text-red-400 shrink-0">
+                    <AlertTriangle size={12} className="shrink-0 mt-0.5" />
+                    <span className="font-mono break-all">{validationError}</span>
+                </div>
+            )}
+            <div className="relative flex-1 min-h-0">
+                <div
+                    ref={scrollRef}
+                    className="absolute inset-0 pointer-events-none"
+                    style={{ overflow: 'scroll', scrollbarWidth: 'none' }}
+                    aria-hidden
+                >
+                    <SyntaxHighlighter
+                        language={language}
+                        style={resolvedTheme === 'dark' ? oneDark : oneLight}
+                        customStyle={{
+                            ...EDITOR_STYLE,
+                            margin: 0,
+                            background: 'transparent',
+                            overflow: 'visible',
+                            minWidth: '100%',
+                            minHeight: '100%',
+                        }}
+                        wrapLongLines={false}
+                    >
+                        {value || ' '}
+                    </SyntaxHighlighter>
+                </div>
+                <textarea
+                    ref={textareaRef}
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    onScroll={syncScroll}
+                    onBlur={onSave}
+                    onKeyDown={handleKeyDown}
+                    className="absolute inset-0 w-full h-full resize-none outline-none bg-transparent spellcheck-false"
+                    style={{
+                        ...EDITOR_STYLE,
+                        color: 'transparent',
+                        caretColor: resolvedTheme === 'dark' ? '#fff' : '#000',
+                    }}
+                    spellCheck={false}
+                />
+            </div>
+        </div>
+    )
+}
+
 interface FetcherTabContentProps {
     activeTab: ActiveTab
     body: string
     onBodyChange: (value: string) => void
+    onBodySave: () => void
+    bodyType: BodyType
+    onBodyTypeChange: (type: BodyType) => void
+    bodyFormData: IFormDataField[]
+    onBodyFormDataChange: (fields: IFormDataField[]) => void
     params: IParam[]
     onAddParam: () => void
     onRemoveParam: (uuid: string) => void
@@ -160,7 +307,6 @@ function ParamsTab({ url, params, onAdd, onRemove, onRemoveAll, onToggle, onUpda
                     </div>
                 </div>
             ))}
-            
         </div>
     )
 }
@@ -223,15 +369,173 @@ function HeadersTab({ headers, onAdd, onRemove, onRemoveAll, onToggle, onUpdate,
     )
 }
 
-function BodyTab({ body, onChange }: { body: string; onChange: (v: string) => void }) {
+function FormDataTab({ fields, onChange }: {
+    fields: IFormDataField[]
+    onChange: (fields: IFormDataField[]) => void
+}) {
+    function add() {
+        onChange([...fields, { key: '', value: '', active: true, uuid: crypto.randomUUID() }])
+    }
+    function remove(uuid: string) {
+        onChange(fields.filter(f => f.uuid !== uuid))
+    }
+    function removeAll() {
+        onChange([])
+    }
+    function toggle(uuid: string) {
+        onChange(fields.map(f => f.uuid === uuid ? { ...f, active: !f.active } : f))
+    }
+    function update(uuid: string, field: 'key' | 'value', value: string) {
+        onChange(fields.map(f => f.uuid === uuid ? { ...f, [field]: value } : f))
+    }
+
     return (
-        <textarea
-            className="w-full h-full resize-none outline-none p-3 font-mono text-sm bg-transparent"
-            value={body}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="Request body (JSON, XML, text...)"
-            spellCheck={false}
-        />
+        <div className="w-full h-full flex flex-col">
+            <div className="w-full h-8 flex flex-row gap-6 border-b border-border px-3 items-center">
+                <span className="cursor-pointer text-xs text-foreground/60 flex flex-row gap-1 items-center hover:text-foreground transition-colors" onClick={add}>
+                    <Plus size={12} /> Adicionar
+                </span>
+                <span className="cursor-pointer text-xs text-foreground/60 flex flex-row gap-1 items-center hover:text-foreground transition-colors" onClick={removeAll}>
+                    <Trash2 size={12} /> Remover todos
+                </span>
+            </div>
+            <div className="w-full h-7 flex flex-row border-b border-border text-xs text-foreground/40 items-center">
+                <div className="w-8 shrink-0" />
+                <span className="flex-1 px-2">Chave</span>
+                <span className="flex-1 px-2 border-l border-border/50">Valor</span>
+                <div className="w-8 shrink-0" />
+            </div>
+            {fields.map((field) => (
+                <div key={field.uuid} className={`w-full h-9 flex flex-row border-b border-border/50 items-center ${field.active ? '' : 'opacity-40'}`}>
+                    <div className="w-8 shrink-0 flex items-center justify-center">
+                        <input
+                            type="checkbox"
+                            className="w-3 h-3 cursor-pointer"
+                            checked={field.active}
+                            onChange={() => toggle(field.uuid)}
+                        />
+                    </div>
+                    <input
+                        className="flex-1 h-full px-2 outline-none border-r border-border/50 bg-transparent text-sm"
+                        placeholder="chave"
+                        value={field.key}
+                        onChange={(e) => update(field.uuid, 'key', e.target.value)}
+                    />
+                    <input
+                        className="flex-1 h-full px-2 outline-none border-r border-border/50 bg-transparent text-sm"
+                        placeholder="valor"
+                        value={field.value}
+                        onChange={(e) => update(field.uuid, 'value', e.target.value)}
+                    />
+                    <div className="w-8 shrink-0 flex items-center justify-center">
+                        <Trash2 size={14} className="cursor-pointer text-foreground/40 hover:text-foreground transition-colors" onClick={() => remove(field.uuid)} />
+                    </div>
+                </div>
+            ))}
+        </div>
+    )
+}
+
+function hasBodyContent(bodyType: BodyType, body: string, bodyFormData: IFormDataField[]): boolean {
+    if (bodyType === 'none') return false
+    if (bodyType === 'formdata') return bodyFormData.length > 0
+    return body.trim() !== ''
+}
+
+function BodyTab({ body, bodyType, bodyFormData, onChange, onTypeChange, onFormDataChange, onSave }: {
+    body: string
+    bodyType: BodyType
+    bodyFormData: IFormDataField[]
+    onChange: (v: string) => void
+    onTypeChange: (t: BodyType) => void
+    onFormDataChange: (fields: IFormDataField[]) => void
+    onSave: () => void
+}) {
+    const language = SYNTAX_LANG[bodyType]
+    const validationError = useMemo(() => validateContent(bodyType, body), [bodyType, body])
+
+    function handleTypeChange(next: BodyType) {
+        if (next === bodyType) return
+        if (hasBodyContent(bodyType, body, bodyFormData)) {
+            const confirmed = window.confirm('O conteúdo atual do body será perdido ao trocar o tipo. Deseja continuar?')
+            if (!confirmed) return
+        }
+        onTypeChange(next)
+    }
+
+    return (
+        <div className="w-full h-full flex flex-col overflow-hidden">
+            <div className="w-full h-8 flex flex-row border-b border-border px-2 items-center gap-0.5 overflow-x-auto shrink-0" style={{ scrollbarWidth: 'none' }}>
+                {BODY_TYPE_OPTIONS.map(({ value, label }) => (
+                    <button
+                        key={value}
+                        onClick={() => handleTypeChange(value)}
+                        className={`h-6 px-2.5 text-xs whitespace-nowrap rounded cursor-pointer transition-colors ${bodyType === value ? 'bg-foreground/15 text-foreground' : 'text-foreground/50 hover:text-foreground/80'}`}
+                    >
+                        {label}
+                    </button>
+                ))}
+            </div>
+
+            {bodyType === 'none' && (
+                <div className="flex-1 flex items-center justify-center text-foreground/30 text-sm select-none">
+                    Esta requisição não tem body
+                </div>
+            )}
+
+            {bodyType === 'text' && (
+                <textarea
+                    className="w-full flex-1 resize-none outline-none p-3 font-mono text-sm bg-transparent"
+                    value={body}
+                    onChange={(e) => onChange(e.target.value)}
+                    onBlur={onSave}
+                    placeholder="Texto..."
+                    spellCheck={false}
+                />
+            )}
+
+            {language && (
+                <CodeEditor
+                    value={body}
+                    onChange={onChange}
+                    language={language}
+                    validationError={validationError}
+                    onSave={onSave}
+                />
+            )}
+
+            {bodyType === 'formdata' && (
+                <FormDataTab fields={bodyFormData} onChange={onFormDataChange} />
+            )}
+
+            {bodyType === 'file' && (
+                <div className="flex-1 flex flex-col items-center justify-center gap-3 p-4">
+                    <input
+                        type="file"
+                        id="body-file-input"
+                        className="hidden"
+                        onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (file) { onChange(file.name); setTimeout(onSave, 0) }
+                        }}
+                    />
+                    <label
+                        htmlFor="body-file-input"
+                        className="cursor-pointer px-4 py-2 border border-border text-sm text-foreground/70 hover:text-foreground hover:border-foreground/40 transition-colors"
+                    >
+                        {body ? `Arquivo: ${body}` : 'Selecionar arquivo'}
+                    </label>
+                    {body && (
+                        <button
+                            className="text-xs text-foreground/40 hover:text-red-400 transition-colors cursor-pointer"
+                            onClick={() => { onChange(''); onSave() }}
+                        >
+                            Remover arquivo
+                        </button>
+                    )}
+                </div>
+            )}
+        </div>
     )
 }
 
@@ -377,7 +681,16 @@ function AuthTab({ auth, onUpdate }: { auth: IAuth; onUpdate: (auth: IAuth) => v
     )
 }
 
-export default function FetcherTabContent({ activeTab, body, onBodyChange, params, onAddParam, onRemoveParam, onRemoveAllParams, onToggleParam, onUpdateParam, onSaveParam, url, headers, onAddHeader, onRemoveHeader, onRemoveAllHeaders, onToggleHeader, onUpdateHeader, onSaveHeader, auth, onUpdateAuth }: FetcherTabContentProps) {
+export default function FetcherTabContent({
+    activeTab,
+    body, onBodyChange, onBodySave,
+    bodyType, onBodyTypeChange,
+    bodyFormData, onBodyFormDataChange,
+    params, onAddParam, onRemoveParam, onRemoveAllParams, onToggleParam, onUpdateParam, onSaveParam,
+    url,
+    headers, onAddHeader, onRemoveHeader, onRemoveAllHeaders, onToggleHeader, onUpdateHeader, onSaveHeader,
+    auth, onUpdateAuth,
+}: FetcherTabContentProps) {
     return (
         <div className="w-full flex-1 min-h-0 overflow-auto">
             {activeTab === 'params' && (
@@ -392,7 +705,17 @@ export default function FetcherTabContent({ activeTab, body, onBodyChange, param
                     onSave={onSaveParam}
                 />
             )}
-            {activeTab === 'body' && <BodyTab body={body} onChange={onBodyChange} />}
+            {activeTab === 'body' && (
+                <BodyTab
+                    body={body}
+                    bodyType={bodyType}
+                    bodyFormData={bodyFormData}
+                    onChange={onBodyChange}
+                    onTypeChange={onBodyTypeChange}
+                    onFormDataChange={onBodyFormDataChange}
+                    onSave={onBodySave}
+                />
+            )}
             {activeTab === 'auth' && <AuthTab auth={auth} onUpdate={onUpdateAuth} />}
             {activeTab === 'headers' && (
                 <HeadersTab

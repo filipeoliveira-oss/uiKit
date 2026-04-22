@@ -1,13 +1,12 @@
 'use client'
 
-import DropdownUtilities from "@/components/dropdownUtilities"
 import ActionsMenu from "@/uiKit/components/actionsMenu/actionsMenu"
 import { Button } from "@/uiKit/components/button/button"
 import Modal from "@/uiKit/components/modal/modal"
 import { Cookie, FilePlus, Plus, PlusCircle, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
-import FetcherTabContent, { IAuth } from "./FetcherTabContent"
+import FetcherTabContent, { IAuth, BodyType, IFormDataField } from "./FetcherTabContent"
 
 interface IParams{
     key:string,
@@ -26,7 +25,9 @@ interface IHeaders{
 interface IRequest {
     method: string,
     url: string,
-    body: string,
+    body:string,
+    bodyType?: BodyType,
+    bodyFormData?: Array<IFormDataField>,
     createdAt: Date,
     uuid: string,
     name: string
@@ -82,6 +83,8 @@ export default function Fetcher() {
     const [deleteAllParamsModal, setDeleteAllParamsModal] = useState(false)
     const [deleteAllHeadersModal, setDeleteAllHeadersModal] = useState(false)
     const [activeTab, setActiveTab] = useState<'params' | 'body' | 'auth' | 'headers'>('params')
+    const [renameRequestModal, setRenameRequestModal] = useState(false)
+    const [editingRequestName, setEditingRequestName] = useState('')
 
     const AVAILABLEMETHODS:Array<IMethods> = [
         {method:'GET', color:'purple'},
@@ -150,7 +153,7 @@ export default function Fetcher() {
 
         setCurrentCollection(prev => {
             if (!prev) return null
-            const newRequest: IRequest = { body: '', createdAt: new Date(), method: 'GET', url: '', uuid: crypto.randomUUID(), name: 'New Request' }
+            const newRequest: IRequest = {body:'', bodyType: 'none', bodyFormData: [], createdAt: new Date(), method: 'GET', url: '', uuid: crypto.randomUUID(), name: 'New Request' }
             const updated = { ...prev, requests: [...prev.requests, newRequest] }
             updateStorage(updated)
 
@@ -378,6 +381,34 @@ export default function Fetcher() {
         updateStorage(updatedCollection)
     }
 
+    function handleBodyTypeChange(bodyType: BodyType) {
+        if (!currentRequest) return
+        const updated = { ...currentRequest, bodyType, body: '', bodyFormData: [] }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+    }
+
+    function handleBodyFormDataChange(bodyFormData: Array<IFormDataField>) {
+        if (!currentRequest) return
+        const updated = { ...currentRequest, bodyFormData }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+    }
+
+    function handleBodySave() {
+        if (!currentRequest) return
+        syncRequest(currentRequest)
+    }
+
+    function handleRenameRequest(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+        if (!currentRequest || !editingRequestName.trim()) return
+        const updated = { ...currentRequest, name: editingRequestName.trim() }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+        setRenameRequestModal(false)
+    }
+
     function handleChangeMethods(newMethod:IMethods['method']){
         setCurrentRequest(prev => {
             if(!prev) return null
@@ -451,7 +482,7 @@ export default function Fetcher() {
                             <span className="w-fit h-fit px-2 py-1 text-xs! rounded-md" style={{backgroundColor:AVAILABLEMETHODS.find((each) => each.method === currentRequest?.method)?.color ?? '', color:'#fff'}}>
                                 {currentRequest?.method}
                             </span>
-                            <span>{currentRequest?.name}</span>
+                            <span className="cursor-pointer select-none" onDoubleClick={() => { if (!currentRequest) return; setEditingRequestName(currentRequest.name); setRenameRequestModal(true) }}>{currentRequest?.name}</span>
                         </div>
                     </div>
                     <div className="w-full flex-1 min-h-0 flex flex-row">
@@ -467,7 +498,7 @@ export default function Fetcher() {
                             </div>
                             <div className="flex flex-row w-full h-12 border-t border-border">
                                 <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'params' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('params')}>Params {currentRequest?.params?.length  ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit">{currentRequest.params.length }</span> : ''}</span>
-                                <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'body' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('body')}>Body {(currentRequest?.body && currentRequest?.body?.length > 0 ) ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit"><div className="w-2 h-2 bg-green-500 rounded-full"></div></span> : ''}</span>
+                                <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'body' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('body')}>Body {currentRequest?.bodyType !== 'none' ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit"><div className="w-2 h-2 bg-green-500 rounded-full"></div></span> : ''}</span>
                                 <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'auth' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('auth')}>Auth {(currentRequest?.auth && currentRequest?.auth?.type !== 'none' ) ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit"><div className="w-2 h-2 bg-green-500 rounded-full"></div></span> : ''}</span>
                                 <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'headers' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('headers')}>Headers {currentRequest?.headers?.length ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit">{currentRequest.headers.length}</span> : ''}</span>
                             </div>
@@ -476,6 +507,11 @@ export default function Fetcher() {
                                 activeTab={activeTab}
                                 body={currentRequest?.body ?? ''}
                                 onBodyChange={(value) => setCurrentRequest(prev => prev ? { ...prev, body: value } : null)}
+                                onBodySave={handleBodySave}
+                                bodyType={currentRequest?.bodyType ?? 'none'}
+                                onBodyTypeChange={handleBodyTypeChange}
+                                bodyFormData={currentRequest?.bodyFormData ?? []}
+                                onBodyFormDataChange={handleBodyFormDataChange}
                                 url={currentRequest?.url ?? ''}
                                 params={currentRequest?.params ?? []}
                                 onAddParam={handleAddParam}
@@ -625,6 +661,26 @@ export default function Fetcher() {
                     <Button variant="outline" onClick={() => setDeleteAllHeadersModal(false)}>Cancelar</Button>
                     <Button variant="danger" onClick={() => { handleRemoveAllHeaders(); setDeleteAllHeadersModal(false) }}>Remover</Button>
                 </div>
+            </Modal>
+
+            <Modal title="Renomear requisição" isOpen={renameRequestModal} onClose={() => setRenameRequestModal(false)} className="bg-background border-border">
+                <form onSubmit={handleRenameRequest}>
+                    <label htmlFor="requestName" className="flex flex-col gap-4">
+                        <span>Nome</span>
+                        <input
+                            className="w-full h-12 border border-border px-2 outline-none"
+                            placeholder="Nome da requisição"
+                            id="requestName"
+                            value={editingRequestName}
+                            onChange={(e) => setEditingRequestName(e.target.value)}
+                            autoFocus
+                        />
+                    </label>
+                    <div className="w-full h-fit flex flex-row gap-4 justify-end mt-4">
+                        <Button variant="ghost" onClick={() => setRenameRequestModal(false)}>Cancelar</Button>
+                        <Button variant="primary" type="submit">Salvar</Button>
+                    </div>
+                </form>
             </Modal>
 
             <Modal isOpen={deleteAllCookiesModal} title="Deletar todos os cookies dessa coleção" className="bg-background border border-border" onClose={() => setDeleteAllCookiesModal(false)}>
