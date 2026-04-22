@@ -1,11 +1,27 @@
 'use client'
 
 import DropdownUtilities from "@/components/dropdownUtilities"
+import ActionsMenu from "@/uiKit/components/actionsMenu/actionsMenu"
 import { Button } from "@/uiKit/components/button/button"
 import Modal from "@/uiKit/components/modal/modal"
 import { Cookie, FilePlus, Plus, PlusCircle, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import FetcherTabContent, { IAuth } from "./FetcherTabContent"
+
+interface IParams{
+    key:string,
+    value:string,
+    active:boolean,
+    uuid:string
+}
+
+interface IHeaders{
+    key:string,
+    value:string,
+    active:boolean,
+    uuid:string
+}
 
 interface IRequest {
     method: string,
@@ -14,6 +30,9 @@ interface IRequest {
     createdAt: Date,
     uuid: string,
     name: string
+    params?:Array<IParams>,
+    headers?:Array<IHeaders>,
+    auth?:IAuth
 }
 
 interface IEnvVariable {
@@ -44,6 +63,11 @@ interface ICollection {
     cookies?: Array<ICookies>
 }
 
+interface IMethods{
+    method:string,
+    color:string
+}
+
 export default function Fetcher() {
     const [currentCollection, setCurrentCollection] = useState<ICollection | null>(null)
     const [newCollectionModal, setNewCollectionModal] = useState(false)
@@ -55,6 +79,19 @@ export default function Fetcher() {
     const [cookiesModal, setCookiesModal] = useState(false)
     const [currentEditingCookie, setCurrentEditingCookie] = useState<null | ICookies>(null)
     const [deleteAllCookiesModal, setDeleteAllCookiesModal] = useState(false)
+    const [deleteAllParamsModal, setDeleteAllParamsModal] = useState(false)
+    const [deleteAllHeadersModal, setDeleteAllHeadersModal] = useState(false)
+    const [activeTab, setActiveTab] = useState<'params' | 'body' | 'auth' | 'headers'>('params')
+
+    const AVAILABLEMETHODS:Array<IMethods> = [
+        {method:'GET', color:'purple'},
+        {method:'POST', color:'green'},
+        {method:'PUT', color:'orange'},
+        {method:'PATCH', color:'#cccf1a'},
+        {method:'DELETE', color:'red'},
+        {method:'OPTIONS', color:'#0fc7fa'},
+        {method:'HEAD', color:'#0fc7fa'},
+    ]
 
 
     useEffect(() => {
@@ -130,6 +167,115 @@ export default function Fetcher() {
             updateStorage(updated)
             return updated
         })
+    }
+
+    function syncRequest(updatedRequest: IRequest) {
+        if (!currentCollection) return
+        const updatedCollection = {
+            ...currentCollection,
+            requests: currentCollection.requests.map(r => r.uuid === updatedRequest.uuid ? updatedRequest : r)
+        }
+        setCurrentCollection(updatedCollection)
+        updateStorage(updatedCollection)
+    }
+
+    function handleAddParam() {
+        if (!currentRequest) return
+        const newParam: IParams = { key: '', value: '', active: true, uuid: crypto.randomUUID() }
+        const updated = { ...currentRequest, params: [...(currentRequest.params ?? []), newParam] }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+    }
+
+    function handleRemoveParam(uuid: string) {
+        if (!currentRequest) return
+        const updated = { ...currentRequest, params: currentRequest.params?.filter(p => p.uuid !== uuid) ?? [] }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+    }
+
+    function handleRemoveAllParams() {
+        if (!currentRequest) return
+        const updated = { ...currentRequest, params: [] }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+    }
+
+    function handleToggleParam(uuid: string) {
+        if (!currentRequest) return
+        const updated = { ...currentRequest, params: currentRequest.params?.map(p => p.uuid === uuid ? { ...p, active: !p.active } : p) ?? [] }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+    }
+
+    function handleUpdateParam(uuid: string, field: 'key' | 'value', value: string) {
+        setCurrentRequest(prev => {
+            if (!prev) return null
+            return { ...prev, params: prev.params?.map(p => p.uuid === uuid ? { ...p, [field]: value } : p) ?? [] }
+        })
+    }
+
+    function handleUpdateAuth(auth: IAuth) {
+        if (!currentRequest) return
+        const updated = { ...currentRequest, auth }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+    }
+
+    function handleAddHeader() {
+        if (!currentRequest) return
+        const newHeader: IHeaders = { key: '', value: '', active: true, uuid: crypto.randomUUID() }
+        const updated = { ...currentRequest, headers: [...(currentRequest.headers ?? []), newHeader] }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+    }
+
+    function handleRemoveHeader(uuid: string) {
+        if (!currentRequest) return
+        const updated = { ...currentRequest, headers: currentRequest.headers?.filter(h => h.uuid !== uuid) ?? [] }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+    }
+
+    function handleRemoveAllHeaders() {
+        if (!currentRequest) return
+        const updated = { ...currentRequest, headers: [] }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+    }
+
+    function handleToggleHeader(uuid: string) {
+        if (!currentRequest) return
+        const updated = { ...currentRequest, headers: currentRequest.headers?.map(h => h.uuid === uuid ? { ...h, active: !h.active } : h) ?? [] }
+        setCurrentRequest(updated)
+        syncRequest(updated)
+    }
+
+    function handleUpdateHeader(uuid: string, field: 'key' | 'value', value: string) {
+        setCurrentRequest(prev => {
+            if (!prev) return null
+            return { ...prev, headers: prev.headers?.map(h => h.uuid === uuid ? { ...h, [field]: value } : h) ?? [] }
+        })
+    }
+
+    function handleSaveHeaders() {
+        if (!currentRequest || !currentCollection) return
+        const updatedCollection = {
+            ...currentCollection,
+            requests: currentCollection.requests.map(r => r.uuid === currentRequest.uuid ? currentRequest : r)
+        }
+        setCurrentCollection(updatedCollection)
+        updateStorage(updatedCollection)
+    }
+
+    function handleSaveParams() {
+        if (!currentRequest || !currentCollection) return
+        const updatedCollection = {
+            ...currentCollection,
+            requests: currentCollection.requests.map(r => r.uuid === currentRequest.uuid ? currentRequest : r)
+        }
+        setCurrentCollection(updatedCollection)
+        updateStorage(updatedCollection)
     }
 
     function updateStorage(updatedValue: ICollection) {
@@ -215,16 +361,45 @@ export default function Fetcher() {
         return ''
     }
 
-    function handleAddNewCookie(){
+    function handleAddNewCookie() {
         setCurrentCollection(prev => {
             if (!prev) return null
-            return { ...prev, cookies: [...prev.cookies ?? [] , {domain:'domain.com', expires:String(new Date()), hostOnly:false, httpOnly:false, key:'foo',value:'bar',path:'/',secure:false,uuid:crypto.randomUUID()}] }
+            return { ...prev, cookies: [...prev.cookies ?? [], { domain: 'domain.com', expires: String(new Date()), hostOnly: false, httpOnly: false, key: 'foo', value: 'bar', path: '/', secure: false, uuid: crypto.randomUUID() }] }
+        })
+    }
+
+    function handleUrlBlur() {
+        if (!currentRequest || !currentCollection) return
+        const updatedCollection = {
+            ...currentCollection,
+            requests: currentCollection.requests.map(r => r.uuid === currentRequest.uuid ? currentRequest : r)
+        }
+        setCurrentCollection(updatedCollection)
+        updateStorage(updatedCollection)
+    }
+
+    function handleChangeMethods(newMethod:IMethods['method']){
+        setCurrentRequest(prev => {
+            if(!prev) return null
+            const updated = { ...prev, method: newMethod }
+
+            setCurrentCollection(prevCollection => {
+                if(!prevCollection) return null
+                const updatedCollection = {
+                    ...prevCollection,
+                    requests: prevCollection.requests.map(r => r.uuid === updated.uuid ? updated : r)
+                }
+                updateStorage(updatedCollection)
+                return updatedCollection
+            })
+
+            return updated
         })
     }
 
     return (
         <>
-            <div className="w-full h-full flex flex-row overflow-auto">
+            <div className="w-full h-full flex flex-row overflow-hidden">
                 <div className="w-[20%] h-full border border-green-400 flex flex-col px-2 gap-4">
                     <div className="flex flex-row gap-2 w-full h-fit justify-between items-center border-b-2 border-border py-2">
                         <select name="collections" id="fectherCollection" value={currentCollection?.name ?? 'optionCollectionDisable'} onChange={(e) => { setCurrentCollection(collections.find(c => c.name === e.target.value) ?? null); setCurrentRequest(null) }}>
@@ -239,39 +414,92 @@ export default function Fetcher() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-4 items-center border-b-2 border-border pb-2">
-                        <span className="w-full h-fit flex flex-row gap-2 cursor-pointer" onClick={() => setEnvsModal(true)}>
-                            <FilePlus />
-                            Variáveis de ambiente
-                        </span>
+                    {currentCollection?.uuid && (
+                        <>
+                            <div className="flex flex-col gap-4 items-center border-b-2 border-border pb-2">
+                                <span className="w-full h-fit flex flex-row gap-2 cursor-pointer" onClick={() => setEnvsModal(true)}>
+                                    <FilePlus />
+                                    Variáveis de ambiente
+                                </span>
 
-                        <span className="w-full h-fit flex flex-row gap-2 cursor-pointer" onClick={() => setCookiesModal(true)}>
-                            <Cookie />
-                            Gerenciar cookies
-                        </span>
-                    </div>
-
-                    <div className="flex flex-row w-full h-fit items-center gap-4">
-                        <input className="w-full h-8 border border-border px-2 outline-none" placeholder="Pesquisa" value={requestSearch} onChange={(e) => setRequestSearch(e.target.value)} />
-                        <PlusCircle fill="var(--foreground)" className="cursor-pointer text-background" onClick={() => handleAddNewRequest()} />
-                    </div>
-
-                    <div className="flex flex-col gap-2 h-full w-full  overflow-y-auto">
-                        {currentCollection?.requests.map((request, index) => (
-                            <div className={`w-full h-fit flex flex-row py-2 gap-2 border-l-3 items-center cursor-pointer ${(currentRequest && currentRequest?.uuid === request.uuid) ? 'border-primary' : 'border-transparent'}`} key={index} onClick={() => setCurrentRequest(request)}>
-                                <div className=" w-fit h-fit flex items-center justify-center px-2 py-1 text-xs!"><span>{request.method}</span></div>
-                                <span>{request.name}</span>
+                                <span className="w-full h-fit flex flex-row gap-2 cursor-pointer" onClick={() => setCookiesModal(true)}>
+                                    <Cookie />
+                                    Gerenciar cookies
+                                </span>
                             </div>
-                        ))}
+
+                            <div className="flex flex-row w-full h-fit items-center gap-4">
+                                <input className="w-full h-8 border border-border px-2 outline-none" placeholder="Pesquisa" value={requestSearch} onChange={(e) => setRequestSearch(e.target.value)} />
+                                <PlusCircle fill="var(--foreground)" className="cursor-pointer text-background" onClick={() => handleAddNewRequest()} />
+                            </div>
+
+                            <div className="flex flex-col gap-2 h-full w-full  overflow-y-auto">
+                                {currentCollection?.requests.map((request, index) => (
+                                    <div className={`w-full h-fit flex flex-row py-2 gap-2 border-l-3 items-center cursor-pointer ${(currentRequest && currentRequest?.uuid === request.uuid) ? 'border-primary' : 'border-transparent'}`} key={index} onClick={() => setCurrentRequest(request)}>
+                                        <div className=" w-fit h-fit flex items-center justify-center px-2 py-1 text-xs!"><span>{request.method}</span></div>
+                                        <span>{request.name}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                </div>
+
+                <div className="w-[80%] h-full flex flex-col border border-blue-300 ">
+                    <div className="w-full h-12 flex flex-row gap-0 border border-blue-300 items-center px-2">
+                        <div className="w-full h-fit flex flex-row gap-4 items-center">
+                            <span className="w-fit h-fit px-2 py-1 text-xs! rounded-md" style={{backgroundColor:AVAILABLEMETHODS.find((each) => each.method === currentRequest?.method)?.color ?? '', color:'#fff'}}>
+                                {currentRequest?.method}
+                            </span>
+                            <span>{currentRequest?.name}</span>
+                        </div>
                     </div>
-                </div>
+                    <div className="w-full flex-1 min-h-0 flex flex-row">
+                        <div className="w-[62.5%] h-full border border-yellow-400  flex flex-col" >
+                            <div className="w-full h-12 flex flex-row bg-foreground/5 px-4">
+                                <ActionsMenu buttonClassName='bg-transparent! border-none h-full' className="bg-background border-border border z-50! w-24" position="bottom" icon={<span className="w-full justify-start items-start flex" style={currentRequest?.method === 'GET' ? {} : {color:AVAILABLEMETHODS.find((each) => each.method === currentRequest?.method)?.color ?? ''}}>{currentRequest?.method}</span>}>
+                                    {AVAILABLEMETHODS.map((each) =>(
+                                        <span key={each.method} className="w-14 h-8 flex items-center py-2" style={each.method === 'GET' ? {} : {color:each.color}} onClick={() => handleChangeMethods(each.method)}>{each.method}</span>
+                                    ))}
+                                </ActionsMenu>
+                                <input className="w-full h-full outline-none border-none px-2" value={currentRequest?.url ?? ''} onChange={(e) => setCurrentRequest(prev => prev ? { ...prev, url: e.target.value } : null)} onBlur={handleUrlBlur} />
+                                <Button className="h-full rounded-0">Enviar</Button>
+                            </div>
+                            <div className="flex flex-row w-full h-12 border-t border-border">
+                                <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'params' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('params')}>Params {currentRequest?.params?.length  ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit">{currentRequest.params.length }</span> : ''}</span>
+                                <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'body' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('body')}>Body {(currentRequest?.body && currentRequest?.body?.length > 0 ) ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit"><div className="w-2 h-2 bg-green-500 rounded-full"></div></span> : ''}</span>
+                                <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'auth' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('auth')}>Auth {(currentRequest?.auth && currentRequest?.auth?.type !== 'none' ) ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit"><div className="w-2 h-2 bg-green-500 rounded-full"></div></span> : ''}</span>
+                                <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'headers' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('headers')}>Headers {currentRequest?.headers?.length ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit">{currentRequest.headers.length}</span> : ''}</span>
+                            </div>
 
-                <div className="w-[50%] h-full border border-yellow-400">
+                            <FetcherTabContent
+                                activeTab={activeTab}
+                                body={currentRequest?.body ?? ''}
+                                onBodyChange={(value) => setCurrentRequest(prev => prev ? { ...prev, body: value } : null)}
+                                url={currentRequest?.url ?? ''}
+                                params={currentRequest?.params ?? []}
+                                onAddParam={handleAddParam}
+                                onRemoveParam={handleRemoveParam}
+                                onRemoveAllParams={() => setDeleteAllParamsModal(true)}
+                                onToggleParam={handleToggleParam}
+                                onUpdateParam={handleUpdateParam}
+                                onSaveParam={handleSaveParams}
+                                headers={currentRequest?.headers ?? []}
+                                onAddHeader={handleAddHeader}
+                                onRemoveHeader={handleRemoveHeader}
+                                onRemoveAllHeaders={() => setDeleteAllHeadersModal(true)}
+                                onToggleHeader={handleToggleHeader}
+                                onUpdateHeader={handleUpdateHeader}
+                                onSaveHeader={handleSaveHeaders}
+                                auth={currentRequest?.auth ?? { type: 'none', active: true }}
+                                onUpdateAuth={handleUpdateAuth}
+                            />
+                        </div>
 
-                </div>
-
-                <div className="w-[30%] h-full border border-pink-400">
-
+                        <div className="w-[37.5%] h-full border border-pink-400 overflow-auto">
+                            b
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -379,6 +607,24 @@ export default function Fetcher() {
                         <input id="hostOnly" type="checkbox" className="w-5 h-5 cursor-pointer" checked={currentEditingCookie?.hostOnly} onChange={(e) => updateCookie('hostOnly', e.target.checked)} />
                     </label>
                 </form>
+            </Modal>
+
+            <Modal isOpen={deleteAllParamsModal} title="Remover todos os params dessa requisição" className="bg-background border border-border" onClose={() => setDeleteAllParamsModal(false)}>
+                <span>Você tem certeza que deseja remover todos os params dessa requisição?</span>
+
+                <div className="w-full h-fit flex flex-row gap-4 justify-end items-center">
+                    <Button variant="outline" onClick={() => setDeleteAllParamsModal(false)}>Cancelar</Button>
+                    <Button variant="danger" onClick={() => { handleRemoveAllParams(); setDeleteAllParamsModal(false) }}>Remover</Button>
+                </div>
+            </Modal>
+
+            <Modal isOpen={deleteAllHeadersModal} title="Remover todos os headers dessa requisição" className="bg-background border border-border" onClose={() => setDeleteAllHeadersModal(false)}>
+                <span>Você tem certeza que deseja remover todos os headers dessa requisição?</span>
+
+                <div className="w-full h-fit flex flex-row gap-4 justify-end items-center">
+                    <Button variant="outline" onClick={() => setDeleteAllHeadersModal(false)}>Cancelar</Button>
+                    <Button variant="danger" onClick={() => { handleRemoveAllHeaders(); setDeleteAllHeadersModal(false) }}>Remover</Button>
+                </div>
             </Modal>
 
             <Modal isOpen={deleteAllCookiesModal} title="Deletar todos os cookies dessa coleção" className="bg-background border border-border" onClose={() => setDeleteAllCookiesModal(false)}>

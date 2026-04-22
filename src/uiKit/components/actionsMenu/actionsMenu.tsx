@@ -66,7 +66,7 @@ const ActionsMenu = forwardRef<HTMLDivElement, ActionsMenuProps>(
         }
         
         return (
-            <div className="relative flex  w-fit h-auto" ref={ref} {...props}>
+            <div className="relative flex w-fit h-auto" ref={ref} {...props}>
                 <button ref={dropdownRef} className={cn('bg-white border border-zinc-200 w-fit min-w-12 h-8 flex items-center justify-center cursor-pointer', buttonClassName)} onClick={() => setIsOpen(!isOpen)}>{icon}</button>
                 <motion.div className={actionsMenu({position, className})} variants={list} initial='closed' animate={isOpen ? 'open' : 'closed'}>
                     {children}
