@@ -24,7 +24,7 @@ interface IDropdown {
 }
 
 
-export default function Dropdown({ onChangeValue, options, value, disabled, filter, placeholder, className, filterKey, itemTemplate }: IDropdown) {
+export default function DropdownUtilities({ onChangeValue, options, value, disabled, filter, placeholder, className, filterKey, itemTemplate }: IDropdown) {
 
     const [isOpen, setIsOpen] = useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null)
@@ -160,7 +160,7 @@ export default function Dropdown({ onChangeValue, options, value, disabled, filt
     }
 
     return (
-        <div className={cn(`shrink-0 w-full h-10 rounded outline-none border border-zinc-400 pl-2 text-base mt-2   bg-transparent flex items-center relative ${disabled ? 'cursor-auto opacity-85' : 'cursor-pointer'}`, className)} onClick={() => !disabled && setIsOpen(!isOpen)} ref={dropdownRef}>
+        <div className={cn(` w-full h-10 rounded outline-none pl-2 text-base bg-transparent flex items-center relative ${disabled ? 'cursor-auto opacity-85' : 'cursor-pointer'}`, className)} onClick={() => !disabled && setIsOpen(!isOpen)} ref={dropdownRef}>
 
             {/* EXHIBITION */}
             <div className={`text-base ${!value ? 'text-[#757575]' : ''}`}>
@@ -201,7 +201,7 @@ export default function Dropdown({ onChangeValue, options, value, disabled, filt
                 <div className="w-full h-fit max-h-52 overflow-x-hidden overflow-y-auto relative">
                     {
                         filteredOptions.map((item: string | Record<string, any>, index: number) => (
-                            <div key={index} onClick={() => onChangeValue(item)} className={`min-w-full w-fit h-fit py-1 px-2 hover:bg-zinc-200 flex flex-row ${selectedIndex === index ? 'bg-zinc-200 pointer-events-none' : 'bg-transparent cursor-pointer'}`}>
+                            <div key={index} onClick={() => onChangeValue(item)} className={`min-w-full w-fit h-fit py-1 px-2  flex flex-row ${selectedIndex === index ? 'bg-transparent pointer-events-none' : 'bg-transparent cursor-pointer'}`}>
                                 {typeof item === "object" ? (itemTemplate ? itemTemplate(item) : <span>{JSON.stringify(item)}</span>) : <span>{item}</span>}
 
                                 {selectedIndex === index && <Check className="absolute right-4" />}

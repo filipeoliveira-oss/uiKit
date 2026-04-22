@@ -145,15 +145,23 @@
     background: oklch(70.5% 0.015 286.067);
 }
 
-
 /* Chrome, Edge, Safari */
 .inputNumber::-webkit-outer-spin-button,
 .inputNumber::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Firefox */
 .inputNumber {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+#fectherCollection {
+    background-color: var(--background) !important;
+    color: var(--foreground) !important;
+    border: 1px solid var(--border);
+    outline: none;
+    height: 2rem; 
+    width: 70%;
 }
