@@ -468,6 +468,20 @@ export default function Fetcher() {
             }
         }
 
+        const parsedUrl = (() => { try { return new URL(url) } catch { return null } })()
+        const cookiesToSend = (currentCollection?.cookies ?? []).filter(c => {
+            if (!parsedUrl) return false
+            const hostname = parsedUrl.hostname
+            const domain = c.domain.startsWith('.') ? c.domain.slice(1) : c.domain
+            const domainMatches = hostname === domain || hostname.endsWith(`.${domain}`)
+            const pathMatches = parsedUrl.pathname.startsWith(c.path || '/')
+            return domainMatches && pathMatches
+        })
+        if (cookiesToSend.length > 0) {
+            const cookieStr = cookiesToSend.map(c => `${c.key}=${c.value}`).join('; ')
+            headersObj['Cookie'] = headersObj['Cookie'] ? `${headersObj['Cookie']}; ${cookieStr}` : cookieStr
+        }
+
         let body: BodyInit | null = null
         const canHaveBody = currentRequest.method !== 'GET' && currentRequest.method !== 'HEAD'
         if (canHaveBody && currentRequest.bodyType !== 'none') {
