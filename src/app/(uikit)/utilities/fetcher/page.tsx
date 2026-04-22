@@ -180,7 +180,6 @@ export default function Fetcher() {
     function handleAddNewEnv() {
         setCurrentCollection(prev => {
             if (!prev) return null
-            alert('2')
             const newEnv: IEnvVariable = { active: true, name: '', uuid: crypto.randomUUID(), value: '' }
             const updated: ICollection = { ...prev, envVariable: [...(prev.envVariable ?? []), newEnv] }
             updateStorage(updated)
@@ -575,7 +574,6 @@ export default function Fetcher() {
             syncRequest(updated)
         } catch (err) {
             console.error('Fetch error:', err)
-            // toast.error('Erro ao enviar requisição')
         } finally {
             setIsSending(false)
         }
