@@ -7,33 +7,46 @@ import { Cookie, FilePlus, Plus, PlusCircle, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import FetcherTabContent, { IAuth, BodyType, IFormDataField } from "./FetcherTabContent"
+import { div } from "framer-motion/client"
+import { ClipLoader } from "@/uiKit/loaders/clipLoader/clipLoader"
+import { DotLoader } from "@/uiKit/loaders/dotLoader/dotLoader"
 
-interface IParams{
-    key:string,
-    value:string,
-    active:boolean,
-    uuid:string
+interface IParams {
+    key: string,
+    value: string,
+    active: boolean,
+    uuid: string
 }
 
-interface IHeaders{
-    key:string,
-    value:string,
-    active:boolean,
-    uuid:string
+interface IHeaders {
+    key: string,
+    value: string,
+    active: boolean,
+    uuid: string
+}
+
+interface IResponse {
+    status: string,
+    delay: string,
+    size: string,
+    data: string,
+    headers: Array<Pick<IHeaders, 'key' | 'value'>>
+    cookies: Array<Omit<ICookies, 'uuid'>>
 }
 
 interface IRequest {
     method: string,
     url: string,
-    body:string,
+    body: string,
     bodyType?: BodyType,
     bodyFormData?: Array<IFormDataField>,
     createdAt: Date,
     uuid: string,
     name: string
-    params?:Array<IParams>,
-    headers?:Array<IHeaders>,
-    auth?:IAuth
+    params?: Array<IParams>,
+    headers?: Array<IHeaders>,
+    auth?: IAuth,
+    response?: IResponse
 }
 
 interface IEnvVariable {
@@ -64,9 +77,9 @@ interface ICollection {
     cookies?: Array<ICookies>
 }
 
-interface IMethods{
-    method:string,
-    color:string
+interface IMethods {
+    method: string,
+    color: string
 }
 
 export default function Fetcher() {
@@ -85,15 +98,18 @@ export default function Fetcher() {
     const [activeTab, setActiveTab] = useState<'params' | 'body' | 'auth' | 'headers'>('params')
     const [renameRequestModal, setRenameRequestModal] = useState(false)
     const [editingRequestName, setEditingRequestName] = useState('')
+    const [activeResponseTab, setActiveResponseTab] = useState<'preview' | 'headers' | 'cookies'>('preview')
+    const [isSending, setIsSending] = useState(false)
 
-    const AVAILABLEMETHODS:Array<IMethods> = [
-        {method:'GET', color:'purple'},
-        {method:'POST', color:'green'},
-        {method:'PUT', color:'orange'},
-        {method:'PATCH', color:'#cccf1a'},
-        {method:'DELETE', color:'red'},
-        {method:'OPTIONS', color:'#0fc7fa'},
-        {method:'HEAD', color:'#0fc7fa'},
+
+    const AVAILABLEMETHODS: Array<IMethods> = [
+        { method: 'GET', color: 'purple' },
+        { method: 'POST', color: 'green' },
+        { method: 'PUT', color: 'orange' },
+        { method: 'PATCH', color: '#cccf1a' },
+        { method: 'DELETE', color: 'red' },
+        { method: 'OPTIONS', color: '#0fc7fa' },
+        { method: 'HEAD', color: '#0fc7fa' },
     ]
 
 
@@ -153,7 +169,7 @@ export default function Fetcher() {
 
         setCurrentCollection(prev => {
             if (!prev) return null
-            const newRequest: IRequest = {body:'', bodyType: 'none', bodyFormData: [], createdAt: new Date(), method: 'GET', url: '', uuid: crypto.randomUUID(), name: 'New Request' }
+            const newRequest: IRequest = { body: '', bodyType: 'none', bodyFormData: [], createdAt: new Date(), method: 'GET', url: '', uuid: crypto.randomUUID(), name: 'New Request' }
             const updated = { ...prev, requests: [...prev.requests, newRequest] }
             updateStorage(updated)
 
@@ -409,13 +425,155 @@ export default function Fetcher() {
         setRenameRequestModal(false)
     }
 
-    function handleChangeMethods(newMethod:IMethods['method']){
+    function resolveEnvVars(value: string): string {
+        if (!currentCollection?.envVariable) return value
+        return value.replace(/\{\{(\w+)\}\}/g, (_, name) => {
+            const env = currentCollection.envVariable?.find(e => e.name === name && e.active)
+            return env?.value ?? `{{${name}}}`
+        })
+    }
+
+    async function handleSendRequest() {
+        if (!currentRequest) return
+
+        let url = resolveEnvVars(currentRequest.url)
+
+        const activeParams = (currentRequest.params ?? []).filter(p => p.active && p.key)
+        if (currentRequest.auth?.type === 'apikey' && currentRequest.auth.addTo === 'query') {
+            activeParams.push({ key: currentRequest.auth.key, value: currentRequest.auth.value, active: true, uuid: '' })
+        }
+        if (activeParams.length) {
+            const base = url.split('?')[0]
+            const qs = activeParams.map(p => `${encodeURIComponent(p.key)}=${encodeURIComponent(resolveEnvVars(p.value))}`).join('&')
+            url = `${base}?${qs}`
+        }
+
+        const headersObj: Record<string, string> = {}
+        for (const h of (currentRequest.headers ?? []).filter(h => h.active && h.key)) {
+            headersObj[resolveEnvVars(h.key)] = resolveEnvVars(h.value)
+        }
+
+        const auth = currentRequest.auth
+        if (auth?.active && auth.type !== 'none') {
+            if (auth.type === 'apikey' && auth.addTo === 'header') {
+                headersObj[auth.key] = auth.value
+            } else if (auth.type === 'bearer') {
+                headersObj['Authorization'] = `${auth.prefix} ${auth.token}`
+            } else if (auth.type === 'basic') {
+                headersObj['Authorization'] = `Basic ${btoa(`${auth.username}:${auth.password}`)}`
+            } else if (auth.type === 'digest') {
+                headersObj['Authorization'] = `Digest username="${auth.username}"`
+            } else if (auth.type === 'ntlm') {
+                headersObj['Authorization'] = `NTLM`
+            }
+        }
+
+        let body: BodyInit | null = null
+        const canHaveBody = currentRequest.method !== 'GET' && currentRequest.method !== 'HEAD'
+        if (canHaveBody && currentRequest.bodyType !== 'none') {
+            if (currentRequest.bodyType === 'json') {
+                headersObj['Content-Type'] = 'application/json'
+                body = currentRequest.body
+            } else if (currentRequest.bodyType === 'xml') {
+                headersObj['Content-Type'] = 'application/xml'
+                body = currentRequest.body
+            } else if (currentRequest.bodyType === 'yaml') {
+                headersObj['Content-Type'] = 'application/x-yaml'
+                body = currentRequest.body
+            } else if (currentRequest.bodyType === 'edn') {
+                headersObj['Content-Type'] = 'application/edn'
+                body = currentRequest.body
+            } else if (currentRequest.bodyType === 'text') {
+                headersObj['Content-Type'] = 'text/plain'
+                body = currentRequest.body
+            } else if (currentRequest.bodyType === 'formdata') {
+                const formData = new FormData()
+                for (const field of (currentRequest.bodyFormData ?? []).filter(f => f.active && f.key)) {
+                    formData.append(field.key, field.value)
+                }
+                body = formData
+            }
+        }
+
+        const formDataEntries = currentRequest.bodyType === 'formdata'
+            ? (currentRequest.bodyFormData ?? []).filter(f => f.active && f.key).map(f => ({ key: f.key, value: f.value }))
+            : undefined
+
+        try {
+            setIsSending(true)
+            const startTime = Date.now()
+            const proxyRes = await fetch('/api/proxy', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    url,
+                    method: currentRequest.method,
+                    headers: headersObj,
+                    body: formDataEntries ? undefined : (body as string | null),
+                    formDataEntries,
+                }),
+            })
+            const delay = Date.now() - startTime
+            const proxyData = await proxyRes.json()
+
+            if (proxyData.error) {
+                toast.error(proxyData.error)
+            }
+
+            const responseHeaders: Array<Pick<IHeaders, 'key' | 'value'>> = Object.entries(proxyData.headers as Record<string, string>).map(([key, value]) => ({ key, value }))
+
+            const responseCookies: Array<Omit<ICookies, 'uuid'>> = (proxyData.setCookies as string[]).map(raw => {
+                const [keyValue, ...attrs] = raw.split(';').map(p => p.trim())
+                const eqIdx = keyValue.indexOf('=')
+                const cookie: Omit<ICookies, 'uuid'> = {
+                    key: keyValue.slice(0, eqIdx).trim(),
+                    value: keyValue.slice(eqIdx + 1).trim(),
+                    domain: '', path: '/', expires: '', secure: false, hostOnly: false, httpOnly: false,
+                }
+                for (const attr of attrs) {
+                    const [k, ...vParts] = attr.split('=')
+                    const v = vParts.join('=').trim()
+                    const kl = k.trim().toLowerCase()
+                    if (kl === 'domain') cookie.domain = v
+                    else if (kl === 'path') cookie.path = v
+                    else if (kl === 'expires') cookie.expires = v
+                    else if (kl === 'secure') cookie.secure = true
+                    else if (kl === 'httponly') cookie.httpOnly = true
+                    else if (kl === 'hostonly') cookie.hostOnly = true
+                }
+                return cookie
+            })
+
+            const text: string = proxyData.body
+            const size = new Blob([text]).size
+            const sizeStr = size >= 1024 ? `${(size / 1024).toFixed(2)} KB` : `${size} B`
+
+            const response: IResponse = {
+                status: `${proxyData.status} ${proxyData.statusText}`,
+                delay: `${delay} ms`,
+                size: sizeStr,
+                data: text,
+                headers: responseHeaders,
+                cookies: responseCookies,
+            }
+            const updated = { ...currentRequest, response }
+            setCurrentRequest(updated)
+            syncRequest(updated)
+        } catch (err) {
+            console.error('Fetch error:', err)
+            // toast.error('Erro ao enviar requisição')
+        } finally {
+            setIsSending(false)
+        }
+    }
+
+    function handleChangeMethods(newMethod: IMethods['method']) {
         setCurrentRequest(prev => {
-            if(!prev) return null
+            if (!prev) return null
             const updated = { ...prev, method: newMethod }
 
             setCurrentCollection(prevCollection => {
-                if(!prevCollection) return null
+                if (!prevCollection) return null
                 const updatedCollection = {
                     ...prevCollection,
                     requests: prevCollection.requests.map(r => r.uuid === updated.uuid ? updated : r)
@@ -430,8 +588,8 @@ export default function Fetcher() {
 
     return (
         <>
-            <div className="w-full h-full flex flex-row overflow-hidden">
-                <div className="w-[20%] h-full border border-green-400 flex flex-col px-2 gap-4">
+            <div className="w-full h-full flex flex-row overflow-hidden border border-border">
+                <div className="w-[20%] h-full flex flex-col px-2 gap-4 border border-border">
                     <div className="flex flex-row gap-2 w-full h-fit justify-between items-center border-b-2 border-border py-2">
                         <select name="collections" id="fectherCollection" value={currentCollection?.name ?? 'optionCollectionDisable'} onChange={(e) => { setCurrentCollection(collections.find(c => c.name === e.target.value) ?? null); setCurrentRequest(null) }}>
                             <option value="optionCollectionDisable" disabled>Selecione uma coleção</option>
@@ -476,67 +634,140 @@ export default function Fetcher() {
                     )}
                 </div>
 
-                <div className="w-[80%] h-full flex flex-col border border-blue-300 ">
-                    <div className="w-full h-12 flex flex-row gap-0 border border-blue-300 items-center px-2">
-                        <div className="w-full h-fit flex flex-row gap-4 items-center">
-                            <span className="w-fit h-fit px-2 py-1 text-xs! rounded-md" style={{backgroundColor:AVAILABLEMETHODS.find((each) => each.method === currentRequest?.method)?.color ?? '', color:'#fff'}}>
-                                {currentRequest?.method}
-                            </span>
-                            <span className="cursor-pointer select-none" onDoubleClick={() => { if (!currentRequest) return; setEditingRequestName(currentRequest.name); setRenameRequestModal(true) }}>{currentRequest?.name}</span>
-                        </div>
+                {!currentRequest ? <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-full h-full flex items-center justify-center text-foreground/40 text-sm">
+                        Selecione uma coleção e um request para começar
                     </div>
-                    <div className="w-full flex-1 min-h-0 flex flex-row">
-                        <div className="w-[62.5%] h-full border border-yellow-400  flex flex-col" >
-                            <div className="w-full h-12 flex flex-row bg-foreground/5 px-4">
-                                <ActionsMenu buttonClassName='bg-transparent! border-none h-full' className="bg-background border-border border z-50! w-24" position="bottom" icon={<span className="w-full justify-start items-start flex" style={currentRequest?.method === 'GET' ? {} : {color:AVAILABLEMETHODS.find((each) => each.method === currentRequest?.method)?.color ?? ''}}>{currentRequest?.method}</span>}>
-                                    {AVAILABLEMETHODS.map((each) =>(
-                                        <span key={each.method} className="w-14 h-8 flex items-center py-2" style={each.method === 'GET' ? {} : {color:each.color}} onClick={() => handleChangeMethods(each.method)}>{each.method}</span>
-                                    ))}
-                                </ActionsMenu>
-                                <input className="w-full h-full outline-none border-none px-2" value={currentRequest?.url ?? ''} onChange={(e) => setCurrentRequest(prev => prev ? { ...prev, url: e.target.value } : null)} onBlur={handleUrlBlur} />
-                                <Button className="h-full rounded-0">Enviar</Button>
+                </div> : (
+                    <div className="w-[80%] h-full flex flex-col">
+                        <div className="w-full h-12 flex flex-row gap-0 items-center px-2">
+                            <div className="w-full h-fit flex flex-row gap-4 items-center">
+                                <span className="w-fit h-fit px-2 py-1 text-xs! rounded-md" style={{ backgroundColor: AVAILABLEMETHODS.find((each) => each.method === currentRequest?.method)?.color ?? '', color: '#fff' }}>
+                                    {currentRequest?.method}
+                                </span>
+                                <span className="cursor-pointer select-none" onDoubleClick={() => { if (!currentRequest) return; setEditingRequestName(currentRequest.name); setRenameRequestModal(true) }}>{currentRequest?.name}</span>
                             </div>
-                            <div className="flex flex-row w-full h-12 border-t border-border">
-                                <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'params' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('params')}>Params {currentRequest?.params?.length  ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit">{currentRequest.params.length }</span> : ''}</span>
-                                <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'body' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('body')}>Body {currentRequest?.bodyType !== 'none' ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit"><div className="w-2 h-2 bg-green-500 rounded-full"></div></span> : ''}</span>
-                                <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'auth' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('auth')}>Auth {(currentRequest?.auth && currentRequest?.auth?.type !== 'none' ) ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit"><div className="w-2 h-2 bg-green-500 rounded-full"></div></span> : ''}</span>
-                                <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'headers' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('headers')}>Headers {currentRequest?.headers?.length ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit">{currentRequest.headers.length}</span> : ''}</span>
+                        </div>
+                        <div className="w-full flex-1 min-h-0 flex flex-row border border-border">
+                            <div className="w-[62.5%] h-full flex flex-col border-r border-border" >
+                                <div className="w-full h-12 flex flex-row bg-foreground/5 px-4">
+                                    <ActionsMenu buttonClassName='bg-transparent! border-none h-full' className="bg-background border-border border z-50! w-24" position="bottom" icon={<span className="w-full justify-start items-start flex" style={currentRequest?.method === 'GET' ? {} : { color: AVAILABLEMETHODS.find((each) => each.method === currentRequest?.method)?.color ?? '' }}>{currentRequest?.method}</span>}>
+                                        {AVAILABLEMETHODS.map((each) => (
+                                            <span key={each.method} className="w-14 h-8 flex items-center py-2" style={each.method === 'GET' ? {} : { color: each.color }} onClick={() => handleChangeMethods(each.method)}>{each.method}</span>
+                                        ))}
+                                    </ActionsMenu>
+                                    <input className="w-full h-full outline-none border-none px-2" value={currentRequest?.url ?? ''} onChange={(e) => setCurrentRequest(prev => prev ? { ...prev, url: e.target.value } : null)} onBlur={handleUrlBlur} />
+                                    <Button className="h-full rounded-0" onClick={handleSendRequest}>Enviar</Button>
+                                </div>
+                                <div className="flex flex-row w-full h-12 border-t border-border">
+                                    <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'params' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('params')}>Params {currentRequest?.params?.length ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit">{currentRequest.params.length}</span> : ''}</span>
+                                    <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'body' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('body')}>Body {currentRequest?.bodyType !== 'none' ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit"><div className="w-2 h-2 bg-green-500 rounded-full"></div></span> : ''}</span>
+                                    <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'auth' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('auth')}>Auth {(currentRequest?.auth && currentRequest?.auth?.type !== 'none') ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit"><div className="w-2 h-2 bg-green-500 rounded-full"></div></span> : ''}</span>
+                                    <span className={`w-fit h-full px-4 py-2 cursor-pointer flex items-center gap-2 ${activeTab === 'headers' ? 'bg-foreground/10' : 'bg-transparent'}`} onClick={() => setActiveTab('headers')}>Headers {currentRequest?.headers?.length ? <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 h-fit">{currentRequest.headers.length}</span> : ''}</span>
+                                </div>
+
+                                <FetcherTabContent
+                                    activeTab={activeTab}
+                                    body={currentRequest?.body ?? ''}
+                                    onBodyChange={(value) => setCurrentRequest(prev => prev ? { ...prev, body: value } : null)}
+                                    onBodySave={handleBodySave}
+                                    bodyType={currentRequest?.bodyType ?? 'none'}
+                                    onBodyTypeChange={handleBodyTypeChange}
+                                    bodyFormData={currentRequest?.bodyFormData ?? []}
+                                    onBodyFormDataChange={handleBodyFormDataChange}
+                                    url={currentRequest?.url ?? ''}
+                                    params={currentRequest?.params ?? []}
+                                    onAddParam={handleAddParam}
+                                    onRemoveParam={handleRemoveParam}
+                                    onRemoveAllParams={() => setDeleteAllParamsModal(true)}
+                                    onToggleParam={handleToggleParam}
+                                    onUpdateParam={handleUpdateParam}
+                                    onSaveParam={handleSaveParams}
+                                    headers={currentRequest?.headers ?? []}
+                                    onAddHeader={handleAddHeader}
+                                    onRemoveHeader={handleRemoveHeader}
+                                    onRemoveAllHeaders={() => setDeleteAllHeadersModal(true)}
+                                    onToggleHeader={handleToggleHeader}
+                                    onUpdateHeader={handleUpdateHeader}
+                                    onSaveHeader={handleSaveHeaders}
+                                    auth={currentRequest?.auth ?? { type: 'none', active: true }}
+                                    onUpdateAuth={handleUpdateAuth}
+                                />
                             </div>
 
-                            <FetcherTabContent
-                                activeTab={activeTab}
-                                body={currentRequest?.body ?? ''}
-                                onBodyChange={(value) => setCurrentRequest(prev => prev ? { ...prev, body: value } : null)}
-                                onBodySave={handleBodySave}
-                                bodyType={currentRequest?.bodyType ?? 'none'}
-                                onBodyTypeChange={handleBodyTypeChange}
-                                bodyFormData={currentRequest?.bodyFormData ?? []}
-                                onBodyFormDataChange={handleBodyFormDataChange}
-                                url={currentRequest?.url ?? ''}
-                                params={currentRequest?.params ?? []}
-                                onAddParam={handleAddParam}
-                                onRemoveParam={handleRemoveParam}
-                                onRemoveAllParams={() => setDeleteAllParamsModal(true)}
-                                onToggleParam={handleToggleParam}
-                                onUpdateParam={handleUpdateParam}
-                                onSaveParam={handleSaveParams}
-                                headers={currentRequest?.headers ?? []}
-                                onAddHeader={handleAddHeader}
-                                onRemoveHeader={handleRemoveHeader}
-                                onRemoveAllHeaders={() => setDeleteAllHeadersModal(true)}
-                                onToggleHeader={handleToggleHeader}
-                                onUpdateHeader={handleUpdateHeader}
-                                onSaveHeader={handleSaveHeaders}
-                                auth={currentRequest?.auth ?? { type: 'none', active: true }}
-                                onUpdateAuth={handleUpdateAuth}
-                            />
-                        </div>
+                            <div className="w-[37.5%] h-full overflow-hidden flex flex-col">
+                                {isSending ? <div className="w-full h-full flex items-center justify-center"><DotLoader /></div> : currentRequest?.response ? (
+                                    <>
+                                        <div className="w-full h-10 flex flex-row gap-4 items-center px-4 border-b border-border text-sm bg-foreground/5 shrink-0">
+                                            <span className={`font-medium ${currentRequest.response.status.startsWith('2') ? 'text-green-500' : (currentRequest.response.status.startsWith('4') || currentRequest.response.status.startsWith('5')) ? 'text-red-500' : 'text-yellow-500'}`}>
+                                                {currentRequest.response.status}
+                                            </span>
+                                            <span className="text-foreground/60">{currentRequest.response.delay}</span>
+                                            <span className="text-foreground/60">{currentRequest.response.size}</span>
+                                        </div>
 
-                        <div className="w-[37.5%] h-full border border-pink-400 overflow-auto">
-                            b
+                                        <div className="flex flex-row w-full h-10 border-b border-border shrink-0">
+                                            <span className={`px-4 h-full flex items-center cursor-pointer text-sm gap-2 ${activeResponseTab === 'preview' ? 'bg-foreground/10' : ''}`} onClick={() => setActiveResponseTab('preview')}>Preview</span>
+                                            <span className={`px-4 h-full flex items-center cursor-pointer text-sm gap-2 ${activeResponseTab === 'headers' ? 'bg-foreground/10' : ''}`} onClick={() => setActiveResponseTab('headers')}>
+                                                Headers
+                                                {currentRequest.response.headers.length > 0 && <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 text-xs">{currentRequest.response.headers.length}</span>}
+                                            </span>
+                                            <span className={`px-4 h-full flex items-center cursor-pointer text-sm gap-2 ${activeResponseTab === 'cookies' ? 'bg-foreground/10' : ''}`} onClick={() => setActiveResponseTab('cookies')}>
+                                                Cookies
+                                                {currentRequest.response.cookies.length > 0 && <span className="bg-foreground/5 p-1 rounded-lg border border-white/40 text-xs">{currentRequest.response.cookies.length}</span>}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex-1 min-h-0 overflow-auto">
+                                            {activeResponseTab === 'preview' && (
+                                                <pre className="p-4 text-sm font-mono whitespace-pre-wrap break-all">
+                                                    {(() => { try { return JSON.stringify(JSON.parse(currentRequest.response.data), null, 2) } catch { return currentRequest.response.data } })()}
+                                                </pre>
+                                            )}
+                                            {activeResponseTab === 'headers' && (
+                                                <div className="flex flex-col">
+                                                    {currentRequest.response.headers.map((header, i) => (
+                                                        <div key={i} className="flex flex-row gap-4 px-4 py-2 border-b border-border text-sm">
+                                                            <span className="w-[40%] font-medium text-foreground/80 break-all">{header.key}</span>
+                                                            <span className="w-[60%] text-foreground/60 break-all">{header.value}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {activeResponseTab === 'cookies' && (
+                                                <div className="flex flex-col">
+                                                    {currentRequest.response.cookies.length === 0 ? (
+                                                        <span className="p-4 text-sm text-foreground/50">Nenhum cookie recebido</span>
+                                                    ) : currentRequest.response.cookies.map((cookie, i) => (
+                                                        <div key={i} className="flex flex-col px-4 py-3 border-b border-border text-sm gap-1">
+                                                            <div className="flex flex-row gap-2">
+                                                                <span className="font-medium">{cookie.key}</span>
+                                                                <span className="text-foreground/60">=</span>
+                                                                <span className="text-foreground/80 break-all">{cookie.value}</span>
+                                                            </div>
+                                                            {cookie.domain && <span className="text-xs text-foreground/50">Domain: {cookie.domain}</span>}
+                                                            {cookie.path && <span className="text-xs text-foreground/50">Path: {cookie.path}</span>}
+                                                            {cookie.expires && <span className="text-xs text-foreground/50">Expires: {cookie.expires}</span>}
+                                                            <div className="flex flex-row gap-2">
+                                                                {cookie.secure && <span className="text-xs bg-foreground/10 px-1 rounded">Secure</span>}
+                                                                {cookie.httpOnly && <span className="text-xs bg-foreground/10 px-1 rounded">HttpOnly</span>}
+                                                                {cookie.hostOnly && <span className="text-xs bg-foreground/10 px-1 rounded">HostOnly</span>}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-foreground/40 text-sm">
+                                        Envie uma requisição para ver a resposta
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
 
             </div>
 
