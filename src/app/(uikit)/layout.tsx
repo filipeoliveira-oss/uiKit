@@ -11,7 +11,9 @@ export default function UiKitLayout({
     return (
         <div className="flex flex-row w-full" style={{height:'calc(100dvh - 64px)'}}>
             <Suspense>
-                <Sidebar />
+                <div className="hidden md:block">
+                    <Sidebar />
+                </div>
                 <div className="w-full h-full  overflow-x-hidden overflow-y-auto">
                     {children}
                 </div>
